@@ -1,0 +1,71 @@
+<scroll-view scroll-y class="thread" scroll-into-view="thread-bottom">
+  <block wx:if="{{entries.length === 0}}">
+    <view class="hero">
+      <view class="hero-title">你想做什么？</view>
+      <view class="hero-sub">告诉我就可以。</view>
+    </view>
+    <view class="suggestions">
+      <button
+        wx:for="{{suggestionKeys}}"
+        wx:key="*this"
+        class="suggestion"
+        data-text="{{item}}"
+        bindtap="onSuggestion"
+      >{{item}}</button>
+    </view>
+  </block>
+
+  <block wx:for="{{entries}}" wx:key="index">
+    <view class="bubble {{item.role === 'user' ? 'bubble-user' : 'bubble-ai'}}">{{item.text}}</view>
+
+    <block wx:if="{{item.cards}}">
+      <view class="panel card" wx:if="{{item.cards.plan}}">
+        <view class="row-title">{{item.cards.plan.title}}</view>
+        <view class="plan-modules">
+          <view wx:for="{{item.cards.plan.modules}}" wx:for-item="mod" wx:key="*this" class="plan-module">✓ {{mod}}</view>
+        </view>
+        <button class="btn-brand" data-kind="generate" data-requirement="{{item.cards.plan.requirement}}" bindtap="onAction">直接生成</button>
+      </view>
+
+      <view class="panel card" wx:if="{{item.cards.sendMessage}}">
+        <view class="row-title">发送给 {{item.cards.sendMessage.contactName}}：</view>
+        <view class="draft">{{item.cards.sendMessage.draft}}</view>
+        <button
+          class="btn-brand"
+          data-kind="send"
+          data-contactid="{{item.cards.sendMessage.contactId}}"
+          data-contactname="{{item.cards.sendMessage.contactName}}"
+          data-draft="{{item.cards.sendMessage.draft}}"
+          bindtap="onAction"
+        >确认发送</button>
+        <view class="confirm-note">涉及对外发送，需要你明确确认后才会执行。</view>
+      </view>
+
+      <view class="panel card" wx:if="{{item.cards.apps.length > 0}}">
+        <view wx:for="{{item.cards.apps}}" wx:for-item="app" wx:key="id" class="row">
+          <view class="app-main">
+            <view class="row-title">{{app.name}}</view>
+            <view class="row-desc">{{app.summary}}</view>
+            <view class="app-reason">匹配 {{app.reason}} · {{app.priceLabel}}</view>
+          </view>
+          <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">使用</navigator>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <view wx:if="{{sending}}" class="bubble bubble-ai">问寻正在思考…</view>
+  <view id="thread-bottom"></view>
+</scroll-view>
+
+<view class="composer">
+  <input
+    class="composer-input"
+    value="{{input}}"
+    placeholder="输入消息……"
+    bindinput="onInput"
+    confirm-type="send"
+    bindconfirm="onSend"
+  />
+  <button class="composer-send" size="mini" bindtap="onSend" disabled="{{sending}}">发送</button>
+</view>

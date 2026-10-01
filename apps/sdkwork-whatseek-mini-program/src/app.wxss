@@ -1,0 +1,49 @@
+/* WhatSeek mini-program global styles — semantic tokens mirror the H5/PC theme. */
+page {
+  --sdk-color-surface-canvas: #f7f8fa;
+  --sdk-color-surface-panel: #ffffff;
+  --sdk-color-text-primary: #18181b;
+  --sdk-color-text-secondary: #52525b;
+  --sdk-color-text-muted: #a1a1aa;
+  --sdk-color-brand: #2563eb;
+  --sdk-color-border-subtle: #e4e4e7;
+  background-color: var(--sdk-color-surface-canvas);
+  color: var(--sdk-color-text-primary);
+  font-size: 28rpx;
+}
+
+.panel {
+  margin: 16rpx 24rpx;
+  border-radius: 24rpx;
+  background-color: var(--sdk-color-surface-panel);
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx;
+  border-bottom: 1rpx solid var(--sdk-color-border-subtle);
+}
+
+.row:last-child { border-bottom: none; }
+
+.row-title { font-size: 30rpx; font-weight: 500; color: var(--sdk-color-text-primary); }
+.row-desc { font-size: 24rpx; color: var(--sdk-color-text-secondary); margin-top: 4rpx; }
+.row-glyph { font-size: 40rpx; }
+
+.btn-brand {
+  background-color: var(--sdk-color-brand);
+  color: #ffffff;
+  border-radius: 999rpx;
+  padding: 18rpx 0;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.page-title { font-size: 40rpx; font-weight: 600; padding: 32rpx 32rpx 8rpx; }
+.page-sub { font-size: 24rpx; color: var(--sdk-color-text-muted); padding: 0 32rpx 16rpx; }
+.empty { text-align: center; color: var(--sdk-color-text-muted); padding: 80rpx 0; font-size: 26rpx; }

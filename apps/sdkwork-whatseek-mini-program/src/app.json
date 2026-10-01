@@ -1,0 +1,54 @@
+{
+  "pages": [
+    "pages/chat/index",
+    "pages/apps/index",
+    "pages/contacts/index",
+    "pages/messages/index",
+    "pages/profile/index"
+  ],
+  "subPackages": [
+    {
+      "root": "detail",
+      "pages": [
+        "apps-detail/index",
+        "conversation/index"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTitleText": "问寻 WhatSeek",
+    "navigationBarBackgroundColor": "#2563eb",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f7f8fa"
+  },
+  "tabBar": {
+    "color": "#71717a",
+    "selectedColor": "#2563eb",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/chat/index",
+        "text": "对话"
+      },
+      {
+        "pagePath": "pages/apps/index",
+        "text": "应用"
+      },
+      {
+        "pagePath": "pages/contacts/index",
+        "text": "通讯录"
+      },
+      {
+        "pagePath": "pages/messages/index",
+        "text": "消息"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

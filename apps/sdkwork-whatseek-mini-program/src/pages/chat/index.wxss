@@ -1,0 +1,20 @@
+.thread { height: calc(100vh - 120rpx); padding-bottom: 24rpx; box-sizing: border-box; }
+.hero { text-align: center; padding: 120rpx 0 48rpx; }
+.hero-title { font-size: 44rpx; font-weight: 600; }
+.hero-sub { font-size: 26rpx; color: var(--sdk-color-text-muted); margin-top: 12rpx; }
+.suggestions { display: flex; flex-direction: column; gap: 16rpx; padding: 0 48rpx; }
+.suggestion { background: var(--sdk-color-surface-panel); border: 1rpx solid var(--sdk-color-border-subtle); border-radius: 24rpx; font-size: 26rpx; text-align: left; padding: 24rpx; color: var(--sdk-color-text-secondary); }
+.bubble { max-width: 80%; margin: 16rpx 24rpx; padding: 20rpx 28rpx; border-radius: 24rpx; font-size: 28rpx; }
+.bubble-user { margin-left: auto; background: var(--sdk-color-brand); color: #fff; }
+.bubble-ai { margin-right: auto; background: var(--sdk-color-surface-panel); border: 1rpx solid var(--sdk-color-border-subtle); }
+.card { margin: 16rpx 24rpx; padding: 20rpx 24rpx; }
+.plan-modules { display: flex; flex-wrap: wrap; gap: 12rpx; margin: 12rpx 0 20rpx; }
+.plan-module { font-size: 24rpx; color: var(--sdk-color-text-secondary); border: 1rpx solid var(--sdk-color-border-subtle); border-radius: 999rpx; padding: 4rpx 16rpx; }
+.draft { background: var(--sdk-color-surface-canvas); border-radius: 16rpx; padding: 16rpx 20rpx; font-size: 26rpx; margin: 12rpx 0 20rpx; }
+.confirm-note { font-size: 20rpx; color: var(--sdk-color-text-muted); margin-top: 12rpx; }
+.app-main { flex: 1; min-width: 0; }
+.app-reason { font-size: 20rpx; color: var(--sdk-color-brand); margin-top: 6rpx; }
+.app-use { font-size: 24rpx; color: #fff; background: var(--sdk-color-brand); border-radius: 999rpx; padding: 8rpx 24rpx; }
+.composer { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 16rpx; padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom)); background: var(--sdk-color-surface-panel); border-top: 1rpx solid var(--sdk-color-border-subtle); }
+.composer-input { flex: 1; background: var(--sdk-color-surface-canvas); border-radius: 999rpx; padding: 16rpx 28rpx; font-size: 28rpx; }
+.composer-send { background: var(--sdk-color-brand); color: #fff; border-radius: 999rpx; font-size: 26rpx; padding: 0 32rpx; }
