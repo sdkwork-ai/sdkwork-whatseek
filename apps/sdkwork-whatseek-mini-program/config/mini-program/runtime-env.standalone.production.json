@@ -1,0 +1,8 @@
+{
+  "environment": "production",
+  "deploymentProfile": "standalone",
+  "profileId": "standalone.production",
+  "runtimeTarget": "mini-program",
+  "appApiBaseUrl": "/",
+  "sdkBaseUrl": "/"
+}

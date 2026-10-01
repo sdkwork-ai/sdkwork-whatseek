@@ -232,6 +232,40 @@ importers:
 
   .: {}
 
+  apps/sdkwork-whatseek-common/packages/sdkwork-whatseek-intent-core:
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-common/packages/sdkwork-whatseek-route-core:
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core:
+    dependencies:
+      '@sdkwork/whatseek-intent-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-intent-core
+      '@sdkwork/whatseek-route-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-route-core
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
   apps/sdkwork-whatseek-h5:
     dependencies:
       '@sdkwork/whatseek-h5-apps':
@@ -325,6 +359,9 @@ importers:
       '@sdkwork/whatseek-h5-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -359,6 +396,12 @@ importers:
       '@sdkwork/whatseek-h5-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-core
+      '@sdkwork/whatseek-intent-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-intent-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -418,6 +461,9 @@ importers:
       '@sdkwork/whatseek-h5-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -446,6 +492,15 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-core:
     dependencies:
+      '@sdkwork/whatseek-intent-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-intent-core
+      '@sdkwork/whatseek-route-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-route-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
       i18next:
         specifier: 'catalog:'
         version: 26.4.2(typescript@6.0.3)
@@ -474,6 +529,9 @@ importers:
       '@sdkwork/whatseek-h5-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -511,6 +569,9 @@ importers:
       '@sdkwork/whatseek-h5-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -548,6 +609,387 @@ importers:
       '@sdkwork/whatseek-h5-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-core
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.0(react@19.3.0)
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.15(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      react-router-dom:
+        specifier: 'catalog:'
+        version: 7.18.4(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc:
+    dependencies:
+      '@sdkwork/whatseek-pc-apps':
+        specifier: workspace:*
+        version: link:packages/sdkwork-whatseek-pc-apps
+      '@sdkwork/whatseek-pc-chat':
+        specifier: workspace:*
+        version: link:packages/sdkwork-whatseek-pc-chat
+      '@sdkwork/whatseek-pc-commons':
+        specifier: workspace:*
+        version: link:packages/sdkwork-whatseek-pc-commons
+      '@sdkwork/whatseek-pc-contacts':
+        specifier: workspace:*
+        version: link:packages/sdkwork-whatseek-pc-contacts
+      '@sdkwork/whatseek-pc-core':
+        specifier: workspace:*
+        version: link:packages/sdkwork-whatseek-pc-core
+      '@sdkwork/whatseek-pc-messages':
+        specifier: workspace:*
+        version: link:packages/sdkwork-whatseek-pc-messages
+      '@sdkwork/whatseek-pc-profile':
+        specifier: workspace:*
+        version: link:packages/sdkwork-whatseek-pc-profile
+      '@sdkwork/whatseek-pc-shell':
+        specifier: workspace:*
+        version: link:packages/sdkwork-whatseek-pc-shell
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
+      '@tailwindcss/typography':
+        specifier: 'catalog:'
+        version: 0.5.20(tailwindcss@4.3.3)
+      '@tailwindcss/vite':
+        specifier: 'catalog:'
+        version: 4.3.3(vite@8.3.1(@types/node@24.19.0)(jiti@2.7.0))
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.0(react@19.3.0)
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.15(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      react-router-dom:
+        specifier: 'catalog:'
+        version: 7.18.4(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.3.3
+    devDependencies:
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 7.0.1(@testing-library/dom@10.4.1)(vitest@4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0)(jiti@2.7.0)))
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@testing-library/user-event':
+        specifier: ^14.6.1
+        version: 14.6.7(@testing-library/dom@10.4.1)
+      '@types/node':
+        specifier: ^24.9.2
+        version: 24.19.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.1.1(vite@8.3.1(@types/node@24.19.0)(jiti@2.7.0))
+      jsdom:
+        specifier: 'catalog:'
+        version: 29.1.1
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vite:
+        specifier: 'catalog:'
+        version: 8.3.1(@types/node@24.19.0)(jiti@2.7.0)
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-apps:
+    dependencies:
+      '@sdkwork/whatseek-pc-commons':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-commons
+      '@sdkwork/whatseek-pc-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.0(react@19.3.0)
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.15(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      react-router-dom:
+        specifier: 'catalog:'
+        version: 7.18.4(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      zustand:
+        specifier: 'catalog:'
+        version: 5.0.15(@types/react@19.3.0)(react@19.3.0)(use-sync-external-store@1.7.0(react@19.3.0))
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-chat:
+    dependencies:
+      '@sdkwork/whatseek-intent-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-intent-core
+      '@sdkwork/whatseek-pc-commons':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-commons
+      '@sdkwork/whatseek-pc-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.0(react@19.3.0)
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.15(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      react-router-dom:
+        specifier: 'catalog:'
+        version: 7.18.4(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      zustand:
+        specifier: 'catalog:'
+        version: 5.0.15(@types/react@19.3.0)(react@19.3.0)(use-sync-external-store@1.7.0(react@19.3.0))
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-commons:
+    dependencies:
+      '@sdkwork/whatseek-pc-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.15(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-contacts:
+    dependencies:
+      '@sdkwork/whatseek-pc-commons':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-commons
+      '@sdkwork/whatseek-pc-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.0(react@19.3.0)
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.15(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      react-router-dom:
+        specifier: 'catalog:'
+        version: 7.18.4(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      zustand:
+        specifier: 'catalog:'
+        version: 5.0.15(@types/react@19.3.0)(react@19.3.0)(use-sync-external-store@1.7.0(react@19.3.0))
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-core:
+    dependencies:
+      '@sdkwork/whatseek-intent-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-intent-core
+      '@sdkwork/whatseek-route-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-route-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
+      i18next:
+        specifier: 'catalog:'
+        version: 26.4.2(typescript@6.0.3)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.15(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      zustand:
+        specifier: 'catalog:'
+        version: 5.0.15(@types/react@19.3.0)(react@19.3.0)(use-sync-external-store@1.7.0(react@19.3.0))
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-messages:
+    dependencies:
+      '@sdkwork/whatseek-pc-commons':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-commons
+      '@sdkwork/whatseek-pc-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.0(react@19.3.0)
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.15(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      react-router-dom:
+        specifier: 'catalog:'
+        version: 7.18.4(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      zustand:
+        specifier: 'catalog:'
+        version: 5.0.15(@types/react@19.3.0)(react@19.3.0)(use-sync-external-store@1.7.0(react@19.3.0))
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-profile:
+    dependencies:
+      '@sdkwork/whatseek-pc-commons':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-commons
+      '@sdkwork/whatseek-pc-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.0(react@19.3.0)
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.15(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      react-router-dom:
+        specifier: 'catalog:'
+        version: 7.18.4(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      zustand:
+        specifier: 'catalog:'
+        version: 5.0.15(@types/react@19.3.0)(react@19.3.0)(use-sync-external-store@1.7.0(react@19.3.0))
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-shell:
+    dependencies:
+      '@sdkwork/whatseek-pc-commons':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-commons
+      '@sdkwork/whatseek-pc-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-pc-core
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../../../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
       lucide-react:
         specifier: 'catalog:'
         version: 1.49.0(@types/react@19.3.0)(react@19.3.0)

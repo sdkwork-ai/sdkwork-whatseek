@@ -26,7 +26,9 @@
     "react-dom": "catalog:",
     "react-i18next": "catalog:",
     "react-router-dom": "catalog:",
-    "zustand": "catalog:"
+    "zustand": "catalog:",
+    "@sdkwork/whatseek-intent-core": "workspace:*",
+    "@sdkwork/whatseek-service-core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "catalog:",

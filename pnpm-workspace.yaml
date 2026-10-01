@@ -1,6 +1,12 @@
 packages:
+  - apps/sdkwork-whatseek-common
+  - apps/sdkwork-whatseek-common/packages/*
   - apps/sdkwork-whatseek-h5
   - apps/sdkwork-whatseek-h5/packages/*
+  - apps/sdkwork-whatseek-pc
+  - apps/sdkwork-whatseek-pc/packages/*
+  - apps/sdkwork-whatseek-mini-program
+  - apps/sdkwork-whatseek-mini-program/packages/*
 
 catalog:
   react: ^19.2.8
@@ -24,3 +30,6 @@ catalog:
   "@testing-library/dom": 10.4.1
   "@testing-library/react": 16.3.2
   "@testing-library/jest-dom": ^7.0.1
+  "@testing-library/user-event": ^14.6.1
+  esbuild: ^0.25.10
+  "miniprogram-api-typings": ^4.1.0

@@ -1,0 +1,8 @@
+{
+  "environment": "test",
+  "deploymentProfile": "standalone",
+  "profileId": "standalone.test",
+  "runtimeTarget": "mini-program",
+  "appApiBaseUrl": "/",
+  "sdkBaseUrl": "/"
+}

@@ -1,0 +1,9 @@
+{
+  "environment": "production",
+  "deploymentProfile": "standalone",
+  "profileId": "standalone.production",
+  "runtimeTarget": "browser",
+  "browserOriginMode": "same-origin",
+  "appApiBaseUrl": "/",
+  "sdkBaseUrl": "/"
+}

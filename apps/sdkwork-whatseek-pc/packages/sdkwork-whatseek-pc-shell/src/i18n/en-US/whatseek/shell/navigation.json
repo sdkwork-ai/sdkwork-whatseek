@@ -1,0 +1,17 @@
+{
+  "navrail": {
+    "label": "Main navigation",
+    "visitor": "Visitor",
+    "brand": "You ask, AI seeks"
+  },
+  "footer": {
+    "brand": "WhatSeek · AI-native super app"
+  },
+  "tab": {
+    "chat": "Chat",
+    "apps": "Apps",
+    "contacts": "Contacts",
+    "messages": "Messages",
+    "profile": "Me"
+  }
+}

@@ -1,0 +1,63 @@
+/**
+ * Public export boundary of `@sdkwork/whatseek-service-core` — the shared
+ * WhatSeek domain model, SDK ports, client registry, and mock client
+ * implementations (APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md: contracts and
+ * service ports live in the common family; UI stays in the surfaces).
+ */
+
+export type {
+  AppCategory,
+  AppRecommendation,
+  ChatCard,
+  ChatMessage,
+  CommerceResult,
+  Contact,
+  ContactKind,
+  Conversation,
+  ConversationKind,
+  CreatedApp,
+  CreatedAppLifecycle,
+  ChatReply,
+  SessionUser,
+  TaskState,
+  WhatseekApp,
+  WhatseekAppKind,
+  WhatseekTask,
+} from './types.js';
+
+export type { TabId } from '@sdkwork/whatseek-route-core';
+export type { IntentResult, WhatseekIntent } from '@sdkwork/whatseek-intent-core';
+
+export type {
+  AppsPort,
+  ChatActionOutcome,
+  ChatCardAction,
+  ChatPort,
+  ContactsPort,
+  MessagesPort,
+  TasksPort,
+  WhatseekPortMap,
+  WhatseekPortName,
+} from './ports.js';
+export {
+  getWhatseekClient,
+  hasWhatseekClient,
+  registerWhatseekClient,
+  resetWhatseekClients,
+} from './inventory.js';
+
+export { createMockAppsClient, type MockAppsClientOptions } from './apps/appsClient.js';
+export { extractSearchKeywords, scoreAppForKeywords, type ScoredApp, type WhatseekAppLike } from './apps/search.js';
+export {
+  WHATSEEK_CATALOG,
+  WHATSEEK_CATEGORIES,
+  DEFAULT_CREATION_MODULES,
+  planModulesForRequirement,
+} from './apps/catalog.js';
+
+export { createMockContactsClient, CONTACT_KIND_ORDER, type MockContactsClientOptions } from './contacts/contactsClient.js';
+
+export { conversationKindGlyph, createMockMessagesClient, type MockMessagesClientOptions } from './messages/messagesClient.js';
+
+export { createMockChatClient, type MockChatClientDeps, type MockChatClientOptions, type Scheduler } from './chat/chatClient.js';
+export { createMockTasksClient, type MockTasksClientOptions } from './chat/tasksClient.js';

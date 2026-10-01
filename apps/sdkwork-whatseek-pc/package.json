@@ -1,0 +1,59 @@
+{
+  "name": "sdkwork-whatseek-pc",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/main.tsx",
+  "types": "./src/main.tsx",
+  "exports": {
+    ".": {
+      "types": "./src/main.tsx",
+      "import": "./src/main.tsx",
+      "default": "./src/main.tsx"
+    }
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3200",
+    "build": "pnpm typecheck && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\"",
+    "build:dev": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment dev",
+    "build:test": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment test",
+    "build:staging": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment staging",
+    "build:prod": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment prod"
+  },
+  "dependencies": {
+    "@sdkwork/whatseek-pc-apps": "workspace:*",
+    "@sdkwork/whatseek-pc-chat": "workspace:*",
+    "@sdkwork/whatseek-pc-commons": "workspace:*",
+    "@sdkwork/whatseek-pc-contacts": "workspace:*",
+    "@sdkwork/whatseek-pc-core": "workspace:*",
+    "@sdkwork/whatseek-pc-messages": "workspace:*",
+    "@sdkwork/whatseek-pc-profile": "workspace:*",
+    "@sdkwork/whatseek-pc-shell": "workspace:*",
+    "@sdkwork/whatseek-service-core": "workspace:*",
+    "@tailwindcss/typography": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-i18next": "catalog:",
+    "react-router-dom": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.9.2",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "jsdom": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  }
+}

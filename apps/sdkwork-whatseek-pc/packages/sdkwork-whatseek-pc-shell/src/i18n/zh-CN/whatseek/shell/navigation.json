@@ -1,0 +1,17 @@
+{
+  "navrail": {
+    "label": "主导航",
+    "visitor": "访客",
+    "brand": "你负责问，AI 负责寻"
+  },
+  "footer": {
+    "brand": "WhatSeek 问寻 · AI 原生超级应用"
+  },
+  "tab": {
+    "chat": "对话",
+    "apps": "应用",
+    "contacts": "通讯录",
+    "messages": "消息",
+    "profile": "我的"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "environment": "staging",
+  "deploymentProfile": "standalone",
+  "profileId": "standalone.staging",
+  "runtimeTarget": "mini-program",
+  "appApiBaseUrl": "/",
+  "sdkBaseUrl": "/"
+}
