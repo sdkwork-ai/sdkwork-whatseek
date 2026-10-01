@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>WhatSeek 问寻</title>
+    <script>
+      (function () {
+        try {
+          var stored = null;
+          try {
+            stored = window.localStorage.getItem('whatseek.color-mode');
+          } catch (storageError) {
+            stored = null;
+          }
+          var mode = stored === 'dark' || stored === 'light' ? stored : 'light';
+          var root = document.documentElement;
+          root.setAttribute('data-sdk-color-mode', mode);
+          root.classList.toggle('dark', mode === 'dark');
+          root.style.colorScheme = mode;
+        } catch (bootError) {
+          /* keep default light mode */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

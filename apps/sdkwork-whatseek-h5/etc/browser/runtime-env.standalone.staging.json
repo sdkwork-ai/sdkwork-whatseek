@@ -1,0 +1,9 @@
+{
+  "environment": "staging",
+  "deploymentProfile": "standalone",
+  "profileId": "standalone.staging",
+  "runtimeTarget": "browser",
+  "browserOriginMode": "same-origin",
+  "appApiBaseUrl": "/",
+  "sdkBaseUrl": "/"
+}

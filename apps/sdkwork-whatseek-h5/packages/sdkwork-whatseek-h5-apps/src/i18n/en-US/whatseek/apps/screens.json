@@ -1,0 +1,101 @@
+{
+  "home": {
+    "title": "App Center",
+    "searchPlaceholder": "Search apps, or just tell me what you need",
+    "aiCreate": {
+      "title": "AI app creation",
+      "subtitle": "Say what you need and get a working app"
+    },
+    "myApps": "My apps",
+    "favorites": "Favorites",
+    "recent": "Recently used",
+    "recommended": "Recommended",
+    "hot": "Trending"
+  },
+  "search": {
+    "title": "Search apps",
+    "inputLabel": "Search apps",
+    "resultCount": "{{count}} apps found",
+    "matchedOn": "matches {{keyword}}",
+    "emptyTitle": "No suitable app found",
+    "emptyDescription": "That's fine — tell WhatSeek what you need and AI can create one for you.",
+    "createFallback": "Nothing fits?",
+    "createFallbackAction": "Let AI create one"
+  },
+  "detail": {
+    "title": "App details",
+    "notFound": "App not found",
+    "aiCapability": "AI capability",
+    "priceTitle": "Price",
+    "permissionsTitle": "Permissions",
+    "noPermissions": "No special permissions required",
+    "use": "Use now",
+    "createFrom": "Create from this",
+    "favorite": "Favorite",
+    "favorited": "Favorited"
+  },
+  "runner": {
+    "title": "Run app",
+    "running": "Running",
+    "previewNote": "This is an app runtime preview. The production version runs real apps in a cloud sandbox."
+  },
+  "create": {
+    "title": "AI app creation",
+    "basedOn": "Creating from \"{{name}}\"",
+    "placeholder": "e.g. Create a cross-border CRM for me",
+    "inputLabel": "Describe the app you want to create",
+    "planAction": "Generate plan",
+    "planTitle": "App plan",
+    "planFor": "I will create \"{{requirement}}\", including:",
+    "generateAction": "Generate now",
+    "generating": "Generating your app…",
+    "previewTitle": "App preview",
+    "modifyPlaceholder": "Keep editing, e.g. add order management",
+    "modifyAction": "Apply",
+    "publishAction": "Publish to My apps",
+    "published": "Published! The app is saved under \"My apps\".",
+    "goMyApps": "Open My apps"
+  },
+  "my": {
+    "title": "My apps",
+    "createdTab": "Created by me",
+    "favoritesTab": "Favorited",
+    "moduleCount": "{{count}} modules",
+    "share": "Share",
+    "shared": "Copied",
+    "delete": "Delete",
+    "createFirst": "Create your first app",
+    "emptyCreatedTitle": "No apps created yet",
+    "emptyCreatedDescription": "Use one sentence and let AI generate your first app",
+    "emptyFavoritesTitle": "No favorites yet"
+  },
+  "lifecycle": {
+    "draft": "Draft",
+    "generating": "Generating",
+    "preview": "Preview",
+    "published": "Published",
+    "updated": "Updated",
+    "archived": "Archived"
+  },
+  "tile": {
+    "users": "{{users}} users"
+  },
+  "category": {
+    "efficiency": "Efficiency",
+    "office": "Office",
+    "coding": "Coding",
+    "design": "Design",
+    "image": "Image",
+    "video": "Video",
+    "audio": "Audio",
+    "ecommerce": "Commerce",
+    "marketing": "Marketing",
+    "education": "Education",
+    "finance": "Finance",
+    "life": "Lifestyle",
+    "social": "Social",
+    "games": "Games",
+    "enterprise": "Enterprise",
+    "agent": "AI Agent"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "home": {
+    "title": "我的",
+    "visitor": "访客",
+    "visitorHint": "登录后同步你的数字资产",
+    "signedIn": "已登录",
+    "signIn": "登录",
+    "signOut": "退出登录",
+    "signedOut": "尚未登录",
+    "asset": {
+      "chats": "对话",
+      "apps": "应用",
+      "contacts": "联系人"
+    },
+    "myApps": "我的应用",
+    "myAppsHint": "查看、编辑、分享你创建的应用",
+    "favorites": "收藏",
+    "settings": "设置",
+    "brand": "你负责问，AI 负责寻"
+  },
+  "settings": {
+    "title": "设置",
+    "darkMode": "外观",
+    "darkModeHint": "切换浅色 / 深色主题",
+    "mode": {
+      "light": "浅色",
+      "dark": "深色"
+    },
+    "language": "语言",
+    "locale": {
+      "zhCN": "中文",
+      "enUS": "English"
+    },
+    "brandTitle": "WhatSeek 问寻",
+    "brandMessage": "你负责问，AI 负责寻。"
+  }
+}

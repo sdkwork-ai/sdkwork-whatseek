@@ -1,0 +1,33 @@
+{
+  "name": "sdkwork-whatseek",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "WhatSeek (问寻) — AI-native super application repository (chat-first H5).",
+  "packageManager": "pnpm@12.4.1",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "dev": "pnpm dev:standalone",
+    "dev:standalone": "node scripts/sdkwork-command.mjs dev --deployment-profile standalone --environment development",
+    "dev:cloud": "node scripts/sdkwork-command.mjs dev --deployment-profile cloud --environment development",
+    "stop": "node scripts/sdkwork-command.mjs stop",
+    "dev:browser": "node scripts/sdkwork-command.mjs dev --runtime-target browser --database postgres --deployment-profile standalone --environment development",
+    "api:assembly:materialize": "node ../sdkwork-specs/tools/materialize-api-assembly.mjs --root .",
+    "api:assembly:validate": "node ../sdkwork-specs/tools/validate-api-assembly.mjs --root .",
+    "build": "node scripts/sdkwork-command.mjs build",
+    "test": "pnpm -r --if-present test",
+    "check": "node scripts/sdkwork-command.mjs check",
+    "verify": "node scripts/sdkwork-command.mjs verify",
+    "clean": "node scripts/sdkwork-command.mjs clean",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "lint": "pnpm -r --if-present lint",
+    "format": "pnpm -r --if-present format",
+    "format:check": "pnpm -r --if-present format:check",
+    "build:h5:dev": "node ../sdkwork-specs/tools/build-browser-client.mjs --root . --architecture h5 --environment dev",
+    "build:h5:test": "node ../sdkwork-specs/tools/build-browser-client.mjs --root . --architecture h5 --environment test",
+    "build:h5:staging": "node ../sdkwork-specs/tools/build-browser-client.mjs --root . --architecture h5 --environment staging",
+    "build:h5:prod": "node ../sdkwork-specs/tools/build-browser-client.mjs --root . --architecture h5 --environment prod"
+  }
+}

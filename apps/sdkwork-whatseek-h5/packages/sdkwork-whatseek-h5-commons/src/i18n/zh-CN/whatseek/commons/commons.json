@@ -1,0 +1,24 @@
+{
+  "action": {
+    "back": "返回"
+  },
+  "state": {
+    "loading": {
+      "title": "加载中…",
+      "description": "正在为你获取内容"
+    },
+    "empty": {
+      "title": "这里还空空如也",
+      "description": "换个方式试试，或者直接告诉问寻你想做什么"
+    },
+    "error": {
+      "title": "出错了",
+      "description": "内容没有加载成功，请重试"
+    },
+    "permission-denied": {
+      "title": "没有权限",
+      "description": "当前账号无权访问该内容"
+    },
+    "retry": "重试"
+  }
+}

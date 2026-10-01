@@ -1,0 +1,24 @@
+{
+  "action": {
+    "back": "Back"
+  },
+  "state": {
+    "loading": {
+      "title": "Loading…",
+      "description": "Fetching content for you"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "description": "Try another way, or just tell WhatSeek what you need"
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "The content failed to load. Please retry."
+    },
+    "permission-denied": {
+      "title": "Permission denied",
+      "description": "This account cannot access the content"
+    },
+    "retry": "Retry"
+  }
+}

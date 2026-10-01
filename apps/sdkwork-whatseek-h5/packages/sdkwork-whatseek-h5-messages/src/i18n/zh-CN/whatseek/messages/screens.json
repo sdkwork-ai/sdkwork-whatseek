@@ -1,0 +1,19 @@
+{
+  "kind": {
+    "system": "系统通知",
+    "app": "应用通知",
+    "task": "AI 任务"
+  },
+  "home": {
+    "title": "消息",
+    "subtitle": "私聊、通知与 AI 任务事件都在这里"
+  },
+  "conversation": {
+    "title": "会话",
+    "notFound": "会话不存在",
+    "emptyTitle": "还没有消息",
+    "inputPlaceholder": "输入消息……",
+    "inputLabel": "消息输入框",
+    "send": "发送"
+  }
+}

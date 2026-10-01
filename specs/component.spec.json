@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "sdkwork-whatseek-workspace",
+    "displayName": "WhatSeek Workspace",
+    "version": "0.1.0",
+    "type": "application",
+    "root": ".",
+    "domain": "whatseek",
+    "capability": "super-app",
+    "surface": "app",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json", "pnpm-workspace.yaml", "specs/component.spec.json"]
+  },
+  "canonicalSpecs": [
+    {
+      "file": "SDKWORK_WORKSPACE_SPEC.md",
+      "path": "../sdkwork-specs/SDKWORK_WORKSPACE_SPEC.md",
+      "purpose": "Repository root directory dictionary and workspace metadata."
+    },
+    {
+      "file": "REPOSITORY_BASELINE_SPEC.md",
+      "path": "../sdkwork-specs/REPOSITORY_BASELINE_SPEC.md",
+      "purpose": "Branch baseline and repository compliance audit rules."
+    },
+    {
+      "file": "APPLICATION_SPEC.md",
+      "path": "../sdkwork-specs/APPLICATION_SPEC.md",
+      "purpose": "Application-wide contract for owned application roots."
+    },
+    {
+      "file": "COMPONENT_SPEC.md",
+      "path": "../sdkwork-specs/COMPONENT_SPEC.md",
+      "purpose": "Component manifest contract implemented by this file and module specs."
+    },
+    {
+      "file": "PNPM_SCRIPT_SPEC.md",
+      "path": "../sdkwork-specs/PNPM_SCRIPT_SPEC.md",
+      "purpose": "Public pnpm command surface contract."
+    },
+    {
+      "file": "CODE_STYLE_SPEC.md",
+      "path": "../sdkwork-specs/CODE_STYLE_SPEC.md",
+      "purpose": "Cross-language code style authority."
+    },
+    {
+      "file": "NAMING_SPEC.md",
+      "path": "../sdkwork-specs/NAMING_SPEC.md",
+      "purpose": "Canonical naming lattice for repositories, app roots, and packages."
+    }
+  ],
+  "contracts": {
+    "layerRole": "runtime-composition",
+    "publicExports": [],
+    "providedPorts": [],
+    "requiredPorts": [],
+    "runtimeEntrypoints": [
+      "package.json#scripts.dev",
+      "package.json#scripts.build",
+      "package.json#scripts.test",
+      "package.json#scripts.check",
+      "package.json#scripts.verify"
+    ],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "permissionComposition": {},
+    "dependencyApiExports": [],
+    "dependencyApiSurfaces": [],
+    "events": [],
+    "configKeys": [
+      "package.json#sdkwork",
+      "pnpm-workspace.yaml#packages"
+    ]
+  },
+  "verification": {
+    "commands": [
+      "pnpm typecheck",
+      "pnpm test",
+      "pnpm build:h5:dev"
+    ]
+  }
+}

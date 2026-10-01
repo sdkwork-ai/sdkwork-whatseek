@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/whatseek-h5-apps",
+    "displayName": "WhatSeek H5 Apps",
+    "version": "0.1.0",
+    "type": "react-package",
+    "root": "apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-apps",
+    "domain": "whatseek",
+    "capability": "apps",
+    "surface": "app",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    {
+      "file": "CODE_STYLE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md",
+      "purpose": "Cross-language code style authority."
+    },
+    {
+      "file": "NAMING_SPEC.md",
+      "path": "../../../../../sdkwork-specs/NAMING_SPEC.md",
+      "purpose": "H5 package naming lattice."
+    },
+    {
+      "file": "TYPESCRIPT_CODE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md",
+      "purpose": "TypeScript strictness and testing baseline."
+    },
+    {
+      "file": "APP_H5_ARCHITECTURE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/APP_H5_ARCHITECTURE_SPEC.md",
+      "purpose": "H5 application architecture and reserved package roles."
+    },
+    {
+      "file": "APP_MOBILE_REACT_UI_SPEC.md",
+      "path": "../../../../../sdkwork-specs/APP_MOBILE_REACT_UI_SPEC.md",
+      "purpose": "Mobile React UI package organization."
+    }
+  ],
+  "contracts": {
+    "layerRole": "frontend-feature",
+    "publicExports": ["."],
+    "providedPorts": [{ "name": "appsPortFactory", "export": "." }],
+    "requiredPorts": [
+      { "name": "whatseekSdkInventory", "provider": "@sdkwork/whatseek-h5-core", "export": "." }
+    ],
+    "runtimeEntrypoints": ["package.json#scripts.typecheck", "package.json#scripts.test"],
+    "routeManifest": [
+      "app.whatseek.apps.home",
+      "app.whatseek.apps.search",
+      "app.whatseek.apps.detail",
+      "app.whatseek.apps.runner",
+      "app.whatseek.apps.create",
+      "app.whatseek.apps.my"
+    ],
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "permissionComposition": {},
+    "dependencyApiExports": [],
+    "dependencyApiSurfaces": [],
+    "events": [],
+    "configKeys": []
+  },
+  "verification": {
+    "commands": ["pnpm --filter @sdkwork/whatseek-h5-apps typecheck", "pnpm --filter @sdkwork/whatseek-h5-apps test"]
+  }
+}

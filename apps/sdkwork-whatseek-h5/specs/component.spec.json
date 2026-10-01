@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "sdkwork-whatseek-h5",
+    "displayName": "WhatSeek H5",
+    "version": "0.1.0",
+    "type": "h5-app-root",
+    "root": "apps/sdkwork-whatseek-h5",
+    "domain": "whatseek",
+    "capability": "super-app",
+    "surface": "app",
+    "languages": ["typescript"],
+    "status": "DRAFT",
+    "manifests": ["package.json", "sdkwork.app.config.json", "specs/component.spec.json"]
+  },
+  "canonicalSpecs": [
+    {
+      "file": "APPLICATION_SPEC.md",
+      "path": "../../../sdkwork-specs/APPLICATION_SPEC.md",
+      "purpose": "Application-wide contract for owned application roots."
+    },
+    {
+      "file": "APP_MANIFEST_SPEC.md",
+      "path": "../../../sdkwork-specs/APP_MANIFEST_SPEC.md",
+      "purpose": "App manifest (sdkwork.app.config.json) authority."
+    },
+    {
+      "file": "FRONTEND_SPEC.md",
+      "path": "../../../sdkwork-specs/FRONTEND_SPEC.md",
+      "purpose": "Frontend architecture baseline."
+    },
+    {
+      "file": "UI_ARCHITECTURE_SPEC.md",
+      "path": "../../../sdkwork-specs/UI_ARCHITECTURE_SPEC.md",
+      "purpose": "UI architecture manifest requirements."
+    },
+    {
+      "file": "APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md",
+      "path": "../../../sdkwork-specs/APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md",
+      "purpose": "Cross-client architecture alignment."
+    },
+    {
+      "file": "APP_H5_ARCHITECTURE_SPEC.md",
+      "path": "../../../sdkwork-specs/APP_H5_ARCHITECTURE_SPEC.md",
+      "purpose": "H5 application architecture authority for this root."
+    },
+    {
+      "file": "CONFIG_SPEC.md",
+      "path": "../../../sdkwork-specs/CONFIG_SPEC.md",
+      "purpose": "Typed runtime config contract."
+    },
+    {
+      "file": "DEPLOYMENT_SPEC.md",
+      "path": "../../../sdkwork-specs/DEPLOYMENT_SPEC.md",
+      "purpose": "Deployment baseline."
+    },
+    {
+      "file": "TEST_SPEC.md",
+      "path": "../../../sdkwork-specs/TEST_SPEC.md",
+      "purpose": "Verification requirements including H5 architecture tests."
+    }
+  ],
+  "contracts": {
+    "layerRole": "frontend-shell",
+    "publicExports": ["src/main.tsx"],
+    "providedPorts": [],
+    "requiredPorts": [],
+    "runtimeEntrypoints": ["src/main.tsx", "package.json#scripts.dev"],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "permissionComposition": {},
+    "dependencyApiExports": [],
+    "dependencyApiSurfaces": [],
+    "events": [],
+    "configKeys": [
+      "etc/sdkwork.deployment.config.json"
+    ]
+  },
+  "verification": {
+    "commands": ["pnpm typecheck", "pnpm test", "pnpm build:dev"]
+  }
+}

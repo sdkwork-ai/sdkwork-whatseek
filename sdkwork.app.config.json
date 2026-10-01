@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 3,
+  "kind": "sdkwork.app",
+  "app": {
+    "key": "sdkwork-whatseek",
+    "name": "WhatSeek",
+    "displayName": "问寻 WhatSeek",
+    "description": "WhatSeek (问寻) — AI-native super application: chat-first entry connecting apps, agents, people, and commerce, with AI app creation on demand.",
+    "vendor": "SDKWork",
+    "officialWebsiteUrl": "https://sdkwork.com/apps/sdkwork-whatseek",
+    "appType": "APP_REACT",
+    "versionSource": "package.json",
+    "identifiers": {
+      "containerImage": "registry.sdkwork.com/apps/sdkwork-whatseek"
+    }
+  },
+  "backend": {
+    "profileKey": "backend-root-admin",
+    "ownerMode": "tenant",
+    "grantMode": "current",
+    "platform": "WEB",
+    "appId": "sdkwork-whatseek-h5",
+    "owner": "sdkwork-whatseek",
+    "domain": "whatseek",
+    "capability": "super-app",
+    "organizationId": "0",
+    "tenantId": "100001",
+    "accessTokenPermissionScope": [
+      "iam:self"
+    ]
+  },
+  "runtime": {
+    "family": "mobile",
+    "framework": "react-h5",
+    "runtimes": [
+      "WEB",
+      "H5"
+    ],
+    "deliveryModes": [
+      "WEB_URL"
+    ],
+    "defaultPlatform": "H5",
+    "defaultArchitecture": "universal",
+    "supportedDeploymentProfiles": [
+      "standalone"
+    ],
+    "defaultDeploymentProfile": "standalone"
+  },
+  "media": {
+    "icons": {
+      "primary": {
+        "id": "sdkwork-whatseek-primary-icon",
+        "type": "ICON",
+        "purpose": "PRIMARY",
+        "platform": "APP",
+        "format": "PNG",
+        "width": 1024,
+        "height": 1024,
+        "enabled": true,
+        "url": "https://cdn.sdkwork.com/apps/sdkwork-whatseek/assets/icon-1024.png",
+        "metadata": {
+          "generatedPlaceholder": true
+        }
+      },
+      "platform": []
+    },
+    "screenshots": [],
+    "previews": []
+  },
+  "publish": {
+    "status": "DRAFT",
+    "platforms": [
+      "H5"
+    ],
+    "installPlatforms": [
+      "H5"
+    ],
+    "installSkill": false
+  },
+  "artifacts": {
+    "installConfig": {
+      "packages": []
+    }
+  },
+  "release": {
+    "currentVersion": "0.1.0",
+    "defaultChannel": "BETA",
+    "latest": {
+      "BETA": "0.1.0"
+    },
+    "notes": [
+      {
+        "version": "0.1.0",
+        "channel": "BETA",
+        "current": true,
+        "packageIds": []
+      }
+    ]
+  },
+  "security": {
+    "checksumRequired": true,
+    "signatureRequired": true,
+    "sbomRequired": true
+  },
+  "devApp": {
+    "sourceRoot": "apps/sdkwork-whatseek-h5",
+    "build": {
+      "targets": [
+        "browser",
+        "h5"
+      ]
+    }
+  },
+  "metadata": {
+    "domain": "whatseek",
+    "capability": "super-app",
+    "standardOwner": "sdkwork-whatseek",
+    "deploymentConfig": "etc/sdkwork.deployment.config.json"
+  }
+}

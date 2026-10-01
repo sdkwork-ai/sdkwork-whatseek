@@ -1,0 +1,45 @@
+# SDKWork repository gitignore — follows REPOSITORY_BASELINE_SPEC.md
+# bin/ and sdks/**/generated/ MUST NOT be ignored.
+
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+coverage/
+**/coverage/
+.pnpm-store/
+**/.pnpm-store/
+.turbo/
+**/.turbo/
+*.tsbuildinfo
+**/.cache/
+*.log
+
+# SDKWork local runtime state
+.runtime/
+**/.runtime/
+
+# Environment files — examples stay tracked
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# SDKWork local-only workspace state
+**/.sdkwork/local/
+**/.sdkwork/secrets/
+**/.sdkwork/cache/
+**/.sdkwork/tmp/
+**/.sdkwork/manual-backups/
+**/.sdkwork/sdkwork-generator-*.json
+
+# Runtime-generated env config (materialized locally)
+**/public/runtime-env.json
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.sqlite-shm
+*.sqlite-wal

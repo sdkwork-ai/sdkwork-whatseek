@@ -1,0 +1,53 @@
+name: Package Application
+
+on:
+  push:
+    tags:
+      - v*
+      - '*.*.*'
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag or source ref to package.
+        required: false
+        default: v0.1.0
+      package_version:
+        description: Package version used in artifact names and manifests.
+        required: false
+        default: 0.1.0
+      platform:
+        description: Platform filter.
+        required: true
+        default: all
+      architecture:
+        description: CPU architecture filter.
+        required: true
+        default: all
+      profile:
+        description: Runtime profile filter.
+        required: true
+        default: all
+      format:
+        description: Package format filter.
+        required: true
+        default: all
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package WhatSeek (WhatSeek 问寻)
+    uses: sdkwork-ai/sdkwork-github-workflow/.github/workflows/sdkwork-package.yml@b0829529b9277a3da32b90c2d36ff34ff09fa832
+    with:
+      config_path: sdkwork.workflow.json
+      tag: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+      package_version: ${{ inputs.package_version }}
+      platform: ${{ inputs.platform }}
+      architecture: ${{ inputs.architecture }}
+      profile: ${{ inputs.profile }}
+      format: ${{ inputs.format }}
+    secrets: inherit

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.deployment-index",
+  "application": "sdkwork-whatseek",
+  "defaultProfile": "standalone.development",
+  "profiles": {
+    "standalone.development": {
+      "config": "topology/standalone.development.env"
+    },
+    "standalone.test": {
+      "config": "topology/standalone.test.env"
+    },
+    "standalone.staging": {
+      "config": "topology/standalone.staging.env"
+    },
+    "standalone.production": {
+      "config": "topology/standalone.production.env"
+    }
+  }
+}

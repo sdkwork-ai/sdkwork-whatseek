@@ -1,0 +1,25 @@
+domain: whatseek
+status: active
+owner: sdkwork-whatseek
+summary: >-
+  WhatSeek (问寻) is an AI-native super application. Chat is the first entry:
+  users express intent in natural language, AI recognizes the intent, routes to
+  existing apps/agents/people/commerce capabilities, or creates a new app on
+  demand. Bottom navigation: 对话 (Chat) / 应用 (Apps) / 通讯录 (Contacts) /
+  消息 (Messages) / 我的 (Profile).
+database_prefix: whatseek_
+api_tags:
+  - whatseek
+sdk_namespaces:
+  - whatseek
+capabilities:
+  - chat-intent-routing
+  - app-center
+  - app-generation
+  - contacts
+  - messages
+  - profile
+  - digital-assets
+depends_on: []
+extends: []
+integration: {}

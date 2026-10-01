@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/whatseek-h5-commons",
+    "displayName": "WhatSeek H5 Commons",
+    "version": "0.1.0",
+    "type": "react-package",
+    "root": "apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-commons",
+    "domain": "whatseek",
+    "capability": "commons",
+    "surface": "app",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    {
+      "file": "CODE_STYLE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md",
+      "purpose": "Cross-language code style authority."
+    },
+    {
+      "file": "NAMING_SPEC.md",
+      "path": "../../../../../sdkwork-specs/NAMING_SPEC.md",
+      "purpose": "H5 package naming lattice."
+    },
+    {
+      "file": "TYPESCRIPT_CODE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md",
+      "purpose": "TypeScript strictness and testing baseline."
+    },
+    {
+      "file": "APP_H5_ARCHITECTURE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/APP_H5_ARCHITECTURE_SPEC.md",
+      "purpose": "H5 application architecture and reserved package roles."
+    },
+    {
+      "file": "APP_MOBILE_REACT_UI_SPEC.md",
+      "path": "../../../../../sdkwork-specs/APP_MOBILE_REACT_UI_SPEC.md",
+      "purpose": "Mobile React UI package organization."
+    }
+  ],
+  "contracts": {
+    "layerRole": "frontend-commons",
+    "publicExports": ["."],
+    "providedPorts": [{ "name": "whatseekUiCommons", "export": "." }],
+    "requiredPorts": [],
+    "runtimeEntrypoints": ["package.json#scripts.typecheck", "package.json#scripts.test"],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "permissionComposition": {},
+    "dependencyApiExports": [],
+    "dependencyApiSurfaces": [],
+    "events": [],
+    "configKeys": []
+  },
+  "verification": {
+    "commands": ["pnpm --filter @sdkwork/whatseek-h5-commons typecheck", "pnpm --filter @sdkwork/whatseek-h5-commons test"]
+  }
+}

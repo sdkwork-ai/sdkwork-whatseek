@@ -1,0 +1,9 @@
+{
+  "kind": "sdkwork.api.assembly",
+  "schemaVersion": 1,
+  "applicationCode": "whatseek",
+  "apiMode": "none",
+  "packageName": "sdkwork-api-whatseek-assembly",
+  "crateDir": "crates/sdkwork-api-whatseek-assembly",
+  "routeCrates": []
+}

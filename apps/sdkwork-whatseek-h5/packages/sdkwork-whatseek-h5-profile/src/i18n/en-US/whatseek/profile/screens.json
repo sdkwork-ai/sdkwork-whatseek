@@ -1,0 +1,37 @@
+{
+  "home": {
+    "title": "Me",
+    "visitor": "Visitor",
+    "visitorHint": "Sign in to sync your digital assets",
+    "signedIn": "Signed in",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signedOut": "Not signed in",
+    "asset": {
+      "chats": "Chats",
+      "apps": "Apps",
+      "contacts": "Contacts"
+    },
+    "myApps": "My apps",
+    "myAppsHint": "View, edit, and share apps you created",
+    "favorites": "Favorites",
+    "settings": "Settings",
+    "brand": "You ask, AI seeks"
+  },
+  "settings": {
+    "title": "Settings",
+    "darkMode": "Appearance",
+    "darkModeHint": "Switch light / dark theme",
+    "mode": {
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": "Language",
+    "locale": {
+      "zhCN": "中文",
+      "enUS": "English"
+    },
+    "brandTitle": "WhatSeek",
+    "brandMessage": "You ask, AI seeks."
+  }
+}

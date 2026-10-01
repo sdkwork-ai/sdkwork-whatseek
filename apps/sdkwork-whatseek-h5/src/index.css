@@ -1,0 +1,150 @@
+/* WhatSeek H5 theme bootstrap (single Tailwind bootstrap for the whole app).
+   Authority: TAILWIND_CSS_INTEGRATION_SPEC.md, THEME_DARKMODE_SPEC.md.
+   Layer 1: --sdk-ref-*  raw palette ramps (brand/neutral, 11-step)
+   Layer 2: --sdk-color-* semantic roles (light + dark values)
+   Layer 3: --sdk-comp-* component tokens
+   Mode root: data-sdk-color-mode="light|dark" + .dark on <html>, applied by
+   the inline anti-flash script in index.html and core/applyColorMode. */
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-canvas: var(--sdk-color-surface-canvas);
+  --color-panel: var(--sdk-color-surface-panel);
+  --color-panel-muted: var(--sdk-color-surface-panel-muted);
+  --color-elevated: var(--sdk-color-surface-elevated);
+  --color-overlay: var(--sdk-color-surface-overlay);
+
+  --color-primary: var(--sdk-color-text-primary);
+  --color-secondary: var(--sdk-color-text-secondary);
+  --color-muted: var(--sdk-color-text-muted);
+  --color-inverse: var(--sdk-color-text-inverse);
+
+  --color-brand: var(--sdk-color-brand-primary);
+  --color-brand-hover: var(--sdk-color-brand-primary-hover);
+  --color-brand-soft: var(--sdk-color-brand-primary-soft);
+  --color-accent: var(--sdk-color-brand-accent);
+
+  --color-success: var(--sdk-color-state-success);
+  --color-warning: var(--sdk-color-state-warning);
+  --color-danger: var(--sdk-color-state-danger);
+  --color-info: var(--sdk-color-state-info);
+
+  --color-border-subtle: var(--sdk-color-border-subtle);
+  --color-border-default: var(--sdk-color-border-default);
+  --color-border-strong: var(--sdk-color-border-strong);
+  --color-border-focus: var(--sdk-color-border-focus);
+
+  --radius-card: 1rem;
+  --shadow-card: var(--sdk-shadow-card);
+}
+
+/* ---- Layer 1: reference palette ramps (brand: tech-blue, neutral: zinc) ---- */
+:root,
+[data-sdk-color-mode="light"] {
+  --sdk-ref-brand-50: #eff6ff;
+  --sdk-ref-brand-100: #dbeafe;
+  --sdk-ref-brand-200: #bfdbfe;
+  --sdk-ref-brand-300: #93c5fd;
+  --sdk-ref-brand-400: #60a5fa;
+  --sdk-ref-brand-500: #3b82f6;
+  --sdk-ref-brand-600: #2563eb;
+  --sdk-ref-brand-700: #1d4ed8;
+  --sdk-ref-brand-800: #1e40af;
+  --sdk-ref-brand-900: #1e3a8a;
+  --sdk-ref-brand-950: #172554;
+
+  --sdk-ref-neutral-50: #fafafa;
+  --sdk-ref-neutral-100: #f4f4f5;
+  --sdk-ref-neutral-200: #e4e4e7;
+  --sdk-ref-neutral-300: #d4d4d8;
+  --sdk-ref-neutral-400: #a1a1aa;
+  --sdk-ref-neutral-500: #71717a;
+  --sdk-ref-neutral-600: #52525b;
+  --sdk-ref-neutral-700: #3f3f46;
+  --sdk-ref-neutral-800: #27272a;
+  --sdk-ref-neutral-900: #18181b;
+  --sdk-ref-neutral-950: #09090b;
+
+  /* ---- Layer 2: semantic roles, light values ---- */
+  --sdk-color-surface-canvas: var(--sdk-ref-neutral-50);
+  --sdk-color-surface-panel: #ffffff;
+  --sdk-color-surface-panel-muted: var(--sdk-ref-neutral-100);
+  --sdk-color-surface-elevated: #ffffff;
+  --sdk-color-surface-overlay: rgb(9 9 11 / 0.4);
+
+  --sdk-color-text-primary: var(--sdk-ref-neutral-900);
+  --sdk-color-text-secondary: var(--sdk-ref-neutral-600);
+  --sdk-color-text-muted: var(--sdk-ref-neutral-400);
+  --sdk-color-text-inverse: #ffffff;
+
+  --sdk-color-brand-primary: var(--sdk-ref-brand-600);
+  --sdk-color-brand-primary-hover: var(--sdk-ref-brand-700);
+  --sdk-color-brand-primary-soft: var(--sdk-ref-brand-50);
+  --sdk-color-brand-accent: var(--sdk-ref-brand-500);
+
+  --sdk-color-state-success: #16a34a;
+  --sdk-color-state-warning: #d97706;
+  --sdk-color-state-danger: #dc2626;
+  --sdk-color-state-info: var(--sdk-ref-brand-500);
+
+  --sdk-color-border-subtle: var(--sdk-ref-neutral-200);
+  --sdk-color-border-default: var(--sdk-ref-neutral-300);
+  --sdk-color-border-strong: var(--sdk-ref-neutral-400);
+  --sdk-color-border-focus: var(--sdk-ref-brand-500);
+
+  /* ---- Layer 3: component tokens ---- */
+  --sdk-comp-tab-bar-bg: var(--sdk-color-surface-panel);
+  --sdk-comp-input-bg: var(--sdk-color-surface-canvas);
+  --sdk-shadow-card: 0 1px 2px rgb(9 9 11 / 0.05);
+
+  color-scheme: light;
+}
+
+[data-sdk-color-mode="dark"] {
+  --sdk-color-surface-canvas: var(--sdk-ref-neutral-950);
+  --sdk-color-surface-panel: var(--sdk-ref-neutral-900);
+  --sdk-color-surface-panel-muted: var(--sdk-ref-neutral-800);
+  --sdk-color-surface-elevated: var(--sdk-ref-neutral-800);
+  --sdk-color-surface-overlay: rgb(0 0 0 / 0.6);
+
+  --sdk-color-text-primary: var(--sdk-ref-neutral-50);
+  --sdk-color-text-secondary: var(--sdk-ref-neutral-300);
+  --sdk-color-text-muted: var(--sdk-ref-neutral-500);
+  --sdk-color-text-inverse: var(--sdk-ref-neutral-950);
+
+  --sdk-color-brand-primary: var(--sdk-ref-brand-500);
+  --sdk-color-brand-primary-hover: var(--sdk-ref-brand-400);
+  --sdk-color-brand-primary-soft: color-mix(in srgb, var(--sdk-ref-brand-500) 16%, transparent);
+  --sdk-color-brand-accent: var(--sdk-ref-brand-400);
+
+  --sdk-color-state-success: #4ade80;
+  --sdk-color-state-warning: #fbbf24;
+  --sdk-color-state-danger: #f87171;
+  --sdk-color-state-info: var(--sdk-ref-brand-400);
+
+  --sdk-color-border-subtle: var(--sdk-ref-neutral-800);
+  --sdk-color-border-default: var(--sdk-ref-neutral-700);
+  --sdk-color-border-strong: var(--sdk-ref-neutral-600);
+  --sdk-color-border-focus: var(--sdk-ref-brand-400);
+
+  --sdk-comp-tab-bar-bg: var(--sdk-color-surface-panel);
+  --sdk-comp-input-bg: var(--sdk-color-surface-canvas);
+  --sdk-shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  background-color: var(--sdk-color-surface-canvas);
+  color: var(--sdk-color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100dvh;
+}
