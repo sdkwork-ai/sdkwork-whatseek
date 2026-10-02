@@ -5,6 +5,15 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — Rendered acceptance of the PRD-conformance round
+
+- Browser acceptance against the rebuilt production bundles: H5 renders the
+  agent-dispatch cards, the live task-state chip transition (through
+  waiting_confirmation), localized message-center titles, and the four-column
+  asset card. PC messages parity confirmed; the round exposed that the PC
+  twin of the profile screen had not received the agents column — fixed and
+  re-verified (对话/应用/Agent/联系人 four-column card).
+
 ### 2026-10-03 — PRD P0 conformance round: intent coverage, cross-surface feature parity
 
 A PRD conformance sweep (against `docs/product/prd/PRD.md` and

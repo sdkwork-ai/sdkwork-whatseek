@@ -61,6 +61,25 @@ window `WhatSeek 问寻` created and stayed alive (pid observed), then
 terminated cleanly. Fulfills acceptance criterion 5's launch-and-terminate
 requirement with direct evidence.
 
+## Rendered Acceptance of the PRD-Conformance Round (2026-10-03)
+
+Browser acceptance of the round's new behavior against the rebuilt
+standalone.production bundles (H5 390×844; PC 1440×900):
+
+- H5 chat: `让智能体帮我整理日报` renders the dispatch copy with three agent
+  roster cards (行业新闻整理 Agent / 跨境选品 Agent / 问寻 AI 助手);
+  content-creation utterances render the task chip and it advances live
+  through pending → running → waiting_confirmation → completed
+  (`data-task-state` observed across the transition), landing message-center
+  notifications (unread badge increments).
+- H5 messages: `titleKey` conversations render localized titles (系统通知 /
+  AI 任务) alongside the new app-notification conversation.
+- H5 profile: four-column asset card (对话 / 应用 / Agent / 联系人).
+- PC: messages parity confirmed (localized titles, 7 conversations); profile
+  initially still rendered the three-column card — the PC twin screen had not
+  received the agents column — fixed in this round and re-verified
+  (4 columns: 7 对话 / 0 应用 / 3 Agent / 11 联系人).
+
 ## Conformance Record (2026-10-03)
 
 - Spec conformance audit (route contract, five UI states, i18n, architecture
