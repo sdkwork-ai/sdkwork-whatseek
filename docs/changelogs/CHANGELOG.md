@@ -5,6 +5,23 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — Conformance audit (zero violations) + operational handoff docs
+
+- **Adversarial spec audit** against the governing sdkwork-specs (route
+  contract, five UI states, i18n layout and key parity, architecture
+  boundaries, package layout, naming, test evidence, HTTP/int64 posture,
+  manifests, documentation): ten checks, **zero MUST-level violations**; test
+  counts and artifact claims re-verified against the tree. The single
+  follow-up observation was closed in this round: PC now runs the same
+  automated five-UI-state render suite as H5 (`tests/ui-states.test.tsx` +
+  `tests/setup/test-runtime.ts`, 8 tests; PC suite 63 → 71).
+- **Operational handoff docs**: `docs/runbooks/RUNBOOK-multi-surface-operations.md`
+  (per-surface gates, artifact paths, smoke steps, recovery) and the
+  developer/operator/integrator guides filled with the verified commands and
+  the current mock-backed integration boundary.
+- Verification: `pnpm verify` green end-to-end; root typecheck/test green;
+  PC prod build PASS.
+
 ### 2026-10-03 — Mini-program page-behavior smoke + desktop release build
 
 - **Mini-program**: new 13-test behavior suite (`tests/mini-program-page-behavior.test.mjs`)
