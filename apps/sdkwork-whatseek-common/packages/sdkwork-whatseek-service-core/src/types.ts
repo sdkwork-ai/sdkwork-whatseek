@@ -85,6 +85,8 @@ export interface Conversation {
   title?: string;
   contactId?: string;
   taskId?: string;
+  /** App update/install notifications carry the originating app id. */
+  appId?: string;
   unread: number;
   updatedAt: string;
   lastMessagePreview?: string;

@@ -35,7 +35,7 @@ trace:
 ## Acceptance Criteria
 
 1. Intent recognizer unit tests cover all PRD §10.1 intents and the four PRD example utterances.
-2. Chat flows render within one second per mock turn; task simulation transitions through all states and lands a message-center notification on completion.
+2. Chat flows render within one second per mock turn; task simulation transitions through all forward states and lands a message-center notification on completion.
 3. SEND_MESSAGE requires an explicit confirm step; without confirmation nothing is sent.
 4. Chat service is tested with a fake client; UI covers loading/empty/error/success states.
 
@@ -45,3 +45,16 @@ trace:
 pnpm --filter @sdkwork/whatseek-h5-chat test
 pnpm typecheck && pnpm test
 ```
+
+## Mock-Milestone Narrowing (2026-10-03)
+
+- "All states" is simulated as the forward PRD §41 path — pending → running →
+  waiting_confirmation → completed. The terminal states (failed / cancelled /
+  expired) are fully typed and rendered by every surface's task UI but require
+  a real backend or explicit user cancellation to occur; the mock does not
+  fake failures into happy paths.
+- Intent routing now covers all 15 PRD §10.1 intents: every intent has a
+  recognition rule (USE_AGENT added 2026-10-03, ordered before SEARCH_AGENT's
+  bare-term branch) and a dedicated router path, except `CREATE_AGENT`,
+  whose real platform is a declared Phase-2 boundary — the router honestly
+  recommends the existing agent roster instead (`reply.createAgent.recommend`).

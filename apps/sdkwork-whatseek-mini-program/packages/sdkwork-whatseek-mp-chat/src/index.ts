@@ -30,7 +30,8 @@ export interface ChatCardView {
 
 type ReplyKeys = keyof typeof zhReplies.reply;
 
-const REPLY_TEXT: Record<Exclude<ReplyKeys, 'tab'>, Record<'zh-CN' | 'en-US', string>> = {
+/** Flat reply keys; dotted-path keys (`searchAgent.found`) resolve through the fragments directly. */
+const REPLY_TEXT: Partial<Record<ReplyKeys, Record<'zh-CN' | 'en-US', string>>> = {
   searchAppFound: { 'zh-CN': zhReplies.reply.searchAppFound, 'en-US': enReplies.reply.searchAppFound },
   searchAppNotFoundCreate: { 'zh-CN': zhReplies.reply.searchAppNotFoundCreate, 'en-US': enReplies.reply.searchAppNotFoundCreate },
   createAppPlan: { 'zh-CN': zhReplies.reply.createAppPlan, 'en-US': enReplies.reply.createAppPlan },
@@ -54,10 +55,27 @@ export function setChatLocale(locale: 'zh-CN' | 'en-US'): void {
   chatLocale = locale;
 }
 
+/** Resolve a dotted reply path (`searchAgent.found`) against the fragments. */
+function resolveNestedReply(path: string): Record<'zh-CN' | 'en-US', string> | undefined {
+  let zh: unknown = zhReplies.reply;
+  let en: unknown = enReplies.reply;
+  for (const segment of path.split('.')) {
+    if (typeof zh !== 'object' || zh === null || typeof en !== 'object' || en === null) {
+      return undefined;
+    }
+    zh = (zh as Record<string, unknown>)[segment];
+    en = (en as Record<string, unknown>)[segment];
+  }
+  if (typeof zh !== 'string' || typeof en !== 'string') {
+    return undefined;
+  }
+  return { 'zh-CN': zh, 'en-US': en };
+}
+
 export function replyText(reply: Pick<ChatReply, 'contentKey'>): string {
-  // contentKey shape: whatseek.chat.reply.<key>
-  const key = reply.contentKey.replace('whatseek.chat.reply.', '') as ReplyKeys;
-  const entry = REPLY_TEXT[key as Exclude<ReplyKeys, 'tab'>];
+  // contentKey shape: whatseek.chat.reply.<key-or-dotted-path>
+  const key = reply.contentKey.replace('whatseek.chat.reply.', '');
+  const entry = REPLY_TEXT[key as ReplyKeys] ?? resolveNestedReply(key);
   return entry !== undefined ? entry[chatLocale] : reply.contentKey;
 }
 

@@ -62,6 +62,14 @@ export async function deleteMyApp(appId: string): Promise<void> {
   await appsPort().deleteMyApp(appId);
 }
 
+export async function modifyMyApp(appId: string, instruction: string): Promise<CreatedApp> {
+  return appsPort().modifyApp(appId, instruction);
+}
+
+export async function listHotApps(): Promise<WhatseekApp[]> {
+  return appsPort().listHot();
+}
+
 export async function listFavoriteApps(): Promise<WhatseekApp[]> {
   return appsPort().listFavorites();
 }

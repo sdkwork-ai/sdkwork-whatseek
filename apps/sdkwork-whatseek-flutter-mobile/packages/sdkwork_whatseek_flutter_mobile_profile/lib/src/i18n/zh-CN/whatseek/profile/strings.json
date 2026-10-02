@@ -6,7 +6,8 @@
     "asset": {
       "chats": "对话",
       "apps": "应用",
-      "contacts": "联系人"
+      "contacts": "联系人",
+      "agents": "Agent"
     },
     "myApps": "我的应用",
     "favorites": "收藏",

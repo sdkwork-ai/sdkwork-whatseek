@@ -1,6 +1,17 @@
 {
   "home": {
-    "title": "Contacts"
+    "title": "Contacts",
+    "searchPlaceholder": "Search people, groups, organizations, or agents",
+    "listTitle": "All contacts ({{count}})",
+    "emptyTitle": "No matching contacts",
+    "segment": {
+      "all": "All",
+      "person": "People",
+      "group": "Groups",
+      "org": "Orgs & merchants",
+      "agent": "Agents",
+      "assistant": "AI assistants"
+    }
   },
   "detail": {
     "title": "Contact details",

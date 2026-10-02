@@ -10,6 +10,19 @@
     "searchSupplier": "Here are matching suppliers (commerce preview):",
     "commercePreview": "Commerce preview (full supply-demand network arrives in Phase 2):",
     "createContentAccepted": "Got it! The task completed.",
+    "searchAgent": {
+      "found": "Here are the matching agents:",
+      "notFound": "No matching agent yet. Describe what you need — creation arrives in a later release."
+    },
+    "useAgent": {
+      "found": "These agents can take this on for you:"
+    },
+    "createAgent": {
+      "recommend": "Agent creation opens in a later release — try an existing one for now:"
+    },
+    "task": {
+      "accepted": "Got it! The task has started; I will notify you when it completes."
+    },
     "general": "I am WhatSeek AI. Ask me to find apps, create apps, find suppliers, or reach someone.",
     "error": "Something went wrong. Please retry.",
     "actionAppGenerated": "Generated app \"{name}\" — see it under My apps.",

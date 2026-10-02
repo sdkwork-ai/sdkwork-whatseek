@@ -71,6 +71,19 @@
       "appGenerated": "Generated app \"{{name}}\" — see it under My apps.",
       "messageSent": "Message sent to {{name}}. Continue the conversation in Messages.",
       "navigated": "Done."
+    },
+    "searchAgent": {
+      "found": "Here are the matching agents:",
+      "notFound": "No matching agent yet. Describe what you need — creation arrives in a later release."
+    },
+    "useAgent": {
+      "found": "These agents can take this on for you:"
+    },
+    "createAgent": {
+      "recommend": "Agent creation opens in a later release — try an existing one for now:"
+    },
+    "task": {
+      "accepted": "Got it! The task has started; I will notify you when it completes."
     }
   }
 }

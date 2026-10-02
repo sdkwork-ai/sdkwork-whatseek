@@ -216,11 +216,19 @@ export function createMockChatClient(deps: MockChatClientDeps, options: MockChat
             cards,
           };
         }
-        case 'CREATE_CONTENT': {
+        case 'CREATE_CONTENT':
+        case 'EXECUTE_TASK':
+        case 'EDIT_CONTENT': {
+          // Forward task simulation (PRD §41): pending → running →
+          // waiting_confirmation → completed. Terminal failure states
+          // (failed/cancelled/expired) are type/UI-complete but need a real
+          // backend or user cancellation to occur.
           const task = await deps.tasks.createTask({ title: text.trim(), intent: intent.intent });
           void schedule(() => {
             void deps.tasks
               .updateTaskState(task.id, 'running')
+              .then(() => delay(taskStepMs))
+              .then(() => deps.tasks.updateTaskState(task.id, 'waiting_confirmation'))
               .then(() => delay(taskStepMs))
               .then(() => deps.tasks.updateTaskState(task.id, 'completed', text.trim()))
               .then((completed) => {
@@ -229,16 +237,49 @@ export function createMockChatClient(deps: MockChatClientDeps, options: MockChat
               .catch(() => undefined);
           }, taskStepMs);
           return {
-            contentKey: 'whatseek.chat.reply.createContent.accepted',
+            contentKey: 'whatseek.chat.reply.task.accepted',
             taskId: task.id,
           };
         }
         case 'SEARCH_AGENT':
-        case 'CREATE_AGENT':
-        case 'USE_AGENT':
-        case 'EDIT_CONTENT':
-        case 'USE_APP':
-        case 'EXECUTE_TASK':
+        case 'USE_AGENT': {
+          const isAgent = (contact: Contact) => contact.kind === 'agent' || contact.kind === 'assistant';
+          const searched = (await deps.contacts.searchContacts(text)).filter(isAgent);
+          const matches = searched.length > 0 ? searched : (await deps.contacts.listContacts()).filter(isAgent);
+          if (matches.length > 0) {
+            cards.push({ type: 'contact_results', contacts: matches.slice(0, 4) });
+            return {
+              contentKey:
+                intent.intent === 'SEARCH_AGENT'
+                  ? 'whatseek.chat.reply.searchAgent.found'
+                  : 'whatseek.chat.reply.useAgent.found',
+              cards,
+            };
+          }
+          return { contentKey: 'whatseek.chat.reply.searchAgent.notFound' };
+        }
+        case 'CREATE_AGENT': {
+          // Creating a real digital employee needs the agent platform
+          // (Phase 2); the mock roster is the honest recommendation instead.
+          const roster = await deps.contacts.listContacts();
+          const agents = roster.filter(
+            (contact) => contact.kind === 'agent' || contact.kind === 'assistant',
+          );
+          cards.push({ type: 'contact_results', contacts: agents.slice(0, 4) });
+          return { contentKey: 'whatseek.chat.reply.createAgent.recommend', cards };
+        }
+        case 'USE_APP': {
+          const results = await deps.apps.searchApps(text);
+          if (results.length > 0) {
+            cards.push({ type: 'app_results', apps: results.slice(0, 3) });
+            return {
+              contentKey: 'whatseek.chat.reply.searchApp.found',
+              contentParams: { count: results.length },
+              cards,
+            };
+          }
+          return { contentKey: 'whatseek.chat.reply.searchAgent.notFound' };
+        }
         case 'GENERAL_CHAT':
         default:
           return { contentKey: 'whatseek.chat.reply.general' };

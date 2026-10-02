@@ -71,6 +71,19 @@
       "appGenerated": "已生成应用「{{name}}」，可以在「我的应用」中查看。",
       "messageSent": "消息已发送给 {{name}}。你可以在「消息」中继续对话。",
       "navigated": "好的。"
+    },
+    "searchAgent": {
+      "found": "找到这些 Agent / 智能体：",
+      "notFound": "暂时没有匹配的 Agent。你可以描述需求，后续版本可以直接创建。"
+    },
+    "useAgent": {
+      "found": "可以派这些 Agent 帮你执行："
+    },
+    "createAgent": {
+      "recommend": "创建数字员工将在后续版本开放，先用现成的 Agent 试试："
+    },
+    "task": {
+      "accepted": "收到！任务已开始，完成后我会通知你。"
     }
   }
 }

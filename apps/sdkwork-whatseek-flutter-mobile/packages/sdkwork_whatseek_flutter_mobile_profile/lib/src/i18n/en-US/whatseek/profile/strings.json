@@ -6,7 +6,8 @@
     "asset": {
       "chats": "Chats",
       "apps": "Apps",
-      "contacts": "Contacts"
+      "contacts": "Contacts",
+      "agents": "Agents"
     },
     "myApps": "My apps",
     "favorites": "Favorites",

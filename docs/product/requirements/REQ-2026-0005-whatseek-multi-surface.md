@@ -54,6 +54,25 @@ Rendered-surface acceptance against the standalone.production bundles (browser h
 - Mini-program: covered by the 9-test contract suite (page quads, facade boundary, states, refresh, dark-mode wiring) — WeChat DevTools rendering is outside this environment's reach and remains the pre-store smoke step.
 - Follow-up fix from acceptance: the lazy-route Suspense fallback no longer shows the chat title on every route (generic loading copy).
 
+## Desktop Launch Smoke (2026-10-03)
+
+`target/release/sdkwork-whatseek-pc-tauri.exe` launched as a real process:
+window `WhatSeek 问寻` created and stayed alive (pid observed), then
+terminated cleanly. Fulfills acceptance criterion 5's launch-and-terminate
+requirement with direct evidence.
+
+## Conformance Record (2026-10-03)
+
+- Spec conformance audit (route contract, five UI states, i18n, architecture
+  boundaries, package layout, naming, test evidence, HTTP/int64 posture,
+  manifests, documentation): ten checks, zero MUST-level violations
+  (`docs/changelogs/CHANGELOG.md` 2026-10-03 entry). Follow-up: PC gained the
+  H5-twin five-state render suite (63 → 71 tests).
+- CI packaging entrypoint (`.github/workflows/package.yml` → reusable
+  `sdkwork-github-workflow`) has existed since the initial commit; the
+  framework ref is pinned to a commit SHA (no framework release tags exist
+  yet). No change required.
+
 ## Verification
 
 ```bash

@@ -7,6 +7,7 @@ Page({
     requirement: '',
     plan: null,
     app: null,
+    instruction: '',
     step: 'input',
     working: false,
     error: '',
@@ -20,6 +21,23 @@ Page({
 
   onRequirementInput(event) {
     this.setData({ requirement: event.detail.value, error: '' });
+  },
+
+  onInstructionInput(event) {
+    this.setData({ instruction: event.detail.value });
+  },
+
+  async onModify() {
+    const instruction = this.data.instruction.trim();
+    if (instruction.length === 0 || this.data.working) return;
+    this.setData({ working: true, error: '' });
+    try {
+      const app = await appApi.apps.modify(this.data.app.id, instruction);
+      this.setData({ app, instruction: '', working: false });
+      appApi.shell.toast('已按指令更新应用');
+    } catch (error) {
+      this.setData({ working: false, error: '修改失败，请重试。' });
+    }
   },
 
   async onDraftPlan() {

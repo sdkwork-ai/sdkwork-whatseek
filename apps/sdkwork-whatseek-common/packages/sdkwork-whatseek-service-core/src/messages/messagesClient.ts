@@ -43,6 +43,7 @@ function seedState(nowIso: string): PersistedState {
     { id: 'conv-supplier', kind: 'direct', title: '上海锦裳服饰', contactId: 'supplier-jinshang', unread: 0, updatedAt: nowIso, lastMessagePreview: '样品已寄出，请注意查收。' },
     { id: 'conv-system', kind: 'system', titleKey: 'whatseek.messages.kind.system', unread: 0, updatedAt: nowIso, lastMessagePreview: '欢迎来到问寻。' },
     { id: 'conv-task-video', kind: 'task', titleKey: 'whatseek.messages.kind.task', taskId: 'task-demo-video', unread: 1, updatedAt: nowIso, lastMessagePreview: '你要求的视频已经生成。' },
+    { id: 'conv-app-update', kind: 'app', titleKey: 'whatseek.messages.kind.app', appId: 'clip-master', unread: 0, updatedAt: nowIso, lastMessagePreview: '剪辑大师已更新到 v2.1，新增多轨道时间线。' },
   ];
   const messages: Record<string, ChatMessage[]> = {
     'conv-zhangsan': [
@@ -63,6 +64,9 @@ function seedState(nowIso: string): PersistedState {
     ],
     'conv-task-video': [
       { id: 'm-7', conversationId: 'conv-task-video', senderId: 'task', senderName: '问寻 AI', content: '你要求的视频已经生成。', sentAt: nowIso, kind: 'task' },
+    ],
+    'conv-app-update': [
+      { id: 'm-8', conversationId: 'conv-app-update', senderId: 'app', senderName: '问寻', content: '剪辑大师已更新到 v2.1，新增多轨道时间线。', sentAt: nowIso, kind: 'system' },
     ],
   };
   return { conversations, messages };

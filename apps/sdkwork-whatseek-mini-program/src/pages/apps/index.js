@@ -7,6 +7,8 @@ Page({
   data: {
     recommended: [],
     categories: [],
+    hot: [],
+    recents: [],
     query: '',
     loading: true,
     error: '',
@@ -20,8 +22,13 @@ Page({
     const silent = options.silent === true;
     this.setData(silent ? { error: '' } : { loading: true, error: '' });
     try {
-      const [recommended, categories] = await Promise.all([appApi.apps.recommended(), appApi.apps.categories()]);
-      this.setData({ recommended, categories, loading: false });
+      const [recommended, categories, hot, recents] = await Promise.all([
+        appApi.apps.recommended(),
+        appApi.apps.categories(),
+        appApi.apps.hot(),
+        appApi.apps.recents(),
+      ]);
+      this.setData({ recommended, categories, hot, recents, loading: false });
     } catch (error) {
       this.setData({ loading: false, error: '加载失败，请稍后重试。' });
     }

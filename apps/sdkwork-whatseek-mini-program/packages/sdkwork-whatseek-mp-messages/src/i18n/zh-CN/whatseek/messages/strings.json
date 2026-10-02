@@ -2,5 +2,10 @@
   "home": {
     "title": "消息",
     "subtitle": "私聊、通知与 AI 任务事件都在这里"
+  },
+  "kind": {
+    "system": "系统通知",
+    "app": "应用通知",
+    "task": "AI 任务"
   }
 }

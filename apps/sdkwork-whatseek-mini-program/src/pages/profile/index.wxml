@@ -21,6 +21,7 @@
   <view class="panel">
     <view class="row"><view class="stat">{{summary.chats}}</view><view class="stat-label">对话</view></view>
     <view class="row"><view class="stat">{{summary.apps}}</view><view class="stat-label">应用</view></view>
+    <view class="row"><view class="stat">{{summary.agents}}</view><view class="stat-label">Agent</view></view>
     <view class="row"><view class="stat">{{summary.contacts}}</view><view class="stat-label">联系人</view></view>
   </view>
 

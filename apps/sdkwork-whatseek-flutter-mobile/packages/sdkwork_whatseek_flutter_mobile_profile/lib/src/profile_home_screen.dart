@@ -14,7 +14,7 @@ class ProfileHomeScreen extends StatefulWidget {
 }
 
 class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
-  late Future<(int, int, int)> _assets;
+  late Future<(int, int, int, int)> _assets;
 
   @override
   void initState() {
@@ -27,7 +27,13 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
     final conversations = await runtime.messages.listConversations();
     final myApps = await runtime.apps.listMyApps();
     final contacts = await runtime.contacts.listContacts();
-    _assets = Future.value((conversations.length, myApps.length, contacts.length));
+    final agents = contacts
+        .where((contact) =>
+            contact.kind == ContactKind.agent ||
+            contact.kind == ContactKind.assistant)
+        .length;
+    _assets =
+        Future.value((conversations.length, myApps.length, contacts.length, agents));
   }
 
   @override
@@ -53,10 +59,10 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
             ],
           ),
           const SizedBox(height: 24),
-          FutureBuilder<(int, int, int)>(
+          FutureBuilder<(int, int, int, int)>(
             future: _assets,
             builder: (context, snapshot) {
-              final assets = snapshot.data ?? (0, 0, 0);
+              final assets = snapshot.data ?? (0, 0, 0, 0);
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -69,6 +75,9 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
                   _AssetStat(
                       count: assets.$3,
                       label: WhatseekProfileStrings.of(context, 'home.asset.contacts')),
+                  _AssetStat(
+                      count: assets.$4,
+                      label: WhatseekProfileStrings.of(context, 'home.asset.agents')),
                 ],
               );
             },

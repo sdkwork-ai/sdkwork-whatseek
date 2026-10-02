@@ -10,7 +10,8 @@
     "asset": {
       "chats": "Chats",
       "apps": "Apps",
-      "contacts": "Contacts"
+      "contacts": "Contacts",
+      "agents": "Agents"
     },
     "myApps": "My apps",
     "myAppsHint": "View, edit, and share apps you created",

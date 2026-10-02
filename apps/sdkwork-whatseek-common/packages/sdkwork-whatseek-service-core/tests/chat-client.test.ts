@@ -191,15 +191,21 @@ describe('mock chat client (AI router)', () => {
     expect(reply.cards?.[0]?.type).toBe('commerce_results');
   });
 
-  it('creates_a_content_task_that_completes_and_notifies_messages', async () => {
+  it('creates_a_content_task_that_passes_through_waiting_confirmation_and_notifies_messages', async () => {
     const deps = fakeDeps();
     const notified: string[] = [];
     deps.messages.postTaskNotification = async (task) => {
       notified.push(task.id);
     };
+    const states: string[] = [];
+    const originalUpdate = deps.tasks.updateTaskState.bind(deps.tasks);
+    deps.tasks.updateTaskState = async (taskId, state, resultSummary) => {
+      states.push(state);
+      return originalUpdate(taskId, state, resultSummary);
+    };
     const chat = createMockChatClient(deps, { replyDelayMs: 0, taskStepMs: 0, scheduler: (cb) => immediateScheduler().scheduler(cb) });
     const reply = await chat.handleSend('帮我做一张商品海报');
-    expect(reply.contentKey).toBe('whatseek.chat.reply.createContent.accepted');
+    expect(reply.contentKey).toBe('whatseek.chat.reply.task.accepted');
     expect(reply.taskId).toBeDefined();
     // Flush the background task chain (microtasks) before asserting.
     await new Promise<void>((resolve) => {
@@ -207,7 +213,88 @@ describe('mock chat client (AI router)', () => {
     });
     const task = await deps.tasks.getTask(reply.taskId ?? '');
     expect(task?.state).toBe('completed');
+    expect(states).toContain('running');
+    expect(states).toContain('waiting_confirmation');
     expect(notified).toContain(reply.taskId);
+  });
+
+  it('routes_agent_search_and_dispatch_to_the_agent_roster', async () => {
+    const agents: Contact[] = [
+      { id: 'a-1', name: '行业新闻整理 Agent', kind: 'agent', bio: '', tags: [], avatar: '🤖' },
+    ];
+    const deps = fakeDeps({
+      searchContacts: async () => agents,
+    });
+    const chat = createMockChatClient(deps, { replyDelayMs: 0, scheduler: (cb) => immediateScheduler().scheduler(cb) });
+
+    const search = await chat.handleSend('找一个电商选品智能体');
+    expect(search.contentKey).toBe('whatseek.chat.reply.searchAgent.found');
+    expect(search.cards?.[0]?.type).toBe('contact_results');
+
+    const use = await chat.handleSend('让智能体帮我整理日报');
+    expect(use.contentKey).toBe('whatseek.chat.reply.useAgent.found');
+    expect(use.cards?.[0]?.type).toBe('contact_results');
+  });
+
+  it('reports_a_missing_agent_search_and_recommends_the_roster_for_creation', async () => {
+    const deps = fakeDeps({ searchContacts: async () => [] });
+    const chat = createMockChatClient(deps, { replyDelayMs: 0, scheduler: (cb) => immediateScheduler().scheduler(cb) });
+
+    // Neither the keyword search nor the roster has any agent: honest notFound.
+    const missing = await chat.handleSend('找一个量子折叠智能体');
+    expect(missing.contentKey).toBe('whatseek.chat.reply.searchAgent.notFound');
+
+    // With an agent on the roster, creation funnels into a recommendation.
+    deps.contacts.listContacts = async () => [
+      { id: 'a-1', name: '跨境选品 Agent', kind: 'agent', bio: '', tags: [], avatar: '🛰️' },
+    ];
+    const create = await chat.handleSend('帮我创建一个选品智能体');
+    expect(create.contentKey).toBe('whatseek.chat.reply.createAgent.recommend');
+    expect(create.cards?.[0]?.type).toBe('contact_results');
+  });
+
+  it('routes_USE_APP_to_app_result_cards', async () => {
+    const recommendations: AppRecommendation[] = [
+      {
+        app: {
+          id: 'clip-master',
+          name: '剪辑大师',
+          summary: '智能视频剪辑',
+          developer: '剪界科技',
+          category: 'video',
+          kind: 'ai',
+          icon: '🎬',
+          rating: 4.8,
+          usersLabel: '2.3万',
+          priceLabel: '免费',
+          aiCapability: true,
+          tags: ['视频'],
+          updatedAt: '2026-10-01T00:00:00.000Z',
+          permissions: [],
+        },
+        reason: '剪辑',
+      },
+    ];
+    const deps = fakeDeps({
+      searchApps: async () => recommendations,
+    });
+    const chat = createMockChatClient(deps, { replyDelayMs: 0, scheduler: (cb) => immediateScheduler().scheduler(cb) });
+    const reply = await chat.handleSend('打开剪辑应用');
+    expect(reply.contentKey).toBe('whatseek.chat.reply.searchApp.found');
+    expect(reply.cards?.[0]?.type).toBe('app_results');
+  });
+
+  it('starts_an_execution_task_for_EXECUTE_TASK_utterances', async () => {
+    const deps = fakeDeps();
+    const chat = createMockChatClient(deps, { replyDelayMs: 0, taskStepMs: 0, scheduler: (cb) => immediateScheduler().scheduler(cb) });
+    const reply = await chat.handleSend('执行库存盘点自动化');
+    expect(reply.contentKey).toBe('whatseek.chat.reply.task.accepted');
+    expect(reply.taskId).toBeDefined();
+    await new Promise<void>((resolve) => {
+      globalThis.setTimeout(resolve, 0);
+    });
+    const task = await deps.tasks.getTask(reply.taskId ?? '');
+    expect(task?.state).toBe('completed');
   });
 });
 

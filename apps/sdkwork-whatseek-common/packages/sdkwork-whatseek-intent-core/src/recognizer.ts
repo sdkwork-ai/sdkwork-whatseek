@@ -52,6 +52,16 @@ const RULES: readonly IntentRule[] = [
     confidence: 0.9,
   },
   {
+    // USE_AGENT must precede SEARCH_AGENT: SEARCH_AGENT's bare-term branch
+    // would otherwise swallow 派/让/用 + agent utterances (PRD §10.2).
+    intent: 'USE_AGENT',
+    patterns: [
+      /(?:让|派|用)(?:一个|个|这个|那个)?[\s\S]{0,12}(?:agent|智能体|数字员工|AI 助手)(?:帮我|来|去)?/iu,
+      /(?:帮我用|派个)(?:agent|智能体|数字员工)/iu,
+    ],
+    confidence: 0.8,
+  },
+  {
     intent: 'SEARCH_AGENT',
     patterns: [
       /((?:找|找一个|找个|推荐)(?:一个)?[\s\S]{0,16}(?:agent|智能体|数字员工))|(agent|智能体)/iu,

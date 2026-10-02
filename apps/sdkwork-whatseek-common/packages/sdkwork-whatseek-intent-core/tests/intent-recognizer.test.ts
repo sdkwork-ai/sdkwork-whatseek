@@ -39,6 +39,19 @@ describe('intent recognition (remaining PRD §10.1 intents)', () => {
     expect(recognizeIntent('帮我找一个可以完成这个任务的智能体').intent).toBe('SEARCH_AGENT');
   });
 
+  it('recognizes_USE_AGENT_without_letting_SEARCH_AGENT_swallow_it', () => {
+    expect(recognizeIntent('让智能体帮我整理日报').intent).toBe('USE_AGENT');
+    expect(recognizeIntent('派一个数字员工去处理这个流程').intent).toBe('USE_AGENT');
+  });
+
+  it('recognizes_USE_APP', () => {
+    expect(recognizeIntent('打开剪辑应用').intent).toBe('USE_APP');
+  });
+
+  it('recognizes_EXECUTE_TASK', () => {
+    expect(recognizeIntent('执行库存盘点自动化').intent).toBe('EXECUTE_TASK');
+  });
+
   it('recognizes_SEARCH_PRODUCT', () => {
     expect(recognizeIntent('我要采购1000件黑色T恤').intent).toBe('SEARCH_PRODUCT');
   });

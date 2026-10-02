@@ -199,7 +199,7 @@ describe('mock chat client (AI router)', () => {
     };
     const chat = createMockChatClient(deps, { replyDelayMs: 0, taskStepMs: 0, scheduler: (cb) => immediateScheduler().scheduler(cb) });
     const reply = await chat.handleSend('帮我做一张商品海报');
-    expect(reply.contentKey).toBe('whatseek.chat.reply.createContent.accepted');
+    expect(reply.contentKey).toBe('whatseek.chat.reply.task.accepted');
     expect(reply.taskId).toBeDefined();
     // Flush the background task chain (microtasks) before asserting.
     await new Promise<void>((resolve) => {

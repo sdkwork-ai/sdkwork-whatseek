@@ -19,7 +19,7 @@ export function ProfileHomeScreen() {
   const signIn = useSessionStore((state) => state.signIn);
   const signOut = useSessionStore((state) => state.signOut);
   const colorMode = useSettingsStore((state) => state.colorMode);
-  const [assets, setAssets] = useState<{ apps: number; contacts: number; conversations: number } | null>(null);
+  const [assets, setAssets] = useState<{ apps: number; agents: number; contacts: number; conversations: number } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,7 +30,8 @@ export function ProfileHomeScreen() {
     ])
       .then(([myApps, contacts, conversations]) => {
         if (!cancelled) {
-          setAssets({ apps: myApps.length, contacts: contacts.length, conversations: conversations.length });
+          const agents = contacts.filter((contact) => contact.kind === 'agent' || contact.kind === 'assistant').length;
+          setAssets({ apps: myApps.length, agents, contacts: contacts.length, conversations: conversations.length });
         }
       })
       .catch(() => undefined);
@@ -83,11 +84,12 @@ export function ProfileHomeScreen() {
       </div>
 
       <Card className="mt-3">
-        <div className="grid grid-cols-3 divide-x divide-border-subtle">
+        <div className="grid grid-cols-4 divide-x divide-border-subtle">
           {(
             [
               { key: 'chats', value: assets?.conversations, path: '/messages' },
               { key: 'apps', value: assets?.apps, path: '/apps/my' },
+              { key: 'agents', value: assets?.agents, path: '/contacts' },
               { key: 'contacts', value: assets?.contacts, path: '/contacts' },
             ] as const
           ).map((asset) => (

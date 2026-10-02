@@ -4,8 +4,9 @@ import "package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mo
 
 import 'i18n/apps_strings.dart';
 
-/// AI app creation flow (PRD §17/§18): requirement → plan → generate → preview
-/// → publish to 我的应用.
+/// AI app creation flow (PRD §17/§18/§43): requirement → plan → generate →
+/// preview → continue modifying → publish to 我的应用 (H5 `AppCreateScreen`
+/// parity).
 class AppCreateScreen extends StatefulWidget {
   const AppCreateScreen({super.key, this.initialRequirement = ''});
 
@@ -17,14 +18,23 @@ class AppCreateScreen extends StatefulWidget {
 
 class _AppCreateScreenState extends State<AppCreateScreen> {
   final TextEditingController _requirement = TextEditingController();
+  final TextEditingController _instruction = TextEditingController();
   ({List<String> modules, String title})? _plan;
   CreatedApp? _created;
   bool _generating = false;
+  bool _modifying = false;
 
   @override
   void initState() {
     super.initState();
     _requirement.text = widget.initialRequirement;
+  }
+
+  @override
+  void dispose() {
+    _requirement.dispose();
+    _instruction.dispose();
+    super.dispose();
   }
 
   Future<void> _makePlan() async {
@@ -51,6 +61,26 @@ class _AppCreateScreenState extends State<AppCreateScreen> {
     setState(() {
       _created = created;
       _generating = false;
+    });
+  }
+
+  /// Applies a follow-up instruction to the generated app and refreshes the
+  /// preview (H5 `AppCreateScreen.applyInstruction` semantics).
+  Future<void> _applyInstruction() async {
+    final created = _created;
+    final instruction = _instruction.text.trim();
+    if (created == null || instruction.isEmpty || _modifying) {
+      return;
+    }
+    setState(() {
+      _modifying = true;
+    });
+    final updated =
+        await WhatseekRuntime.instance.apps.modifyApp(created.id, instruction);
+    setState(() {
+      _created = updated;
+      _instruction.clear();
+      _modifying = false;
     });
   }
 
@@ -115,11 +145,28 @@ class _AppCreateScreenState extends State<AppCreateScreen> {
                 WhatseekAppsStrings.of(context, 'create.published'),
                 style: TextStyle(color: Theme.of(context).colorScheme.primary),
               )
-            else
+            else ...[
+              TextField(
+                controller: _instruction,
+                decoration: InputDecoration(
+                  hintText:
+                      WhatseekAppsStrings.of(context, 'create.modifyPlaceholder'),
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                ),
+                onSubmitted: (_) => _applyInstruction(),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton(
+                onPressed: _modifying ? null : _applyInstruction,
+                child: Text(WhatseekAppsStrings.of(context, 'create.modifyAction')),
+              ),
+              const SizedBox(height: 12),
               FilledButton(
                 onPressed: _publish,
                 child: Text(WhatseekAppsStrings.of(context, 'create.publishAction')),
               ),
+            ],
           ],
         ],
       ),

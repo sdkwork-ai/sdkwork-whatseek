@@ -24,6 +24,10 @@ const FRAGMENTS = {
       searchSupplier: '为你找到这些供应商（商业生态预览）：',
       commercePreview: '商业生态预览（Phase 2 接入完整供需网络）：',
       createContentAccepted: '收到！任务已完成。',
+      searchAgent: { found: '找到这些 Agent / 智能体：', notFound: '暂时没有匹配的 Agent。你可以描述需求，后续版本可以直接创建。' },
+      useAgent: { found: '可以派这些 Agent 帮你执行：' },
+      createAgent: { recommend: '创建数字员工将在后续版本开放，先用现成的 Agent 试试：' },
+      task: { accepted: '收到！任务已开始，完成后我会通知你。' },
       general: '我是问寻 AI。你可以让我找应用、创建应用、找供应商，或者联系某人——直接说就行。',
       error: '出了点问题，请重试。',
       actionAppGenerated: '已生成应用「{name}」，可以在「我的应用」中查看。',
@@ -33,8 +37,8 @@ const FRAGMENTS = {
   },
   apps: { home: { title: '应用中心', searchPlaceholder: '搜索应用，或者直接告诉我你要做什么' }, detail: { use: '立即使用' } },
   contacts: { home: { title: '通讯录' }, detail: { sendMessage: '发消息' } },
-  messages: { home: { title: '消息', subtitle: '私聊、通知与 AI 任务事件都在这里' } },
-  profile: { home: { title: '我的', visitor: '访客', brand: '你负责问，AI 负责寻' } },
+  messages: { home: { title: '消息', subtitle: '私聊、通知与 AI 任务事件都在这里' }, kind: { system: '系统通知', app: '应用通知', task: 'AI 任务' } },
+  profile: { home: { title: '我的', visitor: '访客', brand: '你负责问，AI 负责寻', agents: 'Agent' } },
 };
 
 const EN = {
@@ -53,6 +57,10 @@ const EN = {
       searchSupplier: 'Here are matching suppliers (commerce preview):',
       commercePreview: 'Commerce preview (full supply-demand network arrives in Phase 2):',
       createContentAccepted: 'Got it! The task completed.',
+      searchAgent: { found: 'Here are the matching agents:', notFound: 'No matching agent yet. Describe what you need — creation arrives in a later release.' },
+      useAgent: { found: 'These agents can take this on for you:' },
+      createAgent: { recommend: 'Agent creation opens in a later release — try an existing one for now:' },
+      task: { accepted: 'Got it! The task has started; I will notify you when it completes.' },
       general: 'I am WhatSeek AI. Ask me to find apps, create apps, find suppliers, or reach someone.',
       error: 'Something went wrong. Please retry.',
       actionAppGenerated: 'Generated app "{name}" — see it under My apps.',
@@ -62,8 +70,8 @@ const EN = {
   },
   apps: { home: { title: 'App Center', searchPlaceholder: 'Search apps, or just tell me what you need' }, detail: { use: 'Use now' } },
   contacts: { home: { title: 'Contacts' }, detail: { sendMessage: 'Message' } },
-  messages: { home: { title: 'Messages', subtitle: 'Chats, notifications, and AI task events in one place' } },
-  profile: { home: { title: 'Me', visitor: 'Visitor', brand: 'You ask, AI seeks' } },
+  messages: { home: { title: 'Messages', subtitle: 'Chats, notifications, and AI task events in one place' }, kind: { system: 'System', app: 'App', task: 'AI task' } },
+  profile: { home: { title: 'Me', visitor: 'Visitor', brand: 'You ask, AI seeks', agents: 'Agents' } },
 };
 
 for (const [pkg, zh] of Object.entries(FRAGMENTS)) {

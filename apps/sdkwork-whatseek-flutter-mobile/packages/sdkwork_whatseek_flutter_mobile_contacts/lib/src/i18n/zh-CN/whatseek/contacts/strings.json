@@ -1,6 +1,17 @@
 {
   "home": {
-    "title": "通讯录"
+    "title": "通讯录",
+    "searchPlaceholder": "搜索联系人、群组、企业或 Agent",
+    "listTitle": "全部联系人（{{count}}）",
+    "emptyTitle": "没有找到匹配的联系人",
+    "segment": {
+      "all": "全部",
+      "person": "联系人",
+      "group": "群组",
+      "org": "企业与商家",
+      "agent": "Agent",
+      "assistant": "AI 助手"
+    }
   },
   "detail": {
     "title": "联系人详情",

@@ -2,5 +2,10 @@
   "home": {
     "title": "Messages",
     "subtitle": "Chats, notifications, and AI task events in one place"
+  },
+  "kind": {
+    "system": "System",
+    "app": "App",
+    "task": "AI task"
   }
 }

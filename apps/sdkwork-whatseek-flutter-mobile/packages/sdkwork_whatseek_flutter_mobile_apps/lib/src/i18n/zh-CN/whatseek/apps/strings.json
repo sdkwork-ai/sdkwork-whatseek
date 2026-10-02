@@ -2,7 +2,13 @@
   "home": {
     "title": "应用中心",
     "searchPlaceholder": "搜索应用，或者直接告诉我你要做什么",
-    "recommended": "为你推荐"
+    "recommended": "为你推荐",
+    "recent": "最近使用",
+    "hot": "热门应用",
+    "aiCreate": {
+      "title": "AI 创建应用",
+      "subtitle": "说一句需求，帮你生成一个可用的应用"
+    }
   },
   "search": {
     "title": "搜索应用",
@@ -20,7 +26,9 @@
     "aiCapability": "AI 能力",
     "use": "立即使用",
     "createFrom": "基于此创建",
-    "users": "{{users}} 人在用"
+    "users": "{{users}} 人在用",
+    "favorite": "收藏",
+    "favorited": "已收藏"
   },
   "runner": {
     "title": "运行应用",
@@ -34,13 +42,25 @@
     "generateAction": "直接生成",
     "previewTitle": "预览：{{name}}",
     "moduleCount": "{{count}} 个模块",
+    "modifyPlaceholder": "继续修改，例如：增加订单管理",
+    "modifyAction": "修改",
     "publishAction": "发布到我的应用",
     "published": "已发布！应用已保存到「我的应用」。"
   },
   "my": {
     "title": "我的应用",
+    "createdTab": "我创建的",
+    "favoritesTab": "收藏的应用",
+    "moduleCount": "{{count}} 个模块",
+    "publish": "发布",
+    "delete": "删除",
+    "cancel": "取消",
+    "deleteConfirmTitle": "删除这个应用？",
+    "deleteConfirmBody": "删除后无法恢复。",
+    "createFirst": "去创建第一个应用",
     "emptyCreatedTitle": "还没有创建应用",
-    "emptyCreatedDescription": "用一句自然语言，让 AI 帮你生成第一个应用"
+    "emptyCreatedDescription": "用一句自然语言，让 AI 帮你生成第一个应用",
+    "emptyFavoritesTitle": "还没有收藏应用"
   },
   "lifecycle": {
     "draft": "草稿",

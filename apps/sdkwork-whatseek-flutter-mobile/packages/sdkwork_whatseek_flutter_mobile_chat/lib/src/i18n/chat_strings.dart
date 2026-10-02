@@ -49,6 +49,11 @@ const Map<String, Map<String, String>> chatStrings = {
     'reply.createContentAccepted': '收到！任务已完成。',
     'reply.general': '我是问寻 AI。你可以让我找应用、创建应用、找供应商，或者联系某人——直接说就行。',
     'reply.error': '出了点问题，请重试。',
+    'reply.searchAgent.found': '找到这些 Agent / 智能体：',
+    'reply.searchAgent.notFound': '暂时没有匹配的 Agent。你可以描述需求，后续版本可以直接创建。',
+    'reply.useAgent.found': '可以派这些 Agent 帮你执行：',
+    'reply.createAgent.recommend': '创建数字员工将在后续版本开放，先用现成的 Agent 试试：',
+    'reply.task.accepted': '收到！任务已开始，完成后我会通知你。',
     'reply.actionAppGenerated': '已生成应用「{{name}}」，可以在「我的应用」中查看。',
     'reply.actionMessageSent': '消息已发送，可以在「消息」中继续对话。',
     'reply.actionNavigated': '好的。',
@@ -99,6 +104,11 @@ const Map<String, Map<String, String>> chatStrings = {
     'reply.actionAppGenerated': 'Generated app "{{name}}" — see it under My apps.',
     'reply.actionMessageSent': 'Message sent — continue the conversation in Messages.',
     'reply.actionNavigated': 'Done.',
+    'reply.searchAgent.found': 'Here are the matching agents:',
+    'reply.searchAgent.notFound': 'No matching agent yet. Describe what you need — creation arrives in a later release.',
+    'reply.useAgent.found': 'These agents can take this on for you:',
+    'reply.createAgent.recommend': 'Agent creation opens in a later release — try an existing one for now:',
+    'reply.task.accepted': 'Got it! The task has started; I will notify you when it completes.',
   },
 };
 

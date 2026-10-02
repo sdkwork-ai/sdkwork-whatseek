@@ -5,23 +5,27 @@ import 'package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mo
 import 'i18n/chat_strings.dart';
 
 /// One rendered chat turn. Assistant text carries an i18n key (raw service
-/// text passes through unresolved).
+/// text passes through unresolved); AI replies may carry a task id (PRD §41)
+/// rendered as a state chip.
 class ChatEntry {
   ChatEntry({
     required this.role,
     required this.text,
     this.params = const {},
     this.cards = const [],
+    this.taskId,
   });
 
   final String role;
   final String text;
   final Map<String, Object?> params;
   final List<ChatCard> cards;
+  final String? taskId;
 }
 
 /// 对话 tab root — the Chat First entry (PRD §8): "你想做什么？告诉我就可以。"
-/// with the AI router cards (app results, creation plan, send confirmation).
+/// with the AI router cards (app results, creation plan, send confirmation)
+/// and the task state chips under replies that started a task.
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
@@ -32,6 +36,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final List<ChatEntry> _entries = [];
   final TextEditingController _input = TextEditingController();
+  final Map<String, TaskState> _taskStates = {};
   bool _sending = false;
 
   static const List<String> _suggestionKeys = [
@@ -58,15 +63,35 @@ class _ChatScreenState extends State<ChatScreen> {
           text: reply.text,
           params: reply.params,
           cards: reply.cards,
+          taskId: reply.taskId,
         ));
+        if (reply.taskId != null) {
+          _taskStates[reply.taskId!] ??= TaskState.pending;
+        }
         _sending = false;
       });
+      final taskId = reply.taskId;
+      if (taskId != null) {
+        await _refreshTask(taskId);
+      }
     } on Exception {
       setState(() {
         _entries.add(ChatEntry(role: 'assistant', text: 'reply.error'));
         _sending = false;
       });
     }
+  }
+
+  /// Refreshes one task's state through the tasks client (mini-program
+  /// `onTaskTap` parity): the chip label updates in place.
+  Future<void> _refreshTask(String taskId) async {
+    final task = await WhatseekRuntime.instance.tasks.getTask(taskId);
+    if (task == null || !mounted) {
+      return;
+    }
+    setState(() {
+      _taskStates[taskId] = task.state;
+    });
   }
 
   Future<void> _runAction(BuildContext context, ChatCard card) async {
@@ -183,6 +208,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   : WhatseekChatStrings.of(context, entry.text, entry.params),
               style: TextStyle(color: isUser ? scheme.onPrimary : scheme.onSurface),
             ),
+            if (entry.taskId != null) ...[
+              const SizedBox(height: 6),
+              _buildTaskChip(context, entry.taskId!),
+            ],
             for (final card in entry.cards) ...[
               const SizedBox(height: 8),
               _buildCard(context, card),
@@ -190,6 +219,17 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  /// Compact AI task state chip (PRD §41): seven-state label from the chat
+  /// fragment (`task.*`), tap re-reads the task (H5 `TaskChip` parity).
+  Widget _buildTaskChip(BuildContext context, String taskId) {
+    final state = _taskStates[taskId] ?? TaskState.pending;
+    return ActionChip(
+      label: Text(WhatseekChatStrings.of(context, state.labelKey)),
+      visualDensity: VisualDensity.compact,
+      onPressed: () => _refreshTask(taskId),
     );
   }
 

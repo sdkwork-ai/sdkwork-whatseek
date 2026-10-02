@@ -10,6 +10,7 @@ export interface ProfileSummary {
   user: SessionUser | null;
   chats: number;
   apps: number;
+  agents: number;
   contacts: number;
 }
 
@@ -19,10 +20,12 @@ export async function loadProfileSummary(): Promise<ProfileSummary> {
     getWhatseekClient('apps').listMyApps(),
     getWhatseekClient('contacts').listContacts(),
   ]);
+  const agents = contacts.filter((contact) => contact.kind === 'agent' || contact.kind === 'assistant').length;
   return {
     user: { id: 'visitor', name: '访客', avatar: '🙂', isVisitor: true },
     chats: conversations.length,
     apps: myApps.length,
+    agents,
     contacts: contacts.length,
   };
 }

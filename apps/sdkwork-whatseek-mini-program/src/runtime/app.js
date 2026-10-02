@@ -800,7 +800,8 @@ function seedState(nowIso) {
     { id: "conv-agent-news", kind: "agent", title: "\u884C\u4E1A\u65B0\u95FB\u6574\u7406 Agent", contactId: "agent-news", unread: 2, updatedAt: nowIso, lastMessagePreview: "\u4ECA\u65E5\u884C\u4E1A\u65B0\u95FB\u6458\u8981\u5DF2\u751F\u6210\u3002" },
     { id: "conv-supplier", kind: "direct", title: "\u4E0A\u6D77\u9526\u88F3\u670D\u9970", contactId: "supplier-jinshang", unread: 0, updatedAt: nowIso, lastMessagePreview: "\u6837\u54C1\u5DF2\u5BC4\u51FA\uFF0C\u8BF7\u6CE8\u610F\u67E5\u6536\u3002" },
     { id: "conv-system", kind: "system", titleKey: "whatseek.messages.kind.system", unread: 0, updatedAt: nowIso, lastMessagePreview: "\u6B22\u8FCE\u6765\u5230\u95EE\u5BFB\u3002" },
-    { id: "conv-task-video", kind: "task", titleKey: "whatseek.messages.kind.task", taskId: "task-demo-video", unread: 1, updatedAt: nowIso, lastMessagePreview: "\u4F60\u8981\u6C42\u7684\u89C6\u9891\u5DF2\u7ECF\u751F\u6210\u3002" }
+    { id: "conv-task-video", kind: "task", titleKey: "whatseek.messages.kind.task", taskId: "task-demo-video", unread: 1, updatedAt: nowIso, lastMessagePreview: "\u4F60\u8981\u6C42\u7684\u89C6\u9891\u5DF2\u7ECF\u751F\u6210\u3002" },
+    { id: "conv-app-update", kind: "app", titleKey: "whatseek.messages.kind.app", appId: "clip-master", unread: 0, updatedAt: nowIso, lastMessagePreview: "\u526A\u8F91\u5927\u5E08\u5DF2\u66F4\u65B0\u5230 v2.1\uFF0C\u65B0\u589E\u591A\u8F68\u9053\u65F6\u95F4\u7EBF\u3002" }
   ];
   const messages = {
     "conv-zhangsan": [
@@ -821,6 +822,9 @@ function seedState(nowIso) {
     ],
     "conv-task-video": [
       { id: "m-7", conversationId: "conv-task-video", senderId: "task", senderName: "\u95EE\u5BFB AI", content: "\u4F60\u8981\u6C42\u7684\u89C6\u9891\u5DF2\u7ECF\u751F\u6210\u3002", sentAt: nowIso, kind: "task" }
+    ],
+    "conv-app-update": [
+      { id: "m-8", conversationId: "conv-app-update", senderId: "app", senderName: "\u95EE\u5BFB", content: "\u526A\u8F91\u5927\u5E08\u5DF2\u66F4\u65B0\u5230 v2.1\uFF0C\u65B0\u589E\u591A\u8F68\u9053\u65F6\u95F4\u7EBF\u3002", sentAt: nowIso, kind: "system" }
     ]
   };
   return { conversations, messages };
@@ -1032,6 +1036,16 @@ var init_recognizer = __esm({
         confidence: 0.9
       },
       {
+        // USE_AGENT must precede SEARCH_AGENT: SEARCH_AGENT's bare-term branch
+        // would otherwise swallow 派/让/用 + agent utterances (PRD §10.2).
+        intent: "USE_AGENT",
+        patterns: [
+          /(?:让|派|用)(?:一个|个|这个|那个)?[\s\S]{0,12}(?:agent|智能体|数字员工|AI 助手)(?:帮我|来|去)?/iu,
+          /(?:帮我用|派个)(?:agent|智能体|数字员工)/iu
+        ],
+        confidence: 0.8
+      },
+      {
         intent: "SEARCH_AGENT",
         patterns: [
           /((?:找|找一个|找个|推荐)(?:一个)?[\s\S]{0,16}(?:agent|智能体|数字员工))|(agent|智能体)/iu
@@ -1223,24 +1237,54 @@ ${draft}`);
             cards
           };
         }
-        case "CREATE_CONTENT": {
+        case "CREATE_CONTENT":
+        case "EXECUTE_TASK":
+        case "EDIT_CONTENT": {
           const task = await deps.tasks.createTask({ title: text.trim(), intent: intent.intent });
           void schedule(() => {
-            void deps.tasks.updateTaskState(task.id, "running").then(() => delay(taskStepMs)).then(() => deps.tasks.updateTaskState(task.id, "completed", text.trim())).then((completed) => {
+            void deps.tasks.updateTaskState(task.id, "running").then(() => delay(taskStepMs)).then(() => deps.tasks.updateTaskState(task.id, "waiting_confirmation")).then(() => delay(taskStepMs)).then(() => deps.tasks.updateTaskState(task.id, "completed", text.trim())).then((completed) => {
               void deps.messages.postTaskNotification(completed);
             }).catch(() => void 0);
           }, taskStepMs);
           return {
-            contentKey: "whatseek.chat.reply.createContent.accepted",
+            contentKey: "whatseek.chat.reply.task.accepted",
             taskId: task.id
           };
         }
         case "SEARCH_AGENT":
-        case "CREATE_AGENT":
-        case "USE_AGENT":
-        case "EDIT_CONTENT":
-        case "USE_APP":
-        case "EXECUTE_TASK":
+        case "USE_AGENT": {
+          const isAgent = (contact) => contact.kind === "agent" || contact.kind === "assistant";
+          const searched = (await deps.contacts.searchContacts(text)).filter(isAgent);
+          const matches = searched.length > 0 ? searched : (await deps.contacts.listContacts()).filter(isAgent);
+          if (matches.length > 0) {
+            cards.push({ type: "contact_results", contacts: matches.slice(0, 4) });
+            return {
+              contentKey: intent.intent === "SEARCH_AGENT" ? "whatseek.chat.reply.searchAgent.found" : "whatseek.chat.reply.useAgent.found",
+              cards
+            };
+          }
+          return { contentKey: "whatseek.chat.reply.searchAgent.notFound" };
+        }
+        case "CREATE_AGENT": {
+          const roster = await deps.contacts.listContacts();
+          const agents = roster.filter(
+            (contact) => contact.kind === "agent" || contact.kind === "assistant"
+          );
+          cards.push({ type: "contact_results", contacts: agents.slice(0, 4) });
+          return { contentKey: "whatseek.chat.reply.createAgent.recommend", cards };
+        }
+        case "USE_APP": {
+          const results = await deps.apps.searchApps(text);
+          if (results.length > 0) {
+            cards.push({ type: "app_results", apps: results.slice(0, 3) });
+            return {
+              contentKey: "whatseek.chat.reply.searchApp.found",
+              contentParams: { count: results.length },
+              cards
+            };
+          }
+          return { contentKey: "whatseek.chat.reply.searchAgent.notFound" };
+        }
         case "GENERAL_CHAT":
         default:
           return { contentKey: "whatseek.chat.reply.general" };
@@ -1437,6 +1481,19 @@ var init_strings = __esm({
         searchSupplier: "Here are matching suppliers (commerce preview):",
         commercePreview: "Commerce preview (full supply-demand network arrives in Phase 2):",
         createContentAccepted: "Got it! The task completed.",
+        searchAgent: {
+          found: "Here are the matching agents:",
+          notFound: "No matching agent yet. Describe what you need \u2014 creation arrives in a later release."
+        },
+        useAgent: {
+          found: "These agents can take this on for you:"
+        },
+        createAgent: {
+          recommend: "Agent creation opens in a later release \u2014 try an existing one for now:"
+        },
+        task: {
+          accepted: "Got it! The task has started; I will notify you when it completes."
+        },
         general: "I am WhatSeek AI. Ask me to find apps, create apps, find suppliers, or reach someone.",
         error: "Something went wrong. Please retry.",
         actionAppGenerated: 'Generated app "{name}" \u2014 see it under My apps.',
@@ -1463,6 +1520,19 @@ var init_strings2 = __esm({
         searchSupplier: "\u4E3A\u4F60\u627E\u5230\u8FD9\u4E9B\u4F9B\u5E94\u5546\uFF08\u5546\u4E1A\u751F\u6001\u9884\u89C8\uFF09\uFF1A",
         commercePreview: "\u5546\u4E1A\u751F\u6001\u9884\u89C8\uFF08Phase 2 \u63A5\u5165\u5B8C\u6574\u4F9B\u9700\u7F51\u7EDC\uFF09\uFF1A",
         createContentAccepted: "\u6536\u5230\uFF01\u4EFB\u52A1\u5DF2\u5B8C\u6210\u3002",
+        searchAgent: {
+          found: "\u627E\u5230\u8FD9\u4E9B Agent / \u667A\u80FD\u4F53\uFF1A",
+          notFound: "\u6682\u65F6\u6CA1\u6709\u5339\u914D\u7684 Agent\u3002\u4F60\u53EF\u4EE5\u63CF\u8FF0\u9700\u6C42\uFF0C\u540E\u7EED\u7248\u672C\u53EF\u4EE5\u76F4\u63A5\u521B\u5EFA\u3002"
+        },
+        useAgent: {
+          found: "\u53EF\u4EE5\u6D3E\u8FD9\u4E9B Agent \u5E2E\u4F60\u6267\u884C\uFF1A"
+        },
+        createAgent: {
+          recommend: "\u521B\u5EFA\u6570\u5B57\u5458\u5DE5\u5C06\u5728\u540E\u7EED\u7248\u672C\u5F00\u653E\uFF0C\u5148\u7528\u73B0\u6210\u7684 Agent \u8BD5\u8BD5\uFF1A"
+        },
+        task: {
+          accepted: "\u6536\u5230\uFF01\u4EFB\u52A1\u5DF2\u5F00\u59CB\uFF0C\u5B8C\u6210\u540E\u6211\u4F1A\u901A\u77E5\u4F60\u3002"
+        },
         general: "\u6211\u662F\u95EE\u5BFB AI\u3002\u4F60\u53EF\u4EE5\u8BA9\u6211\u627E\u5E94\u7528\u3001\u521B\u5EFA\u5E94\u7528\u3001\u627E\u4F9B\u5E94\u5546\uFF0C\u6216\u8005\u8054\u7CFB\u67D0\u4EBA\u2014\u2014\u76F4\u63A5\u8BF4\u5C31\u884C\u3002",
         error: "\u51FA\u4E86\u70B9\u95EE\u9898\uFF0C\u8BF7\u91CD\u8BD5\u3002",
         actionAppGenerated: "\u5DF2\u751F\u6210\u5E94\u7528\u300C{name}\u300D\uFF0C\u53EF\u4EE5\u5728\u300C\u6211\u7684\u5E94\u7528\u300D\u4E2D\u67E5\u770B\u3002",
@@ -1483,12 +1553,27 @@ __export(src_exports, {
   taskStatus: () => taskStatus,
   toCardView: () => toCardView
 });
-function setChatLocale(locale) {
-  chatLocale = locale;
+function setChatLocale(locale2) {
+  chatLocale = locale2;
+}
+function resolveNestedReply(path) {
+  let zh = strings_default2.reply;
+  let en = strings_default.reply;
+  for (const segment of path.split(".")) {
+    if (typeof zh !== "object" || zh === null || typeof en !== "object" || en === null) {
+      return void 0;
+    }
+    zh = zh[segment];
+    en = en[segment];
+  }
+  if (typeof zh !== "string" || typeof en !== "string") {
+    return void 0;
+  }
+  return { "zh-CN": zh, "en-US": en };
 }
 function replyText(reply) {
   const key = reply.contentKey.replace("whatseek.chat.reply.", "");
-  const entry = REPLY_TEXT[key];
+  const entry = REPLY_TEXT[key] ?? resolveNestedReply(key);
   return entry !== void 0 ? entry[chatLocale] : reply.contentKey;
 }
 function toCardView(cards) {
@@ -1577,9 +1662,11 @@ __export(src_exports2, {
   listAppsByCategory: () => listAppsByCategory,
   listCategories: () => listCategories,
   listFavoriteApps: () => listFavoriteApps,
+  listHotApps: () => listHotApps,
   listMyApps: () => listMyApps,
   listRecentApps: () => listRecentApps,
   listRecommended: () => listRecommended,
+  modifyMyApp: () => modifyMyApp,
   openApp: () => openApp,
   publishApp: () => publishApp,
   searchApps: () => searchApps,
@@ -1625,6 +1712,12 @@ async function publishApp(appId) {
 }
 async function deleteMyApp(appId) {
   await appsPort().deleteMyApp(appId);
+}
+async function modifyMyApp(appId, instruction) {
+  return appsPort().modifyApp(appId, instruction);
+}
+async function listHotApps() {
+  return appsPort().listHot();
 }
 async function listFavoriteApps() {
   return appsPort().listFavorites();
@@ -1686,6 +1779,42 @@ var init_src5 = __esm({
   }
 });
 
+// packages/sdkwork-whatseek-mp-messages/src/i18n/en-US/whatseek/messages/strings.json
+var strings_default3;
+var init_strings3 = __esm({
+  "packages/sdkwork-whatseek-mp-messages/src/i18n/en-US/whatseek/messages/strings.json"() {
+    strings_default3 = {
+      home: {
+        title: "Messages",
+        subtitle: "Chats, notifications, and AI task events in one place"
+      },
+      kind: {
+        system: "System",
+        app: "App",
+        task: "AI task"
+      }
+    };
+  }
+});
+
+// packages/sdkwork-whatseek-mp-messages/src/i18n/zh-CN/whatseek/messages/strings.json
+var strings_default4;
+var init_strings4 = __esm({
+  "packages/sdkwork-whatseek-mp-messages/src/i18n/zh-CN/whatseek/messages/strings.json"() {
+    strings_default4 = {
+      home: {
+        title: "\u6D88\u606F",
+        subtitle: "\u79C1\u804A\u3001\u901A\u77E5\u4E0E AI \u4EFB\u52A1\u4E8B\u4EF6\u90FD\u5728\u8FD9\u91CC"
+      },
+      kind: {
+        system: "\u7CFB\u7EDF\u901A\u77E5",
+        app: "\u5E94\u7528\u901A\u77E5",
+        task: "AI \u4EFB\u52A1"
+      }
+    };
+  }
+});
+
 // packages/sdkwork-whatseek-mp-messages/src/index.ts
 var src_exports4 = {};
 __export(src_exports4, {
@@ -1695,13 +1824,26 @@ __export(src_exports4, {
   messagesPort: () => messagesPort,
   openDirectConversation: () => openDirectConversation,
   sendMessage: () => sendMessage,
+  setMessagesLocale: () => setMessagesLocale,
   unreadTotal: () => unreadTotal
 });
+function setMessagesLocale(next) {
+  locale = next;
+}
+function withResolvedTitle(conversation) {
+  const titleKey = conversation.titleKey;
+  if (conversation.title !== void 0 || titleKey === void 0) {
+    return conversation;
+  }
+  const title = KIND_TITLES[titleKey]?.[locale] ?? titleKey;
+  return { ...conversation, title };
+}
 function messagesPort() {
   return getWhatseekClient("messages");
 }
 async function listConversations() {
-  return messagesPort().listConversations();
+  const conversations = await messagesPort().listConversations();
+  return conversations.map(withResolvedTitle);
 }
 async function listMessages(conversationId) {
   return messagesPort().listMessages(conversationId);
@@ -1718,11 +1860,20 @@ async function unreadTotal() {
 async function openDirectConversation(contactId) {
   return messagesPort().openDirectConversation(contactId);
 }
+var KIND_TITLES, locale;
 var init_src6 = __esm({
   "packages/sdkwork-whatseek-mp-messages/src/index.ts"() {
     "use strict";
     init_define_SDKWORK_RUNTIME_ENV();
     init_src2();
+    init_strings3();
+    init_strings4();
+    KIND_TITLES = {
+      "whatseek.messages.kind.system": { "zh-CN": strings_default4.kind.system, "en-US": strings_default3.kind.system },
+      "whatseek.messages.kind.app": { "zh-CN": strings_default4.kind.app, "en-US": strings_default3.kind.app },
+      "whatseek.messages.kind.task": { "zh-CN": strings_default4.kind.task, "en-US": strings_default3.kind.task }
+    };
+    locale = "zh-CN";
   }
 });
 
@@ -1739,10 +1890,12 @@ async function loadProfileSummary() {
     getWhatseekClient("apps").listMyApps(),
     getWhatseekClient("contacts").listContacts()
   ]);
+  const agents = contacts.filter((contact) => contact.kind === "agent" || contact.kind === "assistant").length;
   return {
     user: { id: "visitor", name: "\u8BBF\u5BA2", avatar: "\u{1F642}", isVisitor: true },
     chats: conversations.length,
     apps: myApps.length,
+    agents,
     contacts: contacts.length
   };
 }
@@ -1920,10 +2073,12 @@ function bootstrapRuntime() {
       publish: (appId) => apps.publishApp(appId),
       draftPlan: (requirement) => apps.draftCreationPlan(requirement),
       createFromPlan: (requirement, modules) => apps.createAppFromPlan(requirement, modules),
+      modify: (appId, instruction) => apps.modifyMyApp(appId, instruction),
       deleteMyApp: (appId) => apps.deleteMyApp(appId),
       favorites: () => apps.listFavoriteApps(),
       toggleFavorite: (appId) => apps.toggleFavoriteApp(appId),
       recents: () => apps.listRecentApps(),
+      hot: () => apps.listHotApps(),
       byCategory: (categoryId) => apps.listAppsByCategory(categoryId)
     },
     contacts: {
@@ -1942,9 +2097,10 @@ function bootstrapRuntime() {
       summary: () => profile.loadProfileSummary(),
       getAppearance: () => profile.getAppearanceSettings(),
       setAppearance: (next) => profile.setAppearanceSettings(next),
-      setLocale: (locale) => {
-        profile.setAppearanceSettings({ locale });
-        chat.setChatLocale(locale);
+      setLocale: (locale2) => {
+        profile.setAppearanceSettings({ locale: locale2 });
+        chat.setChatLocale(locale2);
+        messages.setMessagesLocale(locale2);
       }
     },
     shell: {

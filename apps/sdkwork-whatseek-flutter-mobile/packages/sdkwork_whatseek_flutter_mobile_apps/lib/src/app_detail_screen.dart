@@ -17,11 +17,26 @@ class AppDetailScreen extends StatefulWidget {
 
 class _AppDetailScreenState extends State<AppDetailScreen> {
   late Future<WhatseekApp?> _app;
+  late Future<bool> _favorite;
 
   @override
   void initState() {
     super.initState();
     _app = WhatseekRuntime.instance.apps.getApp(widget.appId);
+    _favorite = _loadFavorite();
+  }
+
+  Future<bool> _loadFavorite() async {
+    final favorites = await WhatseekRuntime.instance.apps.listFavorites();
+    return favorites.any((app) => app.id == widget.appId);
+  }
+
+  Future<void> _toggleFavorite() async {
+    final favorited =
+        await WhatseekRuntime.instance.apps.toggleFavorite(widget.appId);
+    setState(() {
+      _favorite = Future.value(favorited);
+    });
   }
 
   @override
@@ -45,6 +60,7 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
             padding: const EdgeInsets.all(16),
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Avatar(glyph: app.icon, size: 64),
                   const SizedBox(width: 16),
@@ -63,6 +79,7 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                       ],
                     ),
                   ),
+                  _buildFavoriteToggle(context),
                 ],
               ),
               const SizedBox(height: 16),
@@ -95,6 +112,26 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
           );
         },
       ),
+    );
+  }
+
+  /// Favorite toggle (PRD §16 收藏): filled heart while favorited, outline
+  /// heart otherwise; taps flip the state through the apps client.
+  Widget _buildFavoriteToggle(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: _favorite,
+      builder: (context, snapshot) {
+        final favorited = snapshot.data ?? false;
+        return IconButton(
+          tooltip: WhatseekAppsStrings.of(
+              context, favorited ? 'detail.favorited' : 'detail.favorite'),
+          icon: Icon(
+            favorited ? Icons.favorite : Icons.favorite_border,
+            color: favorited ? Theme.of(context).colorScheme.error : null,
+          ),
+          onPressed: _toggleFavorite,
+        );
+      },
     );
   }
 }

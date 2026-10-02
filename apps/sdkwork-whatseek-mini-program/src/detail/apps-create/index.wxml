@@ -46,6 +46,10 @@
     </view>
   </view>
   <view wx:if="{{error}}" class="state-desc create-error">{{error}}</view>
+  <view class="panel create-panel create-modify-panel">
+    <input class="create-modify-input" value="{{instruction}}" bindinput="onInstructionInput" maxlength="100" placeholder="追加修改指令，例如：增加订单管理" confirm-type="done" />
+    <button class="create-modify-btn" size="mini" disabled="{{working || !instruction}}" bindtap="onModify">修改</button>
+  </view>
   <view class="create-actions">
     <button wx:if="{{app.lifecycle !== 'published'}}" class="btn-brand create-btn" disabled="{{working}}" bindtap="onPublish">{{working ? '发布中…' : '发布到应用市场'}}</button>
     <button class="btn-ghost create-btn" bindtap="onRun">立即运行</button>

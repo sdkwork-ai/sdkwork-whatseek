@@ -5,6 +5,42 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — PRD P0 conformance round: intent coverage, cross-surface feature parity
+
+A PRD conformance sweep (against `docs/product/prd/PRD.md` and
+REQ-2026-0001..0004) found functional deltas the route-contract audits could
+not see. All of them are closed in this round:
+
+- **AI router completes the PRD §10.1 intent set** (shared service family):
+  `USE_AGENT` gains a recognition rule (ordered before `SEARCH_AGENT`'s
+  bare-term branch); `SEARCH_AGENT`/`USE_AGENT` route to the agent roster
+  (contact_results cards, keyword search with kind-filtered roster fallback),
+  `CREATE_AGENT` recommends the roster (real agent creation stays a declared
+  Phase-2 boundary), `USE_APP` routes to app result cards, and
+  `EXECUTE_TASK`/`EDIT_CONTENT` start real tasks. New reply keys
+  (`reply.searchAgent.*`, `reply.useAgent.*`, `reply.createAgent.*`,
+  `reply.task.accepted`) shipped to all four surfaces (H5/PC nested,
+  mini-program nested + dotted-path resolver, Flutter dotted mirror keys).
+- **Task simulation walks the forward PRD §41 path**: pending → running →
+  waiting_confirmation → completed (content/execute/edit tasks); terminal
+  failure states remain type/UI-complete pending a real backend.
+- **Messages**: `app`-kind conversation seeded (application notification), and
+  the mini-program now resolves `titleKey` conversations to localized titles
+  (a latent blank-title display defect).
+- **Asset summary gains the Agent count** on all four surfaces (agent +
+  assistant roster).
+- **Mini-program**: the creation flow gains the post-create modify step
+  (instruction → `modifyApp`), and the app center gains 热门应用 / 最近使用
+  sections. Behavior suite 13 → 15 tests (23 total).
+- **Flutter** (parity round): 我的应用 rebuilt (created/favorited tabs, open/
+  publish/delete), creation modify step, detail favorite toggle, app center
+  rebuilt (AI-create entry, 16 category chips, recents, hot), contacts search
+  + 5-kind segments, chat task chip, profile Agent stat. Tests 33 → 45,
+  `flutter analyze` 0 issues.
+- Verification: `pnpm check` green, root typecheck 0 errors, all suites
+  green (H5, PC, mini-program 23, Flutter 45, common 45+), H5/PC prod builds
+  PASS, mini-program prod bundle builds.
+
 ### 2026-10-03 — Conformance audit (zero violations) + operational handoff docs
 
 - **Adversarial spec audit** against the governing sdkwork-specs (route

@@ -48,10 +48,12 @@ export interface PageApi {
     publish(appId: string): Promise<unknown>;
     draftPlan(requirement: string): { title: string; modules: string[] };
     createFromPlan(requirement: string, modules: readonly string[]): Promise<CreatedAppView>;
+    modify(appId: string, instruction: string): Promise<CreatedAppView>;
     deleteMyApp(appId: string): Promise<void>;
     favorites(): Promise<unknown[]>;
     toggleFavorite(appId: string): Promise<boolean>;
     recents(): Promise<unknown[]>;
+    hot(): Promise<unknown[]>;
     byCategory(categoryId: string): Promise<unknown[]>;
   };
   contacts: {
@@ -141,10 +143,12 @@ export function bootstrapRuntime(): PageApi {
       publish: (appId) => apps.publishApp(appId),
       draftPlan: (requirement) => apps.draftCreationPlan(requirement),
       createFromPlan: (requirement, modules) => apps.createAppFromPlan(requirement, modules),
+      modify: (appId, instruction) => apps.modifyMyApp(appId, instruction),
       deleteMyApp: (appId) => apps.deleteMyApp(appId),
       favorites: () => apps.listFavoriteApps(),
       toggleFavorite: (appId) => apps.toggleFavoriteApp(appId),
       recents: () => apps.listRecentApps(),
+      hot: () => apps.listHotApps(),
       byCategory: (categoryId) => apps.listAppsByCategory(categoryId),
     },
     contacts: {
@@ -166,6 +170,7 @@ export function bootstrapRuntime(): PageApi {
       setLocale: (locale) => {
         profile.setAppearanceSettings({ locale });
         chat.setChatLocale(locale);
+        messages.setMessagesLocale(locale);
       },
     },
     shell: {

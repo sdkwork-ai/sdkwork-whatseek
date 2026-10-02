@@ -10,6 +10,19 @@
     "searchSupplier": "为你找到这些供应商（商业生态预览）：",
     "commercePreview": "商业生态预览（Phase 2 接入完整供需网络）：",
     "createContentAccepted": "收到！任务已完成。",
+    "searchAgent": {
+      "found": "找到这些 Agent / 智能体：",
+      "notFound": "暂时没有匹配的 Agent。你可以描述需求，后续版本可以直接创建。"
+    },
+    "useAgent": {
+      "found": "可以派这些 Agent 帮你执行："
+    },
+    "createAgent": {
+      "recommend": "创建数字员工将在后续版本开放，先用现成的 Agent 试试："
+    },
+    "task": {
+      "accepted": "收到！任务已开始，完成后我会通知你。"
+    },
     "general": "我是问寻 AI。你可以让我找应用、创建应用、找供应商，或者联系某人——直接说就行。",
     "error": "出了点问题，请重试。",
     "actionAppGenerated": "已生成应用「{name}」，可以在「我的应用」中查看。",

@@ -2,7 +2,13 @@
   "home": {
     "title": "App Center",
     "searchPlaceholder": "Search apps, or just tell me what you need",
-    "recommended": "Recommended"
+    "recommended": "Recommended",
+    "recent": "Recently used",
+    "hot": "Trending",
+    "aiCreate": {
+      "title": "AI app creation",
+      "subtitle": "Say what you need and get a working app"
+    }
   },
   "search": {
     "title": "Search apps",
@@ -20,7 +26,9 @@
     "aiCapability": "AI capability",
     "use": "Use now",
     "createFrom": "Create from this",
-    "users": "{{users}} users"
+    "users": "{{users}} users",
+    "favorite": "Favorite",
+    "favorited": "Favorited"
   },
   "runner": {
     "title": "Run app",
@@ -34,13 +42,25 @@
     "generateAction": "Generate now",
     "previewTitle": "Preview: {{name}}",
     "moduleCount": "{{count}} modules",
+    "modifyPlaceholder": "Keep editing, e.g. add order management",
+    "modifyAction": "Apply",
     "publishAction": "Publish to My apps",
     "published": "Published! The app is saved under \"My apps\"."
   },
   "my": {
     "title": "My apps",
+    "createdTab": "Created by me",
+    "favoritesTab": "Favorited",
+    "moduleCount": "{{count}} modules",
+    "publish": "Publish",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "deleteConfirmTitle": "Delete this app?",
+    "deleteConfirmBody": "This cannot be undone.",
+    "createFirst": "Create your first app",
     "emptyCreatedTitle": "No apps created yet",
-    "emptyCreatedDescription": "Use one sentence and let AI generate your first app"
+    "emptyCreatedDescription": "Use one sentence and let AI generate your first app",
+    "emptyFavoritesTitle": "No favorites yet"
   },
   "lifecycle": {
     "draft": "Draft",

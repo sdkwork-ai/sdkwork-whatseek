@@ -1,10 +1,13 @@
-// Widget tests for the three commercial-delivery screens: AppsSearchScreen
-// (success/empty/push-to-detail) and AppRunnerScreen (success / visitor
-// permission-denied / not-found), driven through the injected mock clients.
+// Widget tests for the commercial-delivery screens: AppsHomeScreen (create
+// entry, category chips, hot/recent sections), AppsSearchScreen
+// (success/empty/push-to-detail), AppRunnerScreen (success / visitor
+// permission-denied / not-found), AppCreateScreen (modify step) and
+// AppDetailScreen (favorite toggle) — driven through the injected mock clients.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:sdkwork_whatseek_flutter_mobile_apps/sdkwork_whatseek_flutter_mobile_apps.dart';
+import 'package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart';
 
 Widget _host(Widget child) => MaterialApp(
       onGenerateRoute: (settings) => MaterialPageRoute<void>(
@@ -15,6 +18,47 @@ Widget _host(Widget child) => MaterialApp(
     );
 
 void main() {
+  group('AppsHomeScreen', () {
+    testWidgets('renders_create_entry_category_chips_and_hot_recent_sections',
+        (tester) async {
+      await WhatseekRuntime.instance.apps.recordRecent('clip-master');
+      await tester.pumpWidget(_host(const AppsHomeScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('AI 创建应用'), findsOneWidget);
+      expect(find.text('说一句需求，帮你生成一个可用的应用'), findsOneWidget);
+      expect(find.text('为你推荐'), findsOneWidget);
+      expect(find.text('最近使用'), findsOneWidget);
+      // Category chips carry their localized labels.
+      expect(find.text('⚡ 效率'), findsOneWidget);
+      // The hot strip sits below the fold — scroll the home list to it.
+      await tester.dragUntilVisible(
+        find.text('热门应用'),
+        find.byType(ListView).first,
+        const Offset(0, -150),
+      );
+      expect(find.text('热门应用'), findsOneWidget);
+    });
+
+    testWidgets('category_chip_opens_the_search_route', (tester) async {
+      await tester.pumpWidget(_host(const AppsHomeScreen()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('⚡ 效率'));
+      await tester.pumpAndSettle();
+      expect(find.text('pushed-target'), findsOneWidget);
+    });
+
+    testWidgets('ai_create_entry_opens_the_create_route', (tester) async {
+      await tester.pumpWidget(_host(const AppsHomeScreen()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('AI 创建应用'));
+      await tester.pumpAndSettle();
+      expect(find.text('pushed-target'), findsOneWidget);
+    });
+  });
+
   group('AppsSearchScreen', () {
     testWidgets('search_renders_scored_results_with_rating_and_price',
         (tester) async {
@@ -92,6 +136,54 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('应用不存在'), findsOneWidget);
+    });
+  });
+
+  group('AppCreateScreen', () {
+    testWidgets('preview_accepts_follow_up_instructions_and_refreshes',
+        (tester) async {
+      await tester.pumpWidget(_host(const AppCreateScreen()));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField).first, '帮我做一个库存管理系统');
+      await tester.tap(find.text('生成方案'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('直接生成'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('5 个模块'), findsOneWidget);
+
+      // The instruction field is the second TextField; applying it bumps the
+      // module count and the version (H5 applyInstruction semantics).
+      await tester.enterText(find.byType(TextField).at(1), '增加订单管理');
+      await tester.tap(find.text('修改'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('6 个模块'), findsOneWidget);
+      expect(find.textContaining('v0.1.1'), findsOneWidget);
+      // The publish action survives the modification (lifecycle unchanged).
+      await tester.dragUntilVisible(
+        find.text('发布到我的应用'),
+        find.byType(ListView).first,
+        const Offset(0, -150),
+      );
+      expect(find.text('发布到我的应用'), findsOneWidget);
+    });
+  });
+
+  group('AppDetailScreen', () {
+    testWidgets('favorite_toggle_flips_the_icon_state', (tester) async {
+      await tester.pumpWidget(_host(const AppDetailScreen(appId: 'image-studio')));
+      await tester.pumpAndSettle();
+
+      expect(find.byTooltip('收藏'), findsOneWidget);
+      await tester.tap(find.byTooltip('收藏'));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('已收藏'), findsOneWidget);
+
+      // Tapping again restores the unfavorited state.
+      await tester.tap(find.byTooltip('已收藏'));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('收藏'), findsOneWidget);
     });
   });
 }

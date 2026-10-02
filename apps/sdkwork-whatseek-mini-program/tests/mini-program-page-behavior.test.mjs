@@ -126,6 +126,8 @@ test('apps_home_loads_recommended_and_categories_and_routes_entries', async () =
   assert.equal(page.data.loading, false);
   assert.ok(page.data.recommended.length > 0, 'recommended apps should load');
   assert.ok(page.data.categories.length > 0, 'categories should load');
+  assert.ok(page.data.hot.length > 0, 'hot apps section should load');
+  assert.ok(Array.isArray(page.data.recents), 'recents section should load (may be empty on first run)');
 
   hostCalls.navigate.length = 0;
   page.onCategoryTap({ currentTarget: { dataset: { id: 'video' } } });
@@ -205,6 +207,15 @@ test('create_flow_validates_drafts_creates_and_publishes', async () => {
   assert.ok(page.data.app.id.length > 0);
   const createdId = page.data.app.id;
 
+  page.setData({ instruction: '增加订单管理模块' });
+  await settle(page.onModify());
+  assert.equal(hostCalls.toasts.at(-1), '已按指令更新应用');
+  assert.ok(
+    page.data.app.modules.some((module) => module.includes('订单管理')),
+    'modify must append the instruction as a module',
+  );
+  assert.equal(page.data.instruction, '', 'instruction must clear after modify');
+
   await settle(page.onPublish());
   assert.equal(page.data.app.lifecycle, 'published');
   assert.equal(hostCalls.toasts.at(-1), '已发布到应用市场');
@@ -269,11 +280,15 @@ test('contacts_home_searches_and_routes_to_detail', async () => {
   assert.match(hostCalls.navigate.at(-1), /detail\/contact-detail\/index\?contactId=zhangsan$/u);
 });
 
-test('messages_home_loads_conversations', async () => {
+test('messages_home_loads_conversations_with_resolved_kind_titles', async () => {
   const page = loadPage('pages/messages');
   await settle(page.onShow());
   assert.equal(page.data.loading, false);
   assert.ok(page.data.conversations.length > 0);
+  const system = page.data.conversations.find((conversation) => conversation.kind === 'system');
+  assert.equal(system?.title, '系统通知', 'titleKey conversations must resolve to localized titles');
+  const appNotice = page.data.conversations.find((conversation) => conversation.kind === 'app');
+  assert.equal(appNotice?.title, '应用通知', 'app-kind conversations must resolve too');
 });
 
 test('profile_home_loads_the_visitor_summary_and_entries_route', async () => {
@@ -281,10 +296,19 @@ test('profile_home_loads_the_visitor_summary_and_entries_route', async () => {
   await settle(page.onShow());
   assert.equal(page.data.summary.user.name, '访客');
   assert.ok(page.data.summary.contacts >= 10);
+  assert.ok(page.data.summary.agents >= 2, 'agent + assistant roster must be counted as agents');
 
   hostCalls.navigate.length = 0;
   page.onSettings();
   assert.match(hostCalls.navigate.at(-1), /detail\/settings\/index$/u);
+});
+
+test('chat_routes_agent_dispatch_to_the_agent_roster', async () => {
+  const page = loadPage('pages/chat');
+  page.setData({ input: '让智能体帮我整理日报' });
+  await settle(page.onSend());
+  const assistant = page.data.entries[1];
+  assert.ok(assistant.cards && assistant.cards.contacts.length > 0, 'agent dispatch must return contact cards');
 });
 
 test('chat_send_creates_a_task_chip_that_resolves_state', async () => {
