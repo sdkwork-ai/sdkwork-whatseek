@@ -3,3 +3,4 @@
 library;
 
 export 'src/chat_screen.dart';
+export 'src/i18n/chat_strings.dart';

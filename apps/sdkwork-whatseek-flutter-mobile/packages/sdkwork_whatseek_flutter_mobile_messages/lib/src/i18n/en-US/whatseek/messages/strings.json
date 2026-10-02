@@ -1,0 +1,10 @@
+{
+  "home": {
+    "title": "Messages",
+    "subtitle": "Chats, notifications, and AI task events in one place"
+  },
+  "conversation": {
+    "composerHint": "Type a message…",
+    "send": "Send"
+  }
+}

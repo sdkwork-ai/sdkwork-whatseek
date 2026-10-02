@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart';
 
+import 'i18n/chat_strings.dart';
+
 /// One rendered chat turn.
 class ChatEntry {
   ChatEntry({required this.role, required this.text, this.cards = const []});
@@ -121,9 +123,9 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('你想做什么？', style: Theme.of(context).textTheme.headlineSmall),
+          Text(WhatseekChatStrings.home('heroTitle'), style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 4),
-          Text('告诉我就可以。', style: Theme.of(context).textTheme.bodySmall),
+          Text(WhatseekChatStrings.home('heroSubtitle'), style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 24),
           for (final suggestion in _suggestions)
             Padding(
@@ -270,9 +272,9 @@ class _ChatScreenState extends State<ChatScreen> {
             Expanded(
               child: TextField(
                 controller: _input,
-                decoration: const InputDecoration(
-                  hintText: '输入消息……',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(24))),
+                decoration: InputDecoration(
+                  hintText: WhatseekChatStrings.home('composerHint'),
+                  border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(24))),
                   isDense: true,
                 ),
                 onSubmitted: _send,

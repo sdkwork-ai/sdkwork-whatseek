@@ -1,0 +1,10 @@
+{
+  "home": {
+    "title": "消息",
+    "subtitle": "私聊、通知与 AI 任务事件都在这里"
+  },
+  "conversation": {
+    "composerHint": "输入消息……",
+    "send": "发送"
+  }
+}

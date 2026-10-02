@@ -1,0 +1,9 @@
+{
+  "home": {
+    "title": "App Center",
+    "searchPlaceholder": "Search apps, or just tell me what you need"
+  },
+  "detail": {
+    "use": "Use now"
+  }
+}

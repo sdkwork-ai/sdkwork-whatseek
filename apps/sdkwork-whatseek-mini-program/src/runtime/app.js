@@ -1419,16 +1419,74 @@ var init_src2 = __esm({
   }
 });
 
+// packages/sdkwork-whatseek-mp-chat/src/i18n/en-US/whatseek/chat/strings.json
+var strings_default;
+var init_strings = __esm({
+  "packages/sdkwork-whatseek-mp-chat/src/i18n/en-US/whatseek/chat/strings.json"() {
+    strings_default = {
+      reply: {
+        searchAppFound: "I found apps that fit:",
+        searchAppNotFoundCreate: "No existing app matched \u2014 I can create one for you:",
+        createAppPlan: "Sure, here is the plan:",
+        sendMessageConfirm: "I found the contact. Please confirm before sending:",
+        sendMessageContactNotFound: "I could not find that contact.",
+        searchPersonFound: "Found these contacts:",
+        searchPersonNotFound: "No matching contacts.",
+        searchSupplier: "Here are matching suppliers (commerce preview):",
+        commercePreview: "Commerce preview (full supply-demand network arrives in Phase 2):",
+        createContentAccepted: "Got it! The task completed.",
+        general: "I am WhatSeek AI. Ask me to find apps, create apps, find suppliers, or reach someone.",
+        error: "Something went wrong. Please retry.",
+        actionAppGenerated: 'Generated app "{name}" \u2014 see it under My apps.',
+        actionMessageSent: "Message sent \u2014 continue the conversation in Messages.",
+        actionNavigated: "Done."
+      }
+    };
+  }
+});
+
+// packages/sdkwork-whatseek-mp-chat/src/i18n/zh-CN/whatseek/chat/strings.json
+var strings_default2;
+var init_strings2 = __esm({
+  "packages/sdkwork-whatseek-mp-chat/src/i18n/zh-CN/whatseek/chat/strings.json"() {
+    strings_default2 = {
+      reply: {
+        searchAppFound: "\u627E\u5230\u9002\u5408\u4F60\u7684\u5E94\u7528\uFF1A",
+        searchAppNotFoundCreate: "\u6CA1\u6709\u627E\u5230\u73B0\u6210\u7684\u5E94\u7528 \u2014\u2014 \u6211\u53EF\u4EE5\u76F4\u63A5\u5E2E\u4F60\u521B\u5EFA\u4E00\u4E2A\uFF1A",
+        createAppPlan: "\u597D\u7684\uFF0C\u6211\u51C6\u5907\u521B\u5EFA\uFF0C\u65B9\u6848\u5982\u4E0B\uFF1A",
+        sendMessageConfirm: "\u6211\u627E\u5230\u4E86\u8054\u7CFB\u4EBA\uFF0C\u53D1\u9001\u524D\u8BF7\u786E\u8BA4\uFF1A",
+        sendMessageContactNotFound: "\u901A\u8BAF\u5F55\u91CC\u6CA1\u6709\u627E\u5230\u8FD9\u4E2A\u8054\u7CFB\u4EBA\u3002",
+        searchPersonFound: "\u627E\u5230\u8FD9\u4E9B\u8054\u7CFB\u4EBA\uFF1A",
+        searchPersonNotFound: "\u6CA1\u6709\u627E\u5230\u76F8\u5173\u8054\u7CFB\u4EBA\u3002",
+        searchSupplier: "\u4E3A\u4F60\u627E\u5230\u8FD9\u4E9B\u4F9B\u5E94\u5546\uFF08\u5546\u4E1A\u751F\u6001\u9884\u89C8\uFF09\uFF1A",
+        commercePreview: "\u5546\u4E1A\u751F\u6001\u9884\u89C8\uFF08Phase 2 \u63A5\u5165\u5B8C\u6574\u4F9B\u9700\u7F51\u7EDC\uFF09\uFF1A",
+        createContentAccepted: "\u6536\u5230\uFF01\u4EFB\u52A1\u5DF2\u5B8C\u6210\u3002",
+        general: "\u6211\u662F\u95EE\u5BFB AI\u3002\u4F60\u53EF\u4EE5\u8BA9\u6211\u627E\u5E94\u7528\u3001\u521B\u5EFA\u5E94\u7528\u3001\u627E\u4F9B\u5E94\u5546\uFF0C\u6216\u8005\u8054\u7CFB\u67D0\u4EBA\u2014\u2014\u76F4\u63A5\u8BF4\u5C31\u884C\u3002",
+        error: "\u51FA\u4E86\u70B9\u95EE\u9898\uFF0C\u8BF7\u91CD\u8BD5\u3002",
+        actionAppGenerated: "\u5DF2\u751F\u6210\u5E94\u7528\u300C{name}\u300D\uFF0C\u53EF\u4EE5\u5728\u300C\u6211\u7684\u5E94\u7528\u300D\u4E2D\u67E5\u770B\u3002",
+        actionMessageSent: "\u6D88\u606F\u5DF2\u53D1\u9001\uFF0C\u53EF\u4EE5\u5728\u300C\u6D88\u606F\u300D\u4E2D\u7EE7\u7EED\u5BF9\u8BDD\u3002",
+        actionNavigated: "\u597D\u7684\u3002"
+      }
+    };
+  }
+});
+
 // packages/sdkwork-whatseek-mp-chat/src/index.ts
 var src_exports = {};
 __export(src_exports, {
   replyText: () => replyText,
   runCardAction: () => runCardAction,
   sendChatTurn: () => sendChatTurn,
+  setChatLocale: () => setChatLocale,
   toCardView: () => toCardView
 });
+function setChatLocale(locale) {
+  chatLocale = locale;
+}
 function replyText(reply) {
-  return zhReplyText[reply.contentKey] ?? reply.contentKey;
+  const key = reply.contentKey.replace("whatseek.chat.reply.", "");
+  const entry = REPLY_TEXT[key];
+  return entry !== void 0 ? entry[chatLocale] : reply.contentKey;
 }
 function toCardView(cards) {
   if (cards === void 0 || cards.length === 0) {
@@ -1443,7 +1501,7 @@ function toCardView(cards) {
     } else if (card.type === "app_plan") {
       view.plan = { title: card.title, modules: [...card.modules], requirement: card.requirement };
     } else if (card.type === "send_message_confirm") {
-      view.sendMessage = { contactId: card.contactId, contactName: card.contactName, draft: card.draft };
+      view.sendMessage = { contactId: card.contactId, contactName: contactNameOf(card), draft: card.draft };
     } else if (card.type === "commerce_results") {
       view.commerce = { domain: card.domain, items: card.items.map((item) => ({ ...item })) };
     } else if (card.type === "contact_results") {
@@ -1454,6 +1512,9 @@ function toCardView(cards) {
   }
   return view;
 }
+function contactNameOf(card) {
+  return card.contactName;
+}
 async function sendChatTurn(text) {
   const chat = getWhatseekClient("chat");
   const reply = await chat.handleSend(text);
@@ -1462,32 +1523,34 @@ async function sendChatTurn(text) {
 async function runCardAction(action) {
   const chat = getWhatseekClient("chat");
   const outcome = await chat.runCardAction(action);
-  return zhReplyText[outcome.message] ?? outcome.message;
+  return replyText({ contentKey: outcome.message });
 }
-var zhReplyText;
+var REPLY_TEXT, chatLocale;
 var init_src3 = __esm({
   "packages/sdkwork-whatseek-mp-chat/src/index.ts"() {
     "use strict";
     init_define_SDKWORK_RUNTIME_ENV();
     init_src2();
-    zhReplyText = {
-      "whatseek.chat.reply.searchApp.found": "\u627E\u5230\u9002\u5408\u4F60\u7684\u5E94\u7528\uFF1A",
-      "whatseek.chat.reply.searchApp.notFoundCreate": "\u6CA1\u6709\u627E\u5230\u73B0\u6210\u7684\u5E94\u7528 \u2014\u2014 \u6211\u53EF\u4EE5\u76F4\u63A5\u5E2E\u4F60\u521B\u5EFA\u4E00\u4E2A\uFF1A",
-      "whatseek.chat.reply.createApp.plan": "\u597D\u7684\uFF0C\u6211\u51C6\u5907\u521B\u5EFA\uFF0C\u65B9\u6848\u5982\u4E0B\uFF1A",
-      "whatseek.chat.reply.sendMessage.confirm": "\u6211\u627E\u5230\u4E86\u8054\u7CFB\u4EBA\uFF0C\u53D1\u9001\u524D\u8BF7\u786E\u8BA4\uFF1A",
-      "whatseek.chat.reply.sendMessage.contactNotFound": "\u901A\u8BAF\u5F55\u91CC\u6CA1\u6709\u627E\u5230\u8FD9\u4E2A\u8054\u7CFB\u4EBA\u3002",
-      "whatseek.chat.reply.searchPerson.found": "\u627E\u5230\u8FD9\u4E9B\u8054\u7CFB\u4EBA\uFF1A",
-      "whatseek.chat.reply.searchPerson.notFound": "\u6CA1\u6709\u627E\u5230\u76F8\u5173\u8054\u7CFB\u4EBA\u3002",
-      "whatseek.chat.reply.searchProduct": "\u4E3A\u4F60\u627E\u5230\u8FD9\u4E9B\u5546\u54C1\uFF08\u5546\u4E1A\u751F\u6001\u9884\u89C8\uFF09\uFF1A",
-      "whatseek.chat.reply.searchSupplier": "\u4E3A\u4F60\u627E\u5230\u8FD9\u4E9B\u4F9B\u5E94\u5546\uFF08\u5546\u4E1A\u751F\u6001\u9884\u89C8\uFF09\uFF1A",
-      "whatseek.chat.reply.searchService": "\u4E3A\u4F60\u627E\u5230\u8FD9\u4E9B\u670D\u52A1\uFF08\u5546\u4E1A\u751F\u6001\u9884\u89C8\uFF09\uFF1A",
-      "whatseek.chat.reply.createContent.accepted": "\u6536\u5230\uFF01\u4EFB\u52A1\u5DF2\u5F00\u59CB\uFF0C\u5B8C\u6210\u540E\u6211\u4F1A\u901A\u77E5\u4F60\u3002",
-      "whatseek.chat.reply.general": "\u6211\u662F\u95EE\u5BFB AI\u3002\u4F60\u53EF\u4EE5\u8BA9\u6211\u627E\u5E94\u7528\u3001\u521B\u5EFA\u5E94\u7528\u3001\u627E\u4F9B\u5E94\u5546\uFF0C\u6216\u8005\u8054\u7CFB\u67D0\u4EBA\u3002",
-      "whatseek.chat.reply.error": "\u51FA\u4E86\u70B9\u95EE\u9898\uFF0C\u8BF7\u91CD\u8BD5\u3002",
-      "whatseek.chat.reply.action.appGenerated": "\u5E94\u7528\u5DF2\u751F\u6210\uFF0C\u53EF\u4EE5\u5728\u300C\u5E94\u7528 \u2192 \u6211\u7684\u5E94\u7528\u300D\u4E2D\u67E5\u770B\u3002",
-      "whatseek.chat.reply.action.messageSent": "\u6D88\u606F\u5DF2\u53D1\u9001\uFF0C\u53EF\u4EE5\u5728\u300C\u6D88\u606F\u300D\u4E2D\u7EE7\u7EED\u5BF9\u8BDD\u3002",
-      "whatseek.chat.reply.action.navigated": "\u597D\u7684\u3002"
+    init_strings();
+    init_strings2();
+    REPLY_TEXT = {
+      searchAppFound: { "zh-CN": strings_default2.reply.searchAppFound, "en-US": strings_default.reply.searchAppFound },
+      searchAppNotFoundCreate: { "zh-CN": strings_default2.reply.searchAppNotFoundCreate, "en-US": strings_default.reply.searchAppNotFoundCreate },
+      createAppPlan: { "zh-CN": strings_default2.reply.createAppPlan, "en-US": strings_default.reply.createAppPlan },
+      sendMessageConfirm: { "zh-CN": strings_default2.reply.sendMessageConfirm, "en-US": strings_default.reply.sendMessageConfirm },
+      sendMessageContactNotFound: { "zh-CN": strings_default2.reply.sendMessageContactNotFound, "en-US": strings_default.reply.sendMessageContactNotFound },
+      searchPersonFound: { "zh-CN": strings_default2.reply.searchPersonFound, "en-US": strings_default.reply.searchPersonFound },
+      searchPersonNotFound: { "zh-CN": strings_default2.reply.searchPersonNotFound, "en-US": strings_default.reply.searchPersonNotFound },
+      searchSupplier: { "zh-CN": strings_default2.reply.searchSupplier, "en-US": strings_default.reply.searchSupplier },
+      commercePreview: { "zh-CN": strings_default2.reply.commercePreview, "en-US": strings_default.reply.commercePreview },
+      createContentAccepted: { "zh-CN": strings_default2.reply.createContentAccepted, "en-US": strings_default.reply.createContentAccepted },
+      general: { "zh-CN": strings_default2.reply.general, "en-US": strings_default.reply.general },
+      error: { "zh-CN": strings_default2.reply.error, "en-US": strings_default.reply.error },
+      actionAppGenerated: { "zh-CN": strings_default2.reply.actionAppGenerated, "en-US": strings_default.reply.actionAppGenerated },
+      actionMessageSent: { "zh-CN": strings_default2.reply.actionMessageSent, "en-US": strings_default.reply.actionMessageSent },
+      actionNavigated: { "zh-CN": strings_default2.reply.actionNavigated, "en-US": strings_default.reply.actionNavigated }
     };
+    chatLocale = "zh-CN";
   }
 });
 

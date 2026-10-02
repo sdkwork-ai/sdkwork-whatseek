@@ -1,0 +1,19 @@
+{
+  "reply": {
+    "searchAppFound": "I found apps that fit:",
+    "searchAppNotFoundCreate": "No existing app matched — I can create one for you:",
+    "createAppPlan": "Sure, here is the plan:",
+    "sendMessageConfirm": "I found the contact. Please confirm before sending:",
+    "sendMessageContactNotFound": "I could not find that contact.",
+    "searchPersonFound": "Found these contacts:",
+    "searchPersonNotFound": "No matching contacts.",
+    "searchSupplier": "Here are matching suppliers (commerce preview):",
+    "commercePreview": "Commerce preview (full supply-demand network arrives in Phase 2):",
+    "createContentAccepted": "Got it! The task completed.",
+    "general": "I am WhatSeek AI. Ask me to find apps, create apps, find suppliers, or reach someone.",
+    "error": "Something went wrong. Please retry.",
+    "actionAppGenerated": "Generated app \"{name}\" — see it under My apps.",
+    "actionMessageSent": "Message sent — continue the conversation in Messages.",
+    "actionNavigated": "Done."
+  }
+}

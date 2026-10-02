@@ -1,0 +1,23 @@
+{
+  "home": {
+    "title": "App Center",
+    "searchHint": "Search apps, or just tell me what you need",
+    "empty": "No suitable app found"
+  },
+  "detail": {
+    "use": "Use now",
+    "createFrom": "Create from this"
+  },
+  "my": {
+    "title": "My apps",
+    "emptyTitle": "No apps created yet",
+    "emptyHint": "Use one sentence and let AI generate your first app"
+  },
+  "create": {
+    "title": "AI app creation",
+    "plan": "Generate plan",
+    "generate": "Generate now",
+    "publish": "Publish to My apps",
+    "published": "Published! The app is saved under \"My apps\"."
+  }
+}

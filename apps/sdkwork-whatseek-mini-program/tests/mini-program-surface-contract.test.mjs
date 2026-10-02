@@ -82,3 +82,31 @@ test('route_ids_stay_aligned_with_the_cross_surface_contract', () => {
     assert.ok(shell.includes(`pages/${tab}/index`), `tab path for ${tab} missing in mp-shell`);
   }
 });
+
+test('every_capability_package_ships_zh_en_i18n_fragments_with_key_parity', () => {
+  const packages = ['core', 'commons', 'shell', 'chat', 'apps', 'contacts', 'messages', 'profile'];
+  const keyPaths = (value, prefix = '') => {
+    if (typeof value !== 'object' || value === null) return new Set([prefix]);
+    const keys = new Set();
+    for (const [key, child] of Object.entries(value)) {
+      for (const nested of keyPaths(child, prefix.length === 0 ? key : prefix + '.' + key)) {
+        keys.add(nested);
+      }
+    }
+    return keys;
+  };
+  for (const name of packages) {
+    const read = (locale) => JSON.parse(readFileSync(
+      path.join(
+        surfaceRoot,
+        'packages',
+        ['sdkwork-whatseek-mp', name].join('-'),
+        'src', 'i18n', locale, 'whatseek', name, 'strings.json',
+      ),
+      'utf8',
+    ));
+    const zh = read('zh-CN');
+    const en = read('en-US');
+    assert.deepEqual([...keyPaths(en)].sort(), [...keyPaths(zh)].sort(), ['locale key drift in mp-', name].join(''));
+  }
+});

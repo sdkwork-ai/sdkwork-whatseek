@@ -1,0 +1,9 @@
+{
+  "home": {
+    "title": "应用中心",
+    "searchPlaceholder": "搜索应用，或者直接告诉我你要做什么"
+  },
+  "detail": {
+    "use": "立即使用"
+  }
+}

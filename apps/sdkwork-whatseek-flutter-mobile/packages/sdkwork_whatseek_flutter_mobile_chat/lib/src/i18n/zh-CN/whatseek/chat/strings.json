@@ -1,0 +1,26 @@
+{
+  "home": {
+    "heroTitle": "你想做什么？",
+    "heroSubtitle": "告诉我就可以。",
+    "composerHint": "输入消息……",
+    "thinking": "问寻正在思考…",
+    "newTopic": "开始新对话"
+  },
+  "reply": {
+    "searchAppFound": "找到适合你的应用：",
+    "searchAppNotFoundCreate": "没有找到现成的应用 —— 我可以直接帮你创建一个：",
+    "createAppPlan": "好的，我准备创建，方案如下：",
+    "sendMessageConfirm": "我找到了联系人，发送前请确认：",
+    "sendMessageContactNotFound": "通讯录里没有找到这个联系人。",
+    "searchPersonFound": "找到这些联系人：",
+    "searchPersonNotFound": "没有找到相关联系人。",
+    "searchSupplier": "为你找到这些供应商（商业生态预览）：",
+    "commercePreview": "商业生态预览（Phase 2 接入完整供需网络）：",
+    "createContentAccepted": "收到！任务已完成。",
+    "general": "我是问寻 AI。你可以让我找应用、创建应用、找供应商，或者联系某人——直接说就行。",
+    "error": "出了点问题，请重试。",
+    "actionAppGenerated": "已生成应用「{name}」，可以在「我的应用」中查看。",
+    "actionMessageSent": "消息已发送，可以在「消息」中继续对话。",
+    "actionNavigated": "好的。"
+  }
+}

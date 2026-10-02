@@ -1,0 +1,23 @@
+{
+  "home": {
+    "title": "应用中心",
+    "searchHint": "搜索应用，或者直接告诉我你要做什么",
+    "empty": "没有找到合适的应用"
+  },
+  "detail": {
+    "use": "立即使用",
+    "createFrom": "基于此创建"
+  },
+  "my": {
+    "title": "我的应用",
+    "emptyTitle": "还没有创建应用",
+    "emptyHint": "用一句自然语言，让 AI 帮你生成第一个应用"
+  },
+  "create": {
+    "title": "AI 创建应用",
+    "plan": "生成方案",
+    "generate": "直接生成",
+    "publish": "发布到我的应用",
+    "published": "已发布！应用已保存到「我的应用」。"
+  }
+}

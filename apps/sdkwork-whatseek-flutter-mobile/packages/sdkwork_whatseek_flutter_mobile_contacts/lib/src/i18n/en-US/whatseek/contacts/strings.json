@@ -1,0 +1,9 @@
+{
+  "home": {
+    "title": "Contacts"
+  },
+  "detail": {
+    "company": "Company",
+    "sendMessage": "Message"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "state": {
+    "loading": "Loading…",
+    "empty": "Nothing here yet",
+    "error": "Something went wrong",
+    "permissionDenied": "Permission denied",
+    "retry": "Retry"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "home": {
+    "title": "通讯录"
+  },
+  "detail": {
+    "company": "公司",
+    "sendMessage": "发消息"
+  }
+}

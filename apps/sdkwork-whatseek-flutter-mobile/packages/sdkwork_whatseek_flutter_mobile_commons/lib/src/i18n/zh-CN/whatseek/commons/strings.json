@@ -1,0 +1,9 @@
+{
+  "state": {
+    "loading": "加载中…",
+    "empty": "这里还空空如也",
+    "error": "出错了",
+    "permissionDenied": "没有权限",
+    "retry": "重试"
+  }
+}
