@@ -32,9 +32,9 @@ trace:
 
 1. `pnpm typecheck` 0 errors and `pnpm -r test` all suites green (common 41, H5, PC, profile/shell/contacts/messages).
 2. `pnpm build:h5:prod` and `pnpm build:pc:prod` PASS via the canonical browser build runner.
-3. Mini-program: `tsc` 0 errors, runtime bundle builds for standalone.production, contract suite 8/8 (manifest + 13-route page projection, page quads, facade + error-state coverage, dark-mode theme wiring, runtime freshness, wx host-adapter boundary, route ids, i18n key parity).
+3. Mini-program: `tsc` 0 errors, runtime bundle builds for standalone.production, test suite 22/22 — 9 contract tests (manifest + 13-route page projection, page quads, facade + error-state coverage, dark-mode theme wiring, runtime freshness, wx host-adapter boundary, route ids, i18n key parity) plus 13 page-behavior smoke tests that drive the real native page modules against the real bundled runtime in a simulated WeChat host (loads, states, navigation, favorite/publish/delete/send/task flows, validation and pull-down refresh).
 4. Flutter: `flutter analyze` No issues found, `flutter test` all green (33 tests) including the cross-surface route alignment test with a builder for every one of the 13 route ids, i18n layout compliance, settings screen, and the runner permission-denied state.
-5. Desktop: `cargo build` produces `sdkwork-whatseek-pc-tauri.exe`; smoke test launches and terminates.
+5. Desktop: `pnpm build:desktop` (PC prod bundle + `cargo build --release`) produces the self-contained `sdkwork-whatseek-pc-tauri.exe`; smoke test launches and terminates.
 6. `pnpm check` (12 sdkwork-specs validators) green.
 
 ## Commercial-Delivery Closeout (2026-10-02)

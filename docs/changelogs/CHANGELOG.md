@@ -5,6 +5,23 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — Mini-program page-behavior smoke + desktop release build
+
+- **Mini-program**: new 13-test behavior suite (`tests/mini-program-page-behavior.test.mjs`)
+  loads the real native page modules against the real bundled runtime inside a
+  simulated WeChat host (`Page()`/`wx.*` stubs, CJS copy of `src/` under the OS
+  temp dir) and drives every page's lifecycle and interactions: loads and
+  states, search/empty, runner success + enterprise visitor denial, real
+  favorite toggle, create→publish flow with validation, my-apps labels +
+  confirmed delete, contact detail → direct conversation, thread send,
+  contacts search filtering, profile summary + entries, task chip resolution,
+  and locale switching. Surface suite is now 22 tests (9 contract + 13
+  behavior); test script runs both files.
+- **Desktop**: `pnpm build:desktop` verified end-to-end (PC standalone.production
+  bundle + `cargo build --release` → self-contained `sdkwork-whatseek-pc-tauri.exe`).
+- Verification: root check/typecheck/test green, H5 + PC prod builds PASS,
+  mini-program prod build + 22/22, `flutter analyze` 0 issues + 33/33.
+
 ### 2026-10-03 — Spec hardening + rendered-surface visual acceptance
 
 - **Mini-program** (APP_MINI_PROGRAM_UI_SPEC §7): pull-down refresh wired on
