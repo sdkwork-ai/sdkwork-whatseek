@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "sdkwork_whatseek_flutter_mobile_apps",
+    "displayName": "WhatSeek Flutter Mobile apps",
+    "version": "0.1.0",
+    "type": "dart-package",
+    "root": "apps/sdkwork-whatseek-flutter-mobile/packages/sdkwork_whatseek_flutter_mobile_apps",
+    "domain": "whatseek",
+    "capability": "apps",
+    "surface": "app",
+    "languages": [
+      "dart"
+    ],
+    "generated": false,
+    "manifests": [
+      "pubspec.yaml"
+    ]
+  },
+  "canonicalSpecs": [
+    {
+      "file": "CODE_STYLE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md",
+      "purpose": "Cross-language code style authority."
+    },
+    {
+      "file": "NAMING_SPEC.md",
+      "path": "../../../../../sdkwork-specs/NAMING_SPEC.md",
+      "purpose": "Dart package naming lattice."
+    },
+    {
+      "file": "DART_CODE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/DART_CODE_SPEC.md",
+      "purpose": "Dart language standard."
+    },
+    {
+      "file": "FLUTTER_APP_MOBILE_ARCHITECTURE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/FLUTTER_APP_MOBILE_ARCHITECTURE_SPEC.md",
+      "purpose": "Flutter mobile architecture authority."
+    },
+    {
+      "file": "APP_FLUTTER_UI_SPEC.md",
+      "path": "../../../../../sdkwork-specs/APP_FLUTTER_UI_SPEC.md",
+      "purpose": "Flutter UI standard."
+    }
+  ],
+  "contracts": {
+    "layerRole": "frontend-feature",
+    "publicExports": [
+      "lib/sdkwork_whatseek_flutter_mobile_apps.dart"
+    ],
+    "providedPorts": [],
+    "requiredPorts": [
+      {
+        "name": "whatseekRuntime",
+        "provider": "sdkwork_whatseek_flutter_mobile_core",
+        "export": "."
+      }
+    ],
+    "runtimeEntrypoints": [
+      "pubspec.yaml"
+    ],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "permissionComposition": {},
+    "dependencyApiExports": [],
+    "dependencyApiSurfaces": [],
+    "events": [],
+    "configKeys": []
+  },
+  "verification": {
+    "commands": [
+      "flutter analyze",
+      "flutter test"
+    ]
+  }
+}

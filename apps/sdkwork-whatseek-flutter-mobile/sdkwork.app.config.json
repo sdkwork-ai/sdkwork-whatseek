@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 3,
+  "kind": "sdkwork.app",
+  "app": {
+    "key": "sdkwork-whatseek-flutter-mobile",
+    "name": "WhatSeek Flutter Mobile",
+    "displayName": "问寻 WhatSeek",
+    "description": "WhatSeek (问寻) AI-native super app Flutter mobile client for iOS and Android.",
+    "vendor": "SDKWork",
+    "appType": "APP_FLUTTER",
+    "versionSource": "pubspec.yaml",
+    "identifiers": {
+      "packageName": "com.sdkwork.whatseek",
+      "bundleId": "com.sdkwork.whatseek"
+    }
+  },
+  "backend": {
+    "profileKey": "backend-root-admin",
+    "ownerMode": "tenant",
+    "grantMode": "current",
+    "platform": "APP",
+    "appId": "sdkwork-whatseek-flutter-mobile",
+    "organizationId": "0",
+    "tenantId": "100001",
+    "accessTokenPermissionScope": [
+      "iam:self"
+    ]
+  },
+  "runtime": {
+    "family": "mobile",
+    "framework": "flutter",
+    "runtimes": [
+      "APP_IOS",
+      "APP_ANDROID"
+    ],
+    "deliveryModes": [
+      "APP_STORE",
+      "APK"
+    ],
+    "defaultPlatform": "APP_ANDROID",
+    "defaultArchitecture": "universal",
+    "supportedDeploymentProfiles": [
+      "standalone"
+    ],
+    "defaultDeploymentProfile": "standalone"
+  },
+  "media": {
+    "icons": {
+      "primary": {
+        "id": "sdkwork-whatseek-flutter-primary-icon",
+        "type": "ICON",
+        "purpose": "PRIMARY",
+        "platform": "APP",
+        "format": "PNG",
+        "width": 1024,
+        "height": 1024,
+        "enabled": true,
+        "url": "https://cdn.sdkwork.com/apps/sdkwork-whatseek/assets/icon-1024.png",
+        "metadata": {
+          "generatedPlaceholder": true
+        }
+      },
+      "platform": []
+    },
+    "screenshots": [],
+    "previews": []
+  },
+  "publish": {
+    "status": "DRAFT",
+    "platforms": [
+      "APP_IOS",
+      "APP_ANDROID"
+    ],
+    "installPlatforms": [
+      "APP_IOS",
+      "APP_ANDROID"
+    ],
+    "installSkill": false
+  },
+  "artifacts": {
+    "installConfig": {
+      "packages": []
+    }
+  },
+  "release": {
+    "currentVersion": "0.1.0",
+    "defaultChannel": "BETA",
+    "latest": {
+      "BETA": "0.1.0"
+    },
+    "notes": [
+      {
+        "version": "0.1.0",
+        "channel": "BETA",
+        "current": true,
+        "packageIds": []
+      }
+    ]
+  },
+  "security": {
+    "checksumRequired": true,
+    "signatureRequired": true,
+    "sbomRequired": true
+  },
+  "devApp": {
+    "sourceRoot": "apps/sdkwork-whatseek-flutter-mobile",
+    "build": {
+      "targets": [
+        "flutter-android"
+      ]
+    }
+  },
+  "metadata": {
+    "domain": "whatseek",
+    "capability": "super-app",
+    "standardOwner": "sdkwork-whatseek",
+    "deploymentConfig": "etc/sdkwork.deployment.config.json"
+  }
+}

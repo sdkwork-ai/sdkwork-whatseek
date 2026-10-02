@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart' hide WhatseekApp;
-
 import 'app.dart';
+import 'bootstrap/runtime.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // The standalone milestone boots the in-memory mock runtime directly;
-  // Phase 2 binds generated SDK clients to the platform host adapters here.
-  WhatseekRuntime.instance;
+  // One-time bootstrap: dart-define environment identity, platform host
+  // adapters, IAM visitor session, and the mock SDK client family.
+  // Phase 2 swaps the client family for generated SDK clients here.
+  WhatseekBootstrap.bootstrap();
   runApp(const WhatseekApp());
 }

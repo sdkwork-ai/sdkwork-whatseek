@@ -8,7 +8,12 @@ import 'package:sdkwork_whatseek_flutter_mobile_messages/sdkwork_whatseek_flutte
 import 'package:sdkwork_whatseek_flutter_mobile_profile/sdkwork_whatseek_flutter_mobile_profile.dart';
 import 'package:sdkwork_whatseek_flutter_mobile_shell/sdkwork_whatseek_flutter_mobile_shell.dart';
 
-/// Root application widget (PRD §54): five bottom tabs, chat first.
+import 'auth_gate.dart';
+import 'bootstrap/routes.dart';
+
+/// Root application widget (PRD §54): five bottom tabs, chat first. Detail
+/// routes are composed in `bootstrap/routes.dart` — single owner for route
+/// composition.
 class WhatseekApp extends StatefulWidget {
   const WhatseekApp({super.key});
 
@@ -42,94 +47,33 @@ class _WhatseekAppState extends State<WhatseekApp> {
   static Widget _buildProfile(BuildContext context) => const ProfileHomeScreen();
 
   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
-    // Named routes use the cross-surface route ids; the tab roots are handled
-    // by the shell, detail screens by the builders below.
-    switch (settings.name) {
-      case 'app.whatseek.apps.detail':
-        final appId = settings.arguments as String;
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (context) => AppDetailScreen(appId: appId),
-        );
-      case 'app.whatseek.apps.runner':
-        final appId = settings.arguments as String;
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (context) => _RunnerScreen(appId: appId),
-        );
-      case 'app.whatseek.apps.my':
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (context) => const MyAppsScreen(),
-        );
-      case 'app.whatseek.apps.create':
-        final requirement = settings.arguments as String? ?? '';
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (context) => AppCreateScreen(initialRequirement: requirement),
-        );
-      case 'app.whatseek.contacts.detail':
-        final contactId = settings.arguments as String;
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (context) => ContactDetailScreen(contactId: contactId),
-        );
-      case 'app.whatseek.messages.conversation':
-        final conversationId = settings.arguments as String;
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (context) => ConversationScreen(conversationId: conversationId),
-        );
-      default:
-        return null;
+    final builders = whatseekDetailRoutes();
+    final builder = builders[settings.name];
+    if (builder == null) {
+      return null;
     }
+    return MaterialPageRoute<void>(settings: settings, builder: builder);
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'WhatSeek 问寻',
-      theme: ThemeData(colorSchemeSeed: const Color(0xFF2563EB), useMaterial3: true),
-      onGenerateRoute: _onGenerateRoute,
-      home: WhatseekShell(
-        destinations: _destinations,
-        currentIndex: _currentIndex,
-        onDestinationSelected: (index) => setState(() {
-          _currentIndex = index;
-        }),
-        child: IndexedStack(
-          index: _currentIndex,
-          children: [
-            for (final route in kTabRootRoutes)
-              _tabBuilders[route.id]!(context),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// In-app app runner preview (PRD 应用调用). Phase 1 renders a mock preview.
-class _RunnerScreen extends StatelessWidget {
-  const _RunnerScreen({required this.appId});
-
-  final String appId;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('运行应用')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('🧩', style: Theme.of(context).textTheme.displayLarge),
-            const SizedBox(height: 12),
-            const Text('应用运行预览'),
-            const SizedBox(height: 4),
-            Text('正式版将在云端沙箱中运行真实应用。',
-                style: Theme.of(context).textTheme.bodySmall),
-          ],
+    return AuthGate(
+      child: MaterialApp(
+        title: 'WhatSeek 问寻',
+        theme: ThemeData(colorSchemeSeed: const Color(0xFF2563EB), useMaterial3: true),
+        onGenerateRoute: _onGenerateRoute,
+        home: WhatseekShell(
+          destinations: _destinations,
+          currentIndex: _currentIndex,
+          onDestinationSelected: (index) => setState(() {
+            _currentIndex = index;
+          }),
+          child: IndexedStack(
+            index: _currentIndex,
+            children: [
+              for (final route in kTabRootRoutes) _tabBuilders[route.id]!(context),
+            ],
+          ),
         ),
       ),
     );
