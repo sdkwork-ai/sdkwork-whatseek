@@ -42,6 +42,25 @@ export function ChatHomeScreen() {
   }, [entries.length, sending]);
 
   useEffect(() => {
+    // Reconcile chip states after a reload: activeTaskStates is runtime-only,
+    // so restored threads would render every chip as pending (PRD §41 states
+    // must survive a remount — parked waiting tasks re-expose their actions).
+    for (const entry of entries) {
+      if (entry.taskId === undefined || activeTaskStates[entry.taskId] !== undefined) {
+        continue;
+      }
+      void getWhatseekClient('tasks')
+        .getTask(entry.taskId)
+        .then((task) => {
+          if (task !== null) {
+            useChatStore.getState().setTaskState(task.id, task.state);
+          }
+        })
+        .catch(() => undefined);
+    }
+  }, [entries, activeTaskStates]);
+
+  useEffect(() => {
     void messagesPort.getUnreadTotal().then(setUnreadMessages).catch(() => undefined);
   }, [messagesPort, setUnreadMessages, entries.length]);
 
@@ -49,6 +68,28 @@ export function ChatHomeScreen() {
 
   const handleError = () => {
     setError(true);
+  };
+
+  const runTaskResolution = (taskId: string, kind: 'confirm_task' | 'cancel_task') => {
+    void (async () => {
+      try {
+        const outcome = await chat.runCardAction({ kind, taskId });
+        const task = await getWhatseekClient('tasks').getTask(taskId);
+        if (task !== null) {
+          useChatStore.getState().setTaskState(task.id, task.state);
+        }
+        useChatStore.getState().addAssistantEntry({
+          text: outcome.message,
+          taskId: outcome.taskId,
+        });
+        if (task?.state === 'completed' || task?.state === 'cancelled' || task?.state === 'expired') {
+          const total = await messagesPort.getUnreadTotal();
+          setUnreadMessages(total);
+        }
+      } catch {
+        handleError();
+      }
+    })();
   };
 
   if (error) {
@@ -100,7 +141,23 @@ export function ChatHomeScreen() {
                   {entry.role === 'assistant' ? t(entry.text, { defaultValue: entry.text, ...entry.params }) : entry.text}
                 </div>
                 {entry.taskId !== undefined ? (
-                  <TaskChip state={activeTaskStates[entry.taskId] ?? 'pending'} />
+                  <TaskChip
+                    state={activeTaskStates[entry.taskId] ?? 'pending'}
+                    onConfirm={
+                      activeTaskStates[entry.taskId] === 'waiting_confirmation'
+                        ? () => {
+                            void runTaskResolution(entry.taskId ?? '', 'confirm_task');
+                          }
+                        : undefined
+                    }
+                    onCancel={
+                      activeTaskStates[entry.taskId] === 'waiting_confirmation'
+                        ? () => {
+                            void runTaskResolution(entry.taskId ?? '', 'cancel_task');
+                          }
+                        : undefined
+                    }
+                  />
                 ) : null}
                 {entry.cards !== undefined && entry.cards.length > 0 ? (
                   <ChatCardView

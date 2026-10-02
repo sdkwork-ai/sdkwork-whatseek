@@ -65,6 +65,13 @@
     },
     "task": {
       "accepted": "收到！任务已开始，完成后我会通知你。"
-    }
+    },
+    "actionTaskConfirmed": "任务已完成，结果已同步到「消息」。",
+    "actionTaskCancelled": "任务已取消。",
+    "actionTaskInactive": "该任务已不在待确认状态。"
+  },
+  "taskAction": {
+    "confirm": "确认完成",
+    "cancel": "取消任务"
   }
 }

@@ -1,7 +1,8 @@
 /**
  * Mock AI task store (PRD §41 task states). The chat client drives
- * Pending → Running → (Waiting Confirmation) → Completed transitions through
- * an injectable scheduler; failed paths surface Failed/Cancelled.
+ * Pending → Running → Waiting Confirmation transitions through an injectable
+ * scheduler; the user's confirm/cancel card actions (or lazy expiry of an
+ * abandoned waiting task) resolve the terminal state.
  */
 
 import type { WhatseekTask } from '../types.js';
@@ -14,6 +15,9 @@ interface Storage {
 }
 
 const TASKS_KEY = 'whatseek.tasks';
+
+/** Default idle time a waiting_confirmation task survives before expiring. */
+const DEFAULT_WAITING_EXPIRY_MS = 5 * 60 * 1000;
 
 function defaultStorage(): Storage | null {
   try {
@@ -39,11 +43,14 @@ function readTasks(storage: Storage | null): WhatseekTask[] {
 export interface MockTasksClientOptions {
   storage?: Storage | null;
   now?: () => Date;
+  /** Idle time in ms after which a waiting_confirmation task expires (default 5 min). */
+  waitingExpiryMs?: number;
 }
 
 export function createMockTasksClient(options: MockTasksClientOptions = {}): TasksPort {
   const storage = options.storage === undefined ? defaultStorage() : options.storage;
   const now = options.now ?? (() => new Date());
+  const waitingExpiryMs = options.waitingExpiryMs ?? DEFAULT_WAITING_EXPIRY_MS;
   let tasks: WhatseekTask[] = readTasks(storage);
 
   const persist = () => {
@@ -54,6 +61,29 @@ export function createMockTasksClient(options: MockTasksClientOptions = {}): Tas
         /* storage unavailable */
       }
     }
+  };
+
+  // Lazy expiry on read: an abandoned waiting_confirmation task is expired
+  // the next time anyone looks at it (PRD §41 异常态 Expired without a
+  // server-side scheduler).
+  const expireStale = (): boolean => {
+    const cutoff = now().getTime() - waitingExpiryMs;
+    let changed = false;
+    tasks = tasks.map((task) => {
+      if (task.state !== 'waiting_confirmation') {
+        return task;
+      }
+      const updatedAt = Date.parse(task.updatedAt);
+      if (!Number.isNaN(updatedAt) && updatedAt <= cutoff) {
+        changed = true;
+        return { ...task, state: 'expired', updatedAt: now().toISOString() };
+      }
+      return task;
+    });
+    if (changed) {
+      persist();
+    }
+    return changed;
   };
 
   return {
@@ -87,9 +117,11 @@ export function createMockTasksClient(options: MockTasksClientOptions = {}): Tas
       return updated;
     },
     async getTask(taskId) {
+      expireStale();
       return tasks.find((task) => task.id === taskId) ?? null;
     },
     async listTasks() {
+      expireStale();
       return [...tasks];
     },
   };

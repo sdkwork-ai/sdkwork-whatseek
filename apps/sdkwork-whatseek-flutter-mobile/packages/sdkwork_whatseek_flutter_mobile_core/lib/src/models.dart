@@ -270,10 +270,14 @@ class ChatReply {
 /// Serializable result of a card action; [messageKey] is an i18n key
 /// (`whatseek.chat.reply.action.*`) translated by the chat screen.
 class ChatActionOutcome {
-  const ChatActionOutcome({required this.messageKey, this.params = const {}});
+  const ChatActionOutcome({required this.messageKey, this.params = const {}, this.taskId});
 
   final String messageKey;
   final Map<String, Object?> params;
+
+  /// Task started/resolved by the action — rendered as a state chip on the
+  /// outcome bubble (H5 parity).
+  final String? taskId;
 }
 
 class SessionUser {

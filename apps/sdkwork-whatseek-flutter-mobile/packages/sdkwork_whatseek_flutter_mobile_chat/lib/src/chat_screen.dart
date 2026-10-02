@@ -94,6 +94,32 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  /// Confirms or cancels a parked waiting_confirmation task (PRD §41):
+  /// runs the card action, appends the localized outcome bubble, and
+  /// re-reads the task so the chip reflects the terminal state.
+  Future<void> _resolveTask(String taskId, String kind) async {
+    final runtime = WhatseekRuntime.instance;
+    final outcome = await runtime.chat.runCardAction({
+      'kind': kind,
+      'taskId': taskId,
+    });
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _entries.add(ChatEntry(
+        role: 'assistant',
+        text: outcome.messageKey,
+        params: outcome.params,
+        taskId: outcome.taskId,
+      ));
+    });
+    await _refreshTask(taskId);
+    if (outcome.taskId != null && outcome.taskId != taskId) {
+      await _refreshTask(outcome.taskId!);
+    }
+  }
+
   Future<void> _runAction(BuildContext context, ChatCard card) async {
     final runtime = WhatseekRuntime.instance;
     final outcome = switch (card.type) {
@@ -223,13 +249,38 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Compact AI task state chip (PRD §41): seven-state label from the chat
-  /// fragment (`task.*`), tap re-reads the task (H5 `TaskChip` parity).
+  /// fragment (`task.*`), tap re-reads the task (H5 `TaskChip` parity). A
+  /// parked waiting_confirmation task exposes confirm/cancel actions.
   Widget _buildTaskChip(BuildContext context, String taskId) {
     final state = _taskStates[taskId] ?? TaskState.pending;
-    return ActionChip(
+    final chip = ActionChip(
       label: Text(WhatseekChatStrings.of(context, state.labelKey)),
       visualDensity: VisualDensity.compact,
       onPressed: () => _refreshTask(taskId),
+    );
+    if (state != TaskState.waitingConfirmation) {
+      return chip;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        chip,
+        const SizedBox(height: 4),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FilledButton.tonal(
+              onPressed: () => _resolveTask(taskId, 'confirm_task'),
+              child: Text(WhatseekChatStrings.of(context, 'taskAction.confirm')),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              onPressed: () => _resolveTask(taskId, 'cancel_task'),
+              child: Text(WhatseekChatStrings.of(context, 'taskAction.cancel')),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

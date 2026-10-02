@@ -71,7 +71,9 @@ export type ChatCardAction =
   | { kind: 'create_from_app'; appId: string }
   | { kind: 'generate_app'; requirement: string; modules: readonly string[] }
   | { kind: 'confirm_send_message'; contactId: string; contactName: string; draft: string }
-  | { kind: 'open_contact'; contactId: string };
+  | { kind: 'open_contact'; contactId: string }
+  | { kind: 'confirm_task'; taskId: string }
+  | { kind: 'cancel_task'; taskId: string };
 
 export interface ChatActionOutcome {
   /** i18n key describing the action result (`whatseek.chat.reply.action.*`). */

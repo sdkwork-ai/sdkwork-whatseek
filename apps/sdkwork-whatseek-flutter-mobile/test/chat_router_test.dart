@@ -85,6 +85,72 @@ void main() {
     expect(after.length, equals(2));
   });
 
+  test('send_message_draft_extracts_the_body_after_告诉他说', () async {
+    final runtime = WhatseekRuntime();
+    final reply = await runtime.chat.handleSend('给张三发消息，告诉他下午三点开会');
+    expect(reply.cards.first.draft, equals('下午三点开会'));
+  });
+
+  test('agent_dispatch_routes_to_the_agent_roster', () async {
+    final runtime = WhatseekRuntime();
+    final search = await runtime.chat.handleSend('找一个电商选品智能体');
+    expect(search.text, equals('whatseek.chat.reply.searchAgent.found'));
+    expect(search.cards.first.type, equals('contact_results'));
+
+    final dispatch = await runtime.chat.handleSend('让智能体帮我整理日报');
+    expect(dispatch.text, equals('whatseek.chat.reply.useAgent.found'));
+    expect(dispatch.cards.first.contacts.map((contact) => contact.kind),
+        everyElement(isNot(equals(ContactKind.person))));
+  });
+
+  test('create_agent_recommends_the_existing_roster_honestly', () async {
+    final runtime = WhatseekRuntime();
+    final reply = await runtime.chat.handleSend('帮我创建一个选品智能体');
+    expect(reply.text, equals('whatseek.chat.reply.createAgent.recommend'));
+    expect(reply.cards.first.contacts, isNotEmpty);
+  });
+
+  test('content_task_parks_at_waiting_confirmation_and_resolves_by_user_action',
+      () async {
+    final runtime = WhatseekRuntime();
+    final reply = await runtime.chat.handleSend('帮我做一张商品海报');
+    expect(reply.text, equals('whatseek.chat.reply.task.accepted'));
+    expect(reply.taskId, isNotNull);
+
+    final parked = await runtime.tasks.getTask(reply.taskId!);
+    expect(parked, isNotNull);
+    expect(parked!.state, equals(TaskState.waitingConfirmation));
+
+    // Cancel lands a localized cancellation event in the message center.
+    final outcome =
+        await runtime.chat.runCardAction({'kind': 'cancel_task', 'taskId': reply.taskId!});
+    expect(outcome.messageKey, equals('whatseek.chat.reply.actionTaskCancelled'));
+    final cancelled = await runtime.tasks.getTask(reply.taskId!);
+    expect(cancelled!.state, equals(TaskState.cancelled));
+    final conversations = await runtime.messages.listConversations();
+    expect(
+      conversations.where((conversation) => conversation.taskId == reply.taskId),
+      isNotEmpty,
+    );
+
+    // A stale confirm on the cancelled task is honestly inactive.
+    final stale =
+        await runtime.chat.runCardAction({'kind': 'confirm_task', 'taskId': reply.taskId!});
+    expect(stale.messageKey, equals('whatseek.chat.reply.actionTaskInactive'));
+  });
+
+  test('confirm_completes_the_parked_task_with_a_result_summary', () async {
+    final runtime = WhatseekRuntime();
+    final reply = await runtime.chat.handleSend('执行库存盘点自动化');
+    final outcome =
+        await runtime.chat.runCardAction({'kind': 'confirm_task', 'taskId': reply.taskId!});
+    expect(outcome.messageKey, equals('whatseek.chat.reply.actionTaskConfirmed'));
+    expect(outcome.taskId, equals(reply.taskId));
+    final completed = await runtime.tasks.getTask(reply.taskId!);
+    expect(completed!.state, equals(TaskState.completed));
+    expect(completed.resultSummary, equals('执行库存盘点自动化'));
+  });
+
   test('openApp_serves_catalog_apps_and_records_recent', () async {
     final apps = MockAppsClient();
     final app = await apps.openApp('clip-master');

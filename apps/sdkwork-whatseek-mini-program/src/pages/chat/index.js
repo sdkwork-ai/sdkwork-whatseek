@@ -70,23 +70,42 @@ Page({
     }
   },
 
-  async onTaskTap(event) {
-    const entryindex = Number(event.currentTarget.dataset.entryindex);
+  async onTaskAction(event) {
+    const { kind, entryindex } = event.currentTarget.dataset;
+    const entry = this.data.entries[Number(entryindex)];
+    if (!entry || !entry.taskId) return;
+    const action = kind === 'confirm' ? { kind: 'confirm_task', taskId: entry.taskId } : { kind: 'cancel_task', taskId: entry.taskId };
+    try {
+      const message = await appApi.chat.runAction(action);
+      this.setData({
+        entries: [...this.data.entries, { role: 'assistant', text: message }],
+      });
+      await this.refreshTaskState(Number(entryindex));
+    } catch (error) {
+      appApi.shell.toast('操作失败，请重试');
+    }
+  },
+
+  async refreshTaskState(entryindex) {
     const entry = this.data.entries[entryindex];
     if (!entry || !entry.taskId) return;
     try {
       const task = await appApi.chat.taskStatus(entry.taskId);
       if (task === null) {
-        appApi.shell.toast('任务不存在');
         return;
       }
       const label = appApi.shell.taskStateLabel(task.state);
       this.setData({
         [`entries[${entryindex}].taskState`]: task.resultSummary ? `${label} · ${task.resultSummary}` : label,
+        [`entries[${entryindex}].taskWaiting`]: task.state === 'waiting_confirmation',
       });
     } catch (error) {
       appApi.shell.toast('任务状态获取失败');
     }
+  },
+
+  async onTaskTap(event) {
+    await this.refreshTaskState(Number(event.currentTarget.dataset.entryindex));
   },
 
   onContactTap(event) {

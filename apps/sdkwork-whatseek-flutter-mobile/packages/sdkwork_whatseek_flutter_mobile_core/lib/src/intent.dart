@@ -40,6 +40,13 @@ final List<_IntentRule> _rules = [
     RegExp(r'(?:创建|做一个|做个|生成|开发|搭)(?:一个|个)?[\s\S]{0,20}(agent|智能体|数字员工|自动化助手)',
         caseSensitive: false),
   ], 0.9),
+  // USE_AGENT must precede SEARCH_AGENT: SEARCH_AGENT's bare-term branch
+  // would otherwise swallow 派/让/用 + agent utterances (PRD §10.2).
+  _IntentRule('USE_AGENT', [
+    RegExp(r'(?:让|派|用)(?:一个|个|这个|那个)?[\s\S]{0,12}(?:agent|智能体|数字员工|AI 助手)(?:帮我|来|去)?',
+        caseSensitive: false),
+    RegExp(r'(?:帮我用|派个)(?:agent|智能体|数字员工)', caseSensitive: false),
+  ], 0.8),
   _IntentRule('SEARCH_AGENT', [
     RegExp(r'((?:找|找一个|找个|推荐)(?:一个)?[\s\S]{0,16}(?:agent|智能体|数字员工))|(agent|智能体)',
         caseSensitive: false),

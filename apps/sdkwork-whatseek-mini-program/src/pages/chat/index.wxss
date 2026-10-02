@@ -15,8 +15,12 @@
 .app-main { flex: 1; min-width: 0; }
 .app-reason { font-size: 20rpx; color: var(--sdk-color-brand); margin-top: 6rpx; }
 .app-use { font-size: 24rpx; color: #fff; background: var(--sdk-color-brand); border-radius: 999rpx; padding: 8rpx 24rpx; }
-.task-chip-row { display: flex; margin: 8rpx 24rpx 0; }
+.task-chip-row { display: flex; align-items: center; margin: 8rpx 24rpx 0; }
 .task-chip-row .chip { color: var(--sdk-color-brand); }
+.task-actions { display: flex; gap: 12rpx; margin-left: 16rpx; }
+.task-action { font-size: 22rpx; border-radius: 999rpx; padding: 0 24rpx; line-height: 2.2; }
+.task-action-confirm { background: var(--sdk-color-brand); color: #fff; }
+.task-action-cancel { background: var(--sdk-color-surface-panel); color: var(--sdk-color-text-secondary); border: 1rpx solid var(--sdk-color-border-default); }
 .commerce-price { font-size: 26rpx; font-weight: 600; color: var(--sdk-color-brand); }
 .composer { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 16rpx; padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom)); background: var(--sdk-color-surface-panel); border-top: 1rpx solid var(--sdk-color-border-subtle); }
 .composer-input { flex: 1; background: var(--sdk-color-surface-canvas); border-radius: 999rpx; padding: 16rpx 28rpx; font-size: 28rpx; }

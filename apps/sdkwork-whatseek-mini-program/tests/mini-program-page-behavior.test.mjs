@@ -330,6 +330,30 @@ test('chat_send_creates_a_task_chip_that_resolves_state', async () => {
   );
 });
 
+test('chat_parks_the_task_at_waiting_confirmation_and_resolves_by_user_cancel_or_confirm', async () => {
+  const page = loadPage('pages/chat');
+  page.setData({ input: '帮我做一张活动海报' });
+  await settle(page.onSend());
+  const assistant = page.data.entries[1];
+  assert.ok(assistant.taskId, 'content intent must return a task id');
+
+  // The chain runs pending → running → waiting_confirmation on the runtime
+  // scheduler (2 × 600ms steps), then parks for the user.
+  await new Promise((resolve) => setTimeout(resolve, 1600));
+  await settle(page.onTaskTap({ currentTarget: { dataset: { entryindex: '1' } } }));
+  assert.equal(page.data.entries[1].taskWaiting, true, 'parked task must expose the confirm/cancel actions');
+
+  // Cancel resolves the task and lands a localized outcome bubble.
+  await settle(page.onTaskAction({ currentTarget: { dataset: { kind: 'cancel', entryindex: '1' } } }));
+  assert.equal(page.data.entries[1].taskWaiting, false, 'resolved task must drop the actions');
+  assert.equal(page.data.entries[1].taskState, '已取消');
+  assert.equal(page.data.entries[2].text, '任务已取消。');
+
+  // A stale confirm on the cancelled task reports inactivity honestly.
+  await settle(page.onTaskAction({ currentTarget: { dataset: { kind: 'confirm', entryindex: '1' } } }));
+  assert.equal(page.data.entries[3].text, '该任务已不在待确认状态。');
+});
+
 test('settings_reflects_appearance_and_switches_locale_both_ways', async () => {
   const page = loadPage('detail/settings');
   await settle(page.onLoad());

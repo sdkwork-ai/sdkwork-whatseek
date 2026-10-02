@@ -933,12 +933,18 @@ function createMockMessagesClient(options = {}) {
       const conversationId = `conv-task-${task.id}`;
       const existing = state.conversations.find((conversation) => conversation.id === conversationId);
       const content = task.resultSummary ?? task.title;
+      const outcomeKey = task.state === "cancelled" ? "cancelled" : task.state === "expired" ? "expired" : "completed";
+      const outcomeCopy = {
+        completed: "\u5DF2\u5B8C\u6210\u3002",
+        cancelled: "\u5DF2\u53D6\u6D88\u3002",
+        expired: "\u5DF2\u8FC7\u671F\u3002"
+      };
       const message = {
-        id: `m-${task.id}`,
+        id: `m-${task.id}-${outcomeKey}`,
         conversationId,
         senderId: "task",
         senderName: "\u95EE\u5BFB AI",
-        content: `\u300C${content}\u300D\u5DF2\u5B8C\u6210\u3002`,
+        content: `\u300C${content}\u300D${outcomeCopy[outcomeKey]}`,
         sentAt: now().toISOString(),
         kind: "task"
       };
@@ -1242,9 +1248,7 @@ ${draft}`);
         case "EDIT_CONTENT": {
           const task = await deps.tasks.createTask({ title: text.trim(), intent: intent.intent });
           void schedule(() => {
-            void deps.tasks.updateTaskState(task.id, "running").then(() => delay(taskStepMs)).then(() => deps.tasks.updateTaskState(task.id, "waiting_confirmation")).then(() => delay(taskStepMs)).then(() => deps.tasks.updateTaskState(task.id, "completed", text.trim())).then((completed) => {
-              void deps.messages.postTaskNotification(completed);
-            }).catch(() => void 0);
+            void deps.tasks.updateTaskState(task.id, "running").then(() => delay(taskStepMs)).then(() => deps.tasks.updateTaskState(task.id, "waiting_confirmation")).catch(() => void 0);
           }, taskStepMs);
           return {
             contentKey: "whatseek.chat.reply.task.accepted",
@@ -1331,6 +1335,30 @@ ${draft}`);
             taskId: task.id
           };
         }
+        case "confirm_task": {
+          const task = await deps.tasks.getTask(action.taskId);
+          if (task === null || task.state !== "waiting_confirmation") {
+            return { message: "whatseek.chat.reply.action.taskInactive", taskId: action.taskId };
+          }
+          const completed = await deps.tasks.updateTaskState(task.id, "completed", task.title);
+          await deps.messages.postTaskNotification(completed);
+          return {
+            message: "whatseek.chat.reply.action.taskConfirmed",
+            taskId: task.id
+          };
+        }
+        case "cancel_task": {
+          const task = await deps.tasks.getTask(action.taskId);
+          if (task === null || task.state !== "waiting_confirmation") {
+            return { message: "whatseek.chat.reply.action.taskInactive", taskId: action.taskId };
+          }
+          const cancelled = await deps.tasks.updateTaskState(task.id, "cancelled");
+          await deps.messages.postTaskNotification(cancelled);
+          return {
+            message: "whatseek.chat.reply.action.taskCancelled",
+            taskId: task.id
+          };
+        }
         case "use_app":
         case "create_from_app":
         case "open_contact":
@@ -1358,7 +1386,7 @@ var init_chatClient = __esm({
       ],
       supplier: [
         { id: "s-1", title: "\u4E0A\u6D77\u9526\u88F3\u670D\u9970\u6709\u9650\u516C\u53F8", subtitle: "T \u6064/\u536B\u8863 \xB7 \u652F\u6301\u5B9A\u5236 \xB7 7 \u5929\u6253\u6837", priceLabel: "\u8D77\u8BA2 \xA520 \u4EE5\u5185" },
-        { id: "s-2", title: "\u5E7F\u5DDE\u4F70 clothes \u5236\u8863\u5382", subtitle: "\u8DE8\u5883\u5FEB\u8FD4 \xB7 1000 \u4EF6\u8D77 \xB7 SGS \u8BA4\u8BC1", priceLabel: "\xA511 \u8D77/\u4EF6" },
+        { id: "s-2", title: "\u5E7F\u5DDE\u4F70\u88F3\u5236\u8863\u5382", subtitle: "\u8DE8\u5883\u5FEB\u8FD4 \xB7 1000 \u4EF6\u8D77 \xB7 SGS \u8BA4\u8BC1", priceLabel: "\xA511 \u8D77/\u4EF6" },
         { id: "s-3", title: "\u4E49\u4E4C\u5E02\u7693\u701A\u670D\u9970", subtitle: "\u73B0\u8D27\u6DF7\u6279 \xB7 \u4E00\u4EF6\u4EE3\u53D1", priceLabel: "\xA59.9 \u8D77/\u4EF6" }
       ],
       service: [
@@ -1393,6 +1421,7 @@ function readTasks(storage) {
 function createMockTasksClient(options = {}) {
   const storage = options.storage === void 0 ? defaultStorage4() : options.storage;
   const now = options.now ?? (() => /* @__PURE__ */ new Date());
+  const waitingExpiryMs = options.waitingExpiryMs ?? DEFAULT_WAITING_EXPIRY_MS;
   let tasks = readTasks(storage);
   const persist = () => {
     if (storage !== null) {
@@ -1401,6 +1430,25 @@ function createMockTasksClient(options = {}) {
       } catch {
       }
     }
+  };
+  const expireStale = () => {
+    const cutoff = now().getTime() - waitingExpiryMs;
+    let changed = false;
+    tasks = tasks.map((task) => {
+      if (task.state !== "waiting_confirmation") {
+        return task;
+      }
+      const updatedAt = Date.parse(task.updatedAt);
+      if (!Number.isNaN(updatedAt) && updatedAt <= cutoff) {
+        changed = true;
+        return { ...task, state: "expired", updatedAt: now().toISOString() };
+      }
+      return task;
+    });
+    if (changed) {
+      persist();
+    }
+    return changed;
   };
   return {
     async createTask(input) {
@@ -1433,19 +1481,22 @@ function createMockTasksClient(options = {}) {
       return updated;
     },
     async getTask(taskId) {
+      expireStale();
       return tasks.find((task) => task.id === taskId) ?? null;
     },
     async listTasks() {
+      expireStale();
       return [...tasks];
     }
   };
 }
-var TASKS_KEY;
+var TASKS_KEY, DEFAULT_WAITING_EXPIRY_MS;
 var init_tasksClient = __esm({
   "../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core/src/chat/tasksClient.ts"() {
     "use strict";
     init_define_SDKWORK_RUNTIME_ENV();
     TASKS_KEY = "whatseek.tasks";
+    DEFAULT_WAITING_EXPIRY_MS = 5 * 60 * 1e3;
   }
 });
 
@@ -1498,6 +1549,9 @@ var init_strings = __esm({
         error: "Something went wrong. Please retry.",
         actionAppGenerated: 'Generated app "{name}" \u2014 see it under My apps.',
         actionMessageSent: "Message sent \u2014 continue the conversation in Messages.",
+        actionTaskConfirmed: "Task completed. The result is in your Messages.",
+        actionTaskCancelled: "Task cancelled.",
+        actionTaskInactive: "This task is no longer awaiting confirmation.",
         actionNavigated: "Done."
       }
     };
@@ -1537,6 +1591,9 @@ var init_strings2 = __esm({
         error: "\u51FA\u4E86\u70B9\u95EE\u9898\uFF0C\u8BF7\u91CD\u8BD5\u3002",
         actionAppGenerated: "\u5DF2\u751F\u6210\u5E94\u7528\u300C{name}\u300D\uFF0C\u53EF\u4EE5\u5728\u300C\u6211\u7684\u5E94\u7528\u300D\u4E2D\u67E5\u770B\u3002",
         actionMessageSent: "\u6D88\u606F\u5DF2\u53D1\u9001\uFF0C\u53EF\u4EE5\u5728\u300C\u6D88\u606F\u300D\u4E2D\u7EE7\u7EED\u5BF9\u8BDD\u3002",
+        actionTaskConfirmed: "\u4EFB\u52A1\u5DF2\u5B8C\u6210\uFF0C\u7ED3\u679C\u5DF2\u540C\u6B65\u5230\u300C\u6D88\u606F\u300D\u3002",
+        actionTaskCancelled: "\u4EFB\u52A1\u5DF2\u53D6\u6D88\u3002",
+        actionTaskInactive: "\u8BE5\u4EFB\u52A1\u5DF2\u4E0D\u5728\u5F85\u786E\u8BA4\u72B6\u6001\u3002",
         actionNavigated: "\u597D\u7684\u3002"
       }
     };
@@ -1556,6 +1613,12 @@ __export(src_exports, {
 function setChatLocale(locale2) {
   chatLocale = locale2;
 }
+function flattenReplyKey(key) {
+  if (!key.includes(".")) {
+    return key;
+  }
+  return key.split(".").map((segment, index) => index === 0 ? segment : segment.charAt(0).toUpperCase() + segment.slice(1)).join("");
+}
 function resolveNestedReply(path) {
   let zh = strings_default2.reply;
   let en = strings_default.reply;
@@ -1571,10 +1634,24 @@ function resolveNestedReply(path) {
   }
   return { "zh-CN": zh, "en-US": en };
 }
+function resolveReplyEntry(key) {
+  const flat = flattenReplyKey(key);
+  const direct = REPLY_TEXT[key] ?? REPLY_TEXT[flat];
+  return direct ?? resolveNestedReply(key);
+}
+function interpolateReply(text, params) {
+  if (params === void 0) {
+    return text;
+  }
+  return text.replace(/\{(\w+)\}/gu, (match, name) => name in params ? String(params[name]) : match);
+}
 function replyText(reply) {
   const key = reply.contentKey.replace("whatseek.chat.reply.", "");
-  const entry = REPLY_TEXT[key] ?? resolveNestedReply(key);
-  return entry !== void 0 ? entry[chatLocale] : reply.contentKey;
+  const entry = resolveReplyEntry(key);
+  if (entry === void 0) {
+    return reply.contentKey;
+  }
+  return interpolateReply(entry[chatLocale], reply.contentParams);
 }
 function toCardView(cards) {
   if (cards === void 0 || cards.length === 0) {
@@ -1611,7 +1688,7 @@ async function sendChatTurn(text) {
 async function runCardAction(action) {
   const chat = getWhatseekClient("chat");
   const outcome = await chat.runCardAction(action);
-  return replyText({ contentKey: outcome.message });
+  return replyText({ contentKey: outcome.message, contentParams: outcome.messageParams });
 }
 async function taskStatus(taskId) {
   const task = await getWhatseekClient("tasks").getTask(taskId);
@@ -1643,6 +1720,9 @@ var init_src3 = __esm({
       error: { "zh-CN": strings_default2.reply.error, "en-US": strings_default.reply.error },
       actionAppGenerated: { "zh-CN": strings_default2.reply.actionAppGenerated, "en-US": strings_default.reply.actionAppGenerated },
       actionMessageSent: { "zh-CN": strings_default2.reply.actionMessageSent, "en-US": strings_default.reply.actionMessageSent },
+      actionTaskConfirmed: { "zh-CN": strings_default2.reply.actionTaskConfirmed, "en-US": strings_default.reply.actionTaskConfirmed },
+      actionTaskCancelled: { "zh-CN": strings_default2.reply.actionTaskCancelled, "en-US": strings_default.reply.actionTaskCancelled },
+      actionTaskInactive: { "zh-CN": strings_default2.reply.actionTaskInactive, "en-US": strings_default.reply.actionTaskInactive },
       actionNavigated: { "zh-CN": strings_default2.reply.actionNavigated, "en-US": strings_default.reply.actionNavigated }
     };
     chatLocale = "zh-CN";

@@ -24,6 +24,10 @@
     "cancelled": "已取消",
     "expired": "已过期"
   },
+  "taskAction": {
+    "confirm": "确认完成",
+    "cancel": "取消任务"
+  },
   "card": {
     "recommendReason": "匹配 {{keyword}}",
     "useNow": "立即使用",
@@ -70,6 +74,9 @@
     "action": {
       "appGenerated": "已生成应用「{{name}}」，可以在「我的应用」中查看。",
       "messageSent": "消息已发送给 {{name}}。你可以在「消息」中继续对话。",
+      "taskConfirmed": "任务已完成，结果已同步到「消息」。",
+      "taskCancelled": "任务已取消。",
+      "taskInactive": "该任务已不在待确认状态。",
       "navigated": "好的。"
     },
     "searchAgent": {

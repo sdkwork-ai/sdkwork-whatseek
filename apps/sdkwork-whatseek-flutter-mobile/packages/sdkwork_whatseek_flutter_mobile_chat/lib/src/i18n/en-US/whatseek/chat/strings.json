@@ -65,6 +65,13 @@
     },
     "task": {
       "accepted": "Got it! The task has started; I will notify you when it completes."
-    }
+    },
+    "actionTaskConfirmed": "Task completed. The result is in your Messages.",
+    "actionTaskCancelled": "Task cancelled.",
+    "actionTaskInactive": "This task is no longer awaiting confirmation."
+  },
+  "taskAction": {
+    "confirm": "Confirm result",
+    "cancel": "Cancel task"
   }
 }

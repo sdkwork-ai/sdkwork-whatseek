@@ -5,6 +5,39 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — Task confirmation loop (PRD §41) + Flutter intent parity + mini-program reply localization fix
+
+- **Task states become user-reachable on all four surfaces** (PRD §41 P0
+  基础任务状态): content/execute/edit tasks now run pending → running →
+  **waiting_confirmation and park** — the chat chip exposes 确认完成 / 取消任务
+  actions; 确认 completes the task with a result summary and lands the
+  message-center notification, 取消 moves it to `cancelled` with its own
+  notification copy. `waiting_confirmation` tasks abandoned for 5 minutes
+  lazily expire on read (`expired`). New `confirm_task`/`cancel_task` card
+  actions in the shared ChatPort; the previously unreachable `cancelled`
+  terminal state is now a real user path (H5/PC mirror screens, mini-program
+  page actions, Flutter `_buildTaskChip` actions).
+- **Flutter chat router brought to full PRD §10.1 intent parity**: the Dart
+  port had drifted — it lacked `USE_AGENT` recognition (rule ordering vs
+  `SEARCH_AGENT`), agent dispatch/roster/recommendation routing,
+  `EXECUTE_TASK`/`EDIT_CONTENT` task flows, and product/service commerce
+  result cards. All added off the shared rule shapes; send-message draft
+  extraction (告诉他/说 body) ported too. Flutter tests 45 → 52.
+- **Mini-program fix (user-visible P1)**: reply contentKeys are dotted
+  (`whatseek.chat.reply.action.appGenerated`) while fragments carried flat
+  keys — five of eight reply paths rendered raw i18n keys in the chat bubble
+  (e.g. after tapping 直接生成), and `{name}` interpolation never ran. The
+  resolver now flattens dotted keys to fragments and interpolates
+  `contentParams`; verified against the real bundled runtime (8/8 localized).
+- Supplier preset copy fix (`广州佰裳制衣厂`); `postTaskNotification` phrases
+  the outcome by task state instead of always 已完成, and upserts the task
+  conversation (Dart mirror included).
+- Verification: `pnpm verify` green (12 spec validators, typecheck, all
+  suites: common 52, H5, PC, mini-program 24, Flutter 52), H5/PC prod builds
+  PASS, `flutter analyze` 0 issues, mini-program runtime rebuilt and
+  re-probed. Rendered acceptance: see REQ-2026-0005 §Rendered Acceptance
+  (2026-10-03, task confirmation round).
+
 ### 2026-10-03 — Rendered acceptance of the PRD-conformance round
 
 - Browser acceptance against the rebuilt production bundles: H5 renders the

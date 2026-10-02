@@ -62,7 +62,7 @@ const COMMERCE_PRESETS: Record<'product' | 'supplier' | 'service', readonly Comm
   ],
   supplier: [
     { id: 's-1', title: '上海锦裳服饰有限公司', subtitle: 'T 恤/卫衣 · 支持定制 · 7 天打样', priceLabel: '起订 ¥20 以内' },
-    { id: 's-2', title: '广州佰 clothes 制衣厂', subtitle: '跨境快返 · 1000 件起 · SGS 认证', priceLabel: '¥11 起/件' },
+    { id: 's-2', title: '广州佰裳制衣厂', subtitle: '跨境快返 · 1000 件起 · SGS 认证', priceLabel: '¥11 起/件' },
     { id: 's-3', title: '义乌市皓瀚服饰', subtitle: '现货混批 · 一件代发', priceLabel: '¥9.9 起/件' },
   ],
   service: [
@@ -220,20 +220,15 @@ export function createMockChatClient(deps: MockChatClientDeps, options: MockChat
         case 'EXECUTE_TASK':
         case 'EDIT_CONTENT': {
           // Forward task simulation (PRD §41): pending → running →
-          // waiting_confirmation → completed. Terminal failure states
-          // (failed/cancelled/expired) are type/UI-complete but need a real
-          // backend or user cancellation to occur.
+          // waiting_confirmation, where the chain parks. Completion is the
+          // user's explicit confirm_task (or the task lazily expires);
+          // cancelled/expired terminal states stay user/backend reachable.
           const task = await deps.tasks.createTask({ title: text.trim(), intent: intent.intent });
           void schedule(() => {
             void deps.tasks
               .updateTaskState(task.id, 'running')
               .then(() => delay(taskStepMs))
               .then(() => deps.tasks.updateTaskState(task.id, 'waiting_confirmation'))
-              .then(() => delay(taskStepMs))
-              .then(() => deps.tasks.updateTaskState(task.id, 'completed', text.trim()))
-              .then((completed) => {
-                void deps.messages.postTaskNotification(completed);
-              })
               .catch(() => undefined);
           }, taskStepMs);
           return {
@@ -324,6 +319,32 @@ export function createMockChatClient(deps: MockChatClientDeps, options: MockChat
             message: 'whatseek.chat.reply.action.messageSent',
             messageParams: { name: action.contactName },
             conversationId: conversation.id,
+            taskId: task.id,
+          };
+        }
+        case 'confirm_task': {
+          // User confirms a waiting_confirmation task (PRD §41): the parked
+          // result becomes final and lands in the message center.
+          const task = await deps.tasks.getTask(action.taskId);
+          if (task === null || task.state !== 'waiting_confirmation') {
+            return { message: 'whatseek.chat.reply.action.taskInactive', taskId: action.taskId };
+          }
+          const completed = await deps.tasks.updateTaskState(task.id, 'completed', task.title);
+          await deps.messages.postTaskNotification(completed);
+          return {
+            message: 'whatseek.chat.reply.action.taskConfirmed',
+            taskId: task.id,
+          };
+        }
+        case 'cancel_task': {
+          const task = await deps.tasks.getTask(action.taskId);
+          if (task === null || task.state !== 'waiting_confirmation') {
+            return { message: 'whatseek.chat.reply.action.taskInactive', taskId: action.taskId };
+          }
+          const cancelled = await deps.tasks.updateTaskState(task.id, 'cancelled');
+          await deps.messages.postTaskNotification(cancelled);
+          return {
+            message: 'whatseek.chat.reply.action.taskCancelled',
             taskId: task.id,
           };
         }

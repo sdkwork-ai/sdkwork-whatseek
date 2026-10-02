@@ -14,23 +14,53 @@ const STATE_TONE: Record<TaskState, string> = {
   expired: 'bg-panel-muted text-muted',
 };
 
-/** Compact AI task state chip (PRD §41). */
-export function TaskChip({ state }: { state: TaskState }) {
+interface TaskChipProps {
+  state: TaskState;
+  /** Confirm/cancel handlers for a parked waiting_confirmation task (PRD §41). */
+  onConfirm?: (() => void) | undefined;
+  onCancel?: (() => void) | undefined;
+}
+
+/** Compact AI task state chip (PRD §41) with user confirm/cancel actions. */
+export function TaskChip({ state, onConfirm, onCancel }: TaskChipProps) {
   const { t } = useTranslation();
+  const actionable = state === 'waiting_confirmation' && onConfirm !== undefined && onCancel !== undefined;
   return (
-    <span
-      data-task-state={state}
-      className={cx(
-        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.625rem] font-medium',
-        STATE_TONE[state],
-      )}
-    >
-      {state === 'running' || state === 'pending' ? (
-        <span aria-hidden="true" className="h-2 w-2 animate-spin rounded-full border border-current border-t-transparent" />
-      ) : state === 'completed' ? (
-        <span aria-hidden="true">✓</span>
+    <span className="inline-flex flex-col items-start gap-1">
+      <span
+        data-task-state={state}
+        className={cx(
+          'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.625rem] font-medium',
+          STATE_TONE[state],
+        )}
+      >
+        {state === 'running' || state === 'pending' ? (
+          <span aria-hidden="true" className="h-2 w-2 animate-spin rounded-full border border-current border-t-transparent" />
+        ) : state === 'completed' ? (
+          <span aria-hidden="true">✓</span>
+        ) : null}
+        {t(`whatseek.chat.task.${state}`)}
+      </span>
+      {actionable ? (
+        <span className="inline-flex items-center gap-2" data-task-actions="">
+          <button
+            type="button"
+            data-task-confirm
+            onClick={onConfirm}
+            className="rounded-full bg-brand px-2.5 py-1 text-[0.625rem] font-medium text-white transition-colors hover:bg-brand-hover"
+          >
+            {t('whatseek.chat.taskAction.confirm')}
+          </button>
+          <button
+            type="button"
+            data-task-cancel
+            onClick={onCancel}
+            className="rounded-full border border-border-default px-2.5 py-1 text-[0.625rem] font-medium text-secondary transition-colors hover:bg-panel-muted"
+          >
+            {t('whatseek.chat.taskAction.cancel')}
+          </button>
+        </span>
       ) : null}
-      {t(`whatseek.chat.task.${state}`)}
     </span>
   );
 }

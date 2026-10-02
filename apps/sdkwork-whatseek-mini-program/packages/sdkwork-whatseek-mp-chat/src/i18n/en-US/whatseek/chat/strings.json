@@ -27,6 +27,9 @@
     "error": "Something went wrong. Please retry.",
     "actionAppGenerated": "Generated app \"{name}\" — see it under My apps.",
     "actionMessageSent": "Message sent — continue the conversation in Messages.",
+    "actionTaskConfirmed": "Task completed. The result is in your Messages.",
+    "actionTaskCancelled": "Task cancelled.",
+    "actionTaskInactive": "This task is no longer awaiting confirmation.",
     "actionNavigated": "Done."
   }
 }

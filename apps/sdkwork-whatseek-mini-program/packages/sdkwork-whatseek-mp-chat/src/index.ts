@@ -46,6 +46,9 @@ const REPLY_TEXT: Partial<Record<ReplyKeys, Record<'zh-CN' | 'en-US', string>>> 
   error: { 'zh-CN': zhReplies.reply.error, 'en-US': enReplies.reply.error },
   actionAppGenerated: { 'zh-CN': zhReplies.reply.actionAppGenerated, 'en-US': enReplies.reply.actionAppGenerated },
   actionMessageSent: { 'zh-CN': zhReplies.reply.actionMessageSent, 'en-US': enReplies.reply.actionMessageSent },
+  actionTaskConfirmed: { 'zh-CN': zhReplies.reply.actionTaskConfirmed, 'en-US': enReplies.reply.actionTaskConfirmed },
+  actionTaskCancelled: { 'zh-CN': zhReplies.reply.actionTaskCancelled, 'en-US': enReplies.reply.actionTaskCancelled },
+  actionTaskInactive: { 'zh-CN': zhReplies.reply.actionTaskInactive, 'en-US': enReplies.reply.actionTaskInactive },
   actionNavigated: { 'zh-CN': zhReplies.reply.actionNavigated, 'en-US': enReplies.reply.actionNavigated },
 };
 
@@ -53,6 +56,17 @@ let chatLocale: 'zh-CN' | 'en-US' = 'zh-CN';
 
 export function setChatLocale(locale: 'zh-CN' | 'en-US'): void {
   chatLocale = locale;
+}
+
+/** `searchApp.found` → `searchAppFound`: dotted router keys meet flat fragments. */
+function flattenReplyKey(key: string): string {
+  if (!key.includes('.')) {
+    return key;
+  }
+  return key
+    .split('.')
+    .map((segment, index) => (index === 0 ? segment : segment.charAt(0).toUpperCase() + segment.slice(1)))
+    .join('');
 }
 
 /** Resolve a dotted reply path (`searchAgent.found`) against the fragments. */
@@ -72,11 +86,28 @@ function resolveNestedReply(path: string): Record<'zh-CN' | 'en-US', string> | u
   return { 'zh-CN': zh, 'en-US': en };
 }
 
-export function replyText(reply: Pick<ChatReply, 'contentKey'>): string {
+function resolveReplyEntry(key: string): Record<'zh-CN' | 'en-US', string> | undefined {
+  const flat = flattenReplyKey(key);
+  const direct = REPLY_TEXT[key as ReplyKeys] ?? REPLY_TEXT[flat as ReplyKeys];
+  return direct ?? resolveNestedReply(key);
+}
+
+/** Replace single-brace `{param}` placeholders (fragment convention) with values. */
+function interpolateReply(text: string, params: Record<string, unknown> | undefined): string {
+  if (params === undefined) {
+    return text;
+  }
+  return text.replace(/\{(\w+)\}/gu, (match, name: string) => (name in params ? String(params[name]) : match));
+}
+
+export function replyText(reply: Pick<ChatReply, 'contentKey' | 'contentParams'>): string {
   // contentKey shape: whatseek.chat.reply.<key-or-dotted-path>
   const key = reply.contentKey.replace('whatseek.chat.reply.', '');
-  const entry = REPLY_TEXT[key as ReplyKeys] ?? resolveNestedReply(key);
-  return entry !== undefined ? entry[chatLocale] : reply.contentKey;
+  const entry = resolveReplyEntry(key);
+  if (entry === undefined) {
+    return reply.contentKey;
+  }
+  return interpolateReply(entry[chatLocale], reply.contentParams);
 }
 
 export function toCardView(cards: ChatReply['cards']): ChatCardView | null {
@@ -117,7 +148,7 @@ export async function sendChatTurn(text: string): Promise<{ replyText: string; c
 export async function runCardAction(action: ChatCardAction): Promise<string> {
   const chat = getWhatseekClient('chat');
   const outcome = await chat.runCardAction(action);
-  return replyText({ contentKey: outcome.message });
+  return replyText({ contentKey: outcome.message, contentParams: outcome.messageParams });
 }
 
 export async function taskStatus(taskId: string): Promise<{ id: string; title: string; state: string; resultSummary?: string } | null> {

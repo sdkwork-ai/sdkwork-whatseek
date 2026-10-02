@@ -11,7 +11,7 @@ import type { ReactElement } from 'react';
 
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
-import { applyColorMode, readAppliedColorMode, changeWhatseekLocale, resetWhatseekClients, useSessionStore } from '@sdkwork/whatseek-pc-core';
+import { applyColorMode, getWhatseekClient, readAppliedColorMode, changeWhatseekLocale, resetWhatseekClients, useSessionStore } from '@sdkwork/whatseek-pc-core';
 import { useChatStore } from '@sdkwork/whatseek-pc-chat';
 import { ContactsHomeScreen } from '@sdkwork/whatseek-pc-contacts';
 import { ChatHomeScreen } from '@sdkwork/whatseek-pc-chat';
@@ -129,6 +129,83 @@ describe('ChatHomeScreen (chat-first entry)', () => {
     await waitFor(
       () => {
         expect(screen.getByText(/消息已发送给 张三/)).toBeTruthy();
+      },
+      { timeout: 3000 },
+    );
+  });
+
+  it('parks_a_content_task_at_waiting_confirmation_and_resolves_it_by_user_confirm_or_cancel', async () => {
+    const user = userEvent.setup();
+    renderAt(<ChatHomeScreen />, '/chat');
+    await screen.findByText('你想做什么？');
+
+    const send = async (text: string) => {
+      await user.type(screen.getByLabelText('消息输入框'), text);
+      await user.click(screen.getByRole('button', { name: '发送' }));
+    };
+
+    await send('帮我做一张促销海报');
+    await waitFor(
+      () => {
+        expect(document.querySelector('[data-task-state="waiting_confirmation"]')).not.toBeNull();
+      },
+      { timeout: 3000 },
+    );
+    // The parked task exposes exactly two user actions (PRD §41).
+    expect(document.querySelector('[data-task-actions]')).not.toBeNull();
+
+    // Cancel resolves the first task.
+    await user.click(screen.getByText('取消任务'));
+    await waitFor(
+      () => {
+        expect(document.querySelector('[data-task-state="cancelled"]')).not.toBeNull();
+      },
+      { timeout: 3000 },
+    );
+    expect(screen.getByText(/任务已取消/)).toBeTruthy();
+    expect(document.querySelector('[data-task-actions]')).toBeNull();
+
+    // A second task resolves through explicit confirmation instead.
+    await send('帮我写一篇新年文案');
+    await waitFor(
+      () => {
+        expect(document.querySelectorAll('[data-task-state="waiting_confirmation"]').length).toBe(1);
+      },
+      { timeout: 3000 },
+    );
+    await user.click(screen.getByText('确认完成'));
+    await waitFor(
+      () => {
+        expect(document.querySelector('[data-task-state="completed"]')).not.toBeNull();
+      },
+      { timeout: 3000 },
+    );
+    expect(screen.getByText(/任务已完成/)).toBeTruthy();
+  });
+
+  it('reconciles_restored_task_chips_from_the_task_store_on_mount', async () => {
+    const tasks = getWhatseekClient('tasks');
+    const task = await tasks.createTask({ title: '帮我做一张促销海报', intent: 'CREATE_CONTENT' });
+    await tasks.updateTaskState(task.id, 'cancelled');
+    useChatStore.setState({
+      threads: [
+        {
+          id: 'thread-1',
+          title: '促销海报',
+          createdAt: '2026-10-03T00:00:00.000Z',
+          updatedAt: '2026-10-03T00:00:00.000Z',
+          entries: [
+            { id: 'e-1', role: 'user', text: '帮我做一张促销海报', sentAt: '2026-10-03T00:00:00.000Z' },
+            { id: 'e-2', role: 'assistant', text: 'whatseek.chat.reply.task.accepted', taskId: task.id, sentAt: '2026-10-03T00:00:00.000Z' },
+          ],
+        },
+      ],
+      activeThreadId: 'thread-1',
+    });
+    renderAt(<ChatHomeScreen />, '/chat');
+    await waitFor(
+      () => {
+        expect(document.querySelector('[data-task-state="cancelled"]')).not.toBeNull();
       },
       { timeout: 3000 },
     );

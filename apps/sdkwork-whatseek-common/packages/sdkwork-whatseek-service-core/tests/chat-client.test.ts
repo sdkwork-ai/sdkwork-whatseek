@@ -191,7 +191,7 @@ describe('mock chat client (AI router)', () => {
     expect(reply.cards?.[0]?.type).toBe('commerce_results');
   });
 
-  it('creates_a_content_task_that_passes_through_waiting_confirmation_and_notifies_messages', async () => {
+  it('parks_a_content_task_at_waiting_confirmation_until_the_user_confirms', async () => {
     const deps = fakeDeps();
     const notified: string[] = [];
     deps.messages.postTaskNotification = async (task) => {
@@ -211,11 +211,42 @@ describe('mock chat client (AI router)', () => {
     await new Promise<void>((resolve) => {
       globalThis.setTimeout(resolve, 0);
     });
-    const task = await deps.tasks.getTask(reply.taskId ?? '');
-    expect(task?.state).toBe('completed');
+    // The chain parks at waiting_confirmation; nothing notifies yet.
+    const parked = await deps.tasks.getTask(reply.taskId ?? '');
+    expect(parked?.state).toBe('waiting_confirmation');
+    expect(notified).toEqual([]);
     expect(states).toContain('running');
     expect(states).toContain('waiting_confirmation');
-    expect(notified).toContain(reply.taskId);
+
+    // User confirm resolves the task and lands the message-center event.
+    const outcome = await chat.runCardAction({ kind: 'confirm_task', taskId: reply.taskId ?? '' });
+    expect(outcome.message).toBe('whatseek.chat.reply.action.taskConfirmed');
+    const confirmed = await deps.tasks.getTask(reply.taskId ?? '');
+    expect(confirmed?.state).toBe('completed');
+    expect(confirmed?.resultSummary).toBe('帮我做一张商品海报');
+    expect(notified).toEqual([reply.taskId]);
+  });
+
+  it('cancels_a_waiting_task_from_user_action_and_notifies_the_cancellation', async () => {
+    const deps = fakeDeps();
+    const notifiedStates: string[] = [];
+    deps.messages.postTaskNotification = async (task) => {
+      notifiedStates.push(task.state);
+    };
+    const chat = createMockChatClient(deps, { replyDelayMs: 0, taskStepMs: 0, scheduler: (cb) => immediateScheduler().scheduler(cb) });
+    const reply = await chat.handleSend('帮我做一张商品海报');
+    await new Promise<void>((resolve) => {
+      globalThis.setTimeout(resolve, 0);
+    });
+    const outcome = await chat.runCardAction({ kind: 'cancel_task', taskId: reply.taskId ?? '' });
+    expect(outcome.message).toBe('whatseek.chat.reply.action.taskCancelled');
+    const cancelled = await deps.tasks.getTask(reply.taskId ?? '');
+    expect(cancelled?.state).toBe('cancelled');
+    expect(notifiedStates).toEqual(['cancelled']);
+
+    // A stale confirm on a no-longer-waiting task reports inactivity honestly.
+    const stale = await chat.runCardAction({ kind: 'confirm_task', taskId: reply.taskId ?? '' });
+    expect(stale.message).toBe('whatseek.chat.reply.action.taskInactive');
   });
 
   it('routes_agent_search_and_dispatch_to_the_agent_roster', async () => {
@@ -294,7 +325,7 @@ describe('mock chat client (AI router)', () => {
       globalThis.setTimeout(resolve, 0);
     });
     const task = await deps.tasks.getTask(reply.taskId ?? '');
-    expect(task?.state).toBe('completed');
+    expect(task?.state).toBe('waiting_confirmation');
   });
 });
 
@@ -314,5 +345,29 @@ describe('mock tasks client', () => {
   it('rejects_updates_for_unknown_tasks', async () => {
     const tasks = createMockTasksClient({ storage: null });
     await expect(tasks.updateTaskState('missing', 'running')).rejects.toThrowError(/task not found/u);
+  });
+
+  it('lazily_expires_an_abandoned_waiting_confirmation_task_on_read', async () => {
+    let clock = new Date('2026-10-03T10:00:00.000Z');
+    const tasks = createMockTasksClient({ storage: null, waitingExpiryMs: 1000, now: () => clock });
+    const task = await tasks.createTask({ title: '生成海报', intent: 'CREATE_CONTENT' });
+    await tasks.updateTaskState(task.id, 'running');
+    await tasks.updateTaskState(task.id, 'waiting_confirmation');
+    expect((await tasks.getTask(task.id))?.state).toBe('waiting_confirmation');
+
+    clock = new Date('2026-10-03T10:01:00.000Z');
+    const expired = await tasks.getTask(task.id);
+    expect(expired?.state).toBe('expired');
+    // The terminal state persists across subsequent reads.
+    expect((await tasks.listTasks()).find((entry) => entry.id === task.id)?.state).toBe('expired');
+  });
+
+  it('does_not_expire_fresh_waiting_confirmation_tasks', async () => {
+    let clock = new Date('2026-10-03T10:00:00.000Z');
+    const tasks = createMockTasksClient({ storage: null, waitingExpiryMs: 60_000, now: () => clock });
+    const task = await tasks.createTask({ title: '生成海报', intent: 'CREATE_CONTENT' });
+    await tasks.updateTaskState(task.id, 'waiting_confirmation');
+    clock = new Date('2026-10-03T10:00:30.000Z');
+    expect((await tasks.getTask(task.id))?.state).toBe('waiting_confirmation');
   });
 });

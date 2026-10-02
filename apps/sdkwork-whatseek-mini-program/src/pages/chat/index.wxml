@@ -23,6 +23,10 @@
         <view class="chip-dot"></view>
         <text>{{item.taskState || '任务已创建 · 点按查看状态'}}</text>
       </view>
+      <view wx:if="{{item.taskWaiting}}" class="task-actions">
+        <button class="task-action task-action-confirm" size="mini" data-kind="confirm" data-entryindex="{{entryIndex}}" bindtap="onTaskAction">确认完成</button>
+        <button class="task-action task-action-cancel" size="mini" data-kind="cancel" data-entryindex="{{entryIndex}}" bindtap="onTaskAction">取消任务</button>
+      </view>
     </view>
 
     <block wx:if="{{item.cards}}">

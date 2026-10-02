@@ -207,6 +207,37 @@ class MockMessagesClient {
     final conversationId = 'conv-task-${task.id}';
     final now = DateTime.now();
     final content = task.resultSummary ?? task.title;
+    final outcome = switch (task.state) {
+      TaskState.cancelled => '已取消。',
+      TaskState.expired => '已过期。',
+      _ => '已完成。',
+    };
+    final preview = '「$content」$outcome';
+    final existing = _conversations.indexWhere((conversation) => conversation.id == conversationId);
+    final message = ChatMessage(
+      id: 'm-${task.id}-$outcome',
+      conversationId: conversationId,
+      senderId: 'task',
+      senderName: '问寻 AI',
+      content: preview,
+      sentAt: now,
+    );
+    if (existing >= 0) {
+      final conversation = _conversations[existing];
+      _conversations[existing] = Conversation(
+        id: conversation.id,
+        kind: conversation.kind,
+        titleKey: conversation.titleKey,
+        title: conversation.title,
+        contactId: conversation.contactId,
+        taskId: conversation.taskId,
+        unread: conversation.unread,
+        updatedAt: now,
+        lastMessagePreview: preview,
+      );
+      _messages[conversationId] = [...(_messages[conversationId] ?? const <ChatMessage>[]), message];
+      return;
+    }
     _conversations.insert(
       0,
       Conversation(
@@ -216,19 +247,10 @@ class MockMessagesClient {
         taskId: task.id,
         unread: 1,
         updatedAt: now,
-        lastMessagePreview: '「$content」已完成。',
+        lastMessagePreview: preview,
       ),
     );
-    _messages[conversationId] = [
-      ChatMessage(
-        id: 'm-${task.id}',
-        conversationId: conversationId,
-        senderId: 'task',
-        senderName: '问寻 AI',
-        content: '「$content」已完成。',
-        sentAt: now,
-      ),
-    ];
+    _messages[conversationId] = [message];
   }
 
   Future<int> unreadTotal() async {
@@ -364,7 +386,7 @@ class MockChatClient {
               type: 'send_message_confirm',
               contactId: contact.id,
               contactName: contact.name,
-              draft: trimmed,
+              draft: extractDraftMessage(trimmed) ?? trimmed,
             ),
           ],
         );
@@ -393,7 +415,13 @@ class MockChatClient {
                 ),
                 CommerceResult(
                   id: 's-2',
-                  title: '义乌皓瀚服饰',
+                  title: '广州佰裳制衣厂',
+                  subtitle: '跨境快返 · 1000 件起 · SGS 认证',
+                  priceLabel: '¥11 起/件',
+                ),
+                CommerceResult(
+                  id: 's-3',
+                  title: '义乌市皓瀚服饰',
                   subtitle: '现货混批 · 一件代发',
                   priceLabel: '¥9.9 起/件',
                 ),
@@ -402,12 +430,111 @@ class MockChatClient {
           ],
         );
       case 'SEARCH_PRODUCT':
+        return const ChatReply(
+          text: '${_replyPrefix}commercePreview',
+          cards: [
+            ChatCard(
+              type: 'commerce_results',
+              commerceDomain: 'product',
+              commerceItems: [
+                CommerceResult(
+                  id: 'p-1',
+                  title: '黑色圆领 T 恤 220g',
+                  subtitle: '纯棉 · 支持定制印花 · 起订 100 件',
+                  priceLabel: '¥12.5/件',
+                ),
+                CommerceResult(
+                  id: 'p-2',
+                  title: '速干 T 恤 批发款',
+                  subtitle: '速干面料 · 8 色可选 · 起订 50 件',
+                  priceLabel: '¥18/件',
+                ),
+                CommerceResult(
+                  id: 'p-3',
+                  title: '重磅纯色 T 恤',
+                  subtitle: '260g 重磅 · 小单快返',
+                  priceLabel: '¥25/件',
+                ),
+              ],
+            ),
+          ],
+        );
       case 'SEARCH_SERVICE':
-        return const ChatReply(text: '${_replyPrefix}commercePreview');
+        return const ChatReply(
+          text: '${_replyPrefix}commercePreview',
+          cards: [
+            ChatCard(
+              type: 'commerce_results',
+              commerceDomain: 'service',
+              commerceItems: [
+                CommerceResult(
+                  id: 'sv-1',
+                  title: '跨境代运营服务',
+                  subtitle: '店铺搭建 + 投放 · 按月服务',
+                  priceLabel: '¥3000/月',
+                ),
+                CommerceResult(
+                  id: 'sv-2',
+                  title: '商品拍摄服务',
+                  subtitle: '白底图/场景图 · 48h 交付',
+                  priceLabel: '¥80/张',
+                ),
+                CommerceResult(
+                  id: 'sv-3',
+                  title: '独立站 SEO 咨询',
+                  subtitle: '关键词策略 + 内容规划',
+                  priceLabel: '¥1500/次',
+                ),
+              ],
+            ),
+          ],
+        );
       case 'CREATE_CONTENT':
+      case 'EXECUTE_TASK':
+      case 'EDIT_CONTENT':
+        // Forward task simulation (PRD §41): the chain parks at
+        // waiting_confirmation; the user's confirm/cancel action resolves it.
         final task = await tasks.createTask(title: trimmed, intent: intent.intent);
-        await tasks.updateTaskState(task.id, TaskState.completed, resultSummary: trimmed);
-        return ChatReply(text: '${_replyPrefix}createContentAccepted', taskId: task.id);
+        await tasks.updateTaskState(task.id, TaskState.running);
+        await tasks.updateTaskState(task.id, TaskState.waitingConfirmation);
+        return ChatReply(text: '${_replyPrefix}task.accepted', taskId: task.id);
+      case 'SEARCH_AGENT':
+      case 'USE_AGENT': {
+        bool isAgent(Contact contact) =>
+            contact.kind == ContactKind.agent || contact.kind == ContactKind.assistant;
+        final searched = (await contacts.searchContacts(trimmed)).where(isAgent).toList();
+        final matches = searched.isNotEmpty ? searched : (await contacts.listContacts()).where(isAgent).toList();
+        if (matches.isNotEmpty) {
+          return ChatReply(
+            text: intent.intent == 'SEARCH_AGENT'
+                ? '${_replyPrefix}searchAgent.found'
+                : '${_replyPrefix}useAgent.found',
+            cards: [ChatCard(type: 'contact_results', contacts: matches.take(4).toList())],
+          );
+        }
+        return const ChatReply(text: '${_replyPrefix}searchAgent.notFound');
+      }
+      case 'CREATE_AGENT':
+        // Creating a real digital employee needs the agent platform
+        // (Phase 2); the mock roster is the honest recommendation instead.
+        final roster = await contacts.listContacts();
+        final agents = roster
+            .where((contact) => contact.kind == ContactKind.agent || contact.kind == ContactKind.assistant)
+            .toList();
+        return ChatReply(
+          text: '${_replyPrefix}createAgent.recommend',
+          cards: [ChatCard(type: 'contact_results', contacts: agents.take(4).toList())],
+        );
+      case 'USE_APP': {
+        final results = await apps.searchApps(trimmed);
+        if (results.isNotEmpty) {
+          return ChatReply(
+            text: '${_replyPrefix}searchAppFound',
+            cards: [ChatCard(type: 'app_results', apps: results.take(3).toList())],
+          );
+        }
+        return const ChatReply(text: '${_replyPrefix}searchAgent.notFound');
+      }
       default:
         return const ChatReply(text: '${_replyPrefix}general');
     }
@@ -438,6 +565,7 @@ class MockChatClient {
         return ChatActionOutcome(
           messageKey: '${_replyPrefix}actionAppGenerated',
           params: {'name': created.name},
+          taskId: task.id,
         );
       case 'confirm_send_message':
         final contactId = action['contactId'] as String? ?? '';
@@ -446,6 +574,29 @@ class MockChatClient {
         await messages.sendMessage(conversation.id, draft);
         await messages.markRead(conversation.id);
         return const ChatActionOutcome(messageKey: '${_replyPrefix}actionMessageSent');
+      case 'confirm_task':
+      case 'cancel_task': {
+        // User confirmation resolves a parked waiting_confirmation task
+        // (PRD §41); the outcome lands in the message center.
+        final taskId = action['taskId'] as String? ?? '';
+        final task = await tasks.getTask(taskId);
+        if (task == null || task.state != TaskState.waitingConfirmation) {
+          return ChatActionOutcome(
+            messageKey: '${_replyPrefix}actionTaskInactive',
+            taskId: taskId.isEmpty ? null : taskId,
+          );
+        }
+        final resolved = kind == 'confirm_task'
+            ? await tasks.updateTaskState(task.id, TaskState.completed, resultSummary: task.title)
+            : await tasks.updateTaskState(task.id, TaskState.cancelled);
+        await messages.postTaskNotification(resolved);
+        return ChatActionOutcome(
+          messageKey: kind == 'confirm_task'
+              ? '${_replyPrefix}actionTaskConfirmed'
+              : '${_replyPrefix}actionTaskCancelled',
+          taskId: task.id,
+        );
+      }
       default:
         return const ChatActionOutcome(messageKey: '${_replyPrefix}actionNavigated');
     }
@@ -466,6 +617,17 @@ String? extractContactName(String text) {
     if (name != null && name.isNotEmpty) {
       return name;
     }
+  }
+  return null;
+}
+
+/// Extract the draft body after 告诉他/跟他说/说/内容是 — the Dart port of
+/// the TS `extractDraftMessage`.
+String? extractDraftMessage(String text) {
+  final match = RegExp(r'(?:告诉(?:他|她|它)|跟(?:他|她)说|说|内容是)[：:]?\s*(.+)$').firstMatch(text.trim());
+  final draft = match?.group(1);
+  if (draft != null && draft.trim().isNotEmpty) {
+    return draft.trim();
   }
   return null;
 }

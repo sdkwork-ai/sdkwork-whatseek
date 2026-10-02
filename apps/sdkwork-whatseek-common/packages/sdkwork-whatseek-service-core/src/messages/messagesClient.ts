@@ -198,12 +198,19 @@ export function createMockMessagesClient(options: MockMessagesClientOptions = {}
       const conversationId = `conv-task-${task.id}`;
       const existing = state.conversations.find((conversation) => conversation.id === conversationId);
       const content = task.resultSummary ?? task.title;
+      const outcomeKey =
+        task.state === 'cancelled' ? 'cancelled' : task.state === 'expired' ? 'expired' : 'completed';
+      const outcomeCopy: Record<'completed' | 'cancelled' | 'expired', string> = {
+        completed: '已完成。',
+        cancelled: '已取消。',
+        expired: '已过期。',
+      };
       const message: ChatMessage = {
-        id: `m-${task.id}`,
+        id: `m-${task.id}-${outcomeKey}`,
         conversationId,
         senderId: 'task',
         senderName: '问寻 AI',
-        content: `「${content}」已完成。`,
+        content: `「${content}」${outcomeCopy[outcomeKey]}`,
         sentAt: now().toISOString(),
         kind: 'task',
       };

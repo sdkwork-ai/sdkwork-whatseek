@@ -24,6 +24,10 @@
     "cancelled": "Cancelled",
     "expired": "Expired"
   },
+  "taskAction": {
+    "confirm": "Confirm result",
+    "cancel": "Cancel task"
+  },
   "card": {
     "recommendReason": "matches {{keyword}}",
     "useNow": "Use now",
@@ -70,6 +74,9 @@
     "action": {
       "appGenerated": "Generated app \"{{name}}\" — see it under My apps.",
       "messageSent": "Message sent to {{name}}. Continue the conversation in Messages.",
+      "taskConfirmed": "Task completed. The result is in your Messages.",
+      "taskCancelled": "Task cancelled.",
+      "taskInactive": "This task is no longer awaiting confirmation.",
       "navigated": "Done."
     },
     "searchAgent": {

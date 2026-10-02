@@ -32,8 +32,8 @@ trace:
 
 1. `pnpm typecheck` 0 errors and `pnpm -r test` all suites green (common 41, H5, PC, profile/shell/contacts/messages).
 2. `pnpm build:h5:prod` and `pnpm build:pc:prod` PASS via the canonical browser build runner.
-3. Mini-program: `tsc` 0 errors, runtime bundle builds for standalone.production, test suite 22/22 — 9 contract tests (manifest + 13-route page projection, page quads, facade + error-state coverage, dark-mode theme wiring, runtime freshness, wx host-adapter boundary, route ids, i18n key parity) plus 13 page-behavior smoke tests that drive the real native page modules against the real bundled runtime in a simulated WeChat host (loads, states, navigation, favorite/publish/delete/send/task flows, validation and pull-down refresh).
-4. Flutter: `flutter analyze` No issues found, `flutter test` all green (33 tests) including the cross-surface route alignment test with a builder for every one of the 13 route ids, i18n layout compliance, settings screen, and the runner permission-denied state.
+3. Mini-program: `tsc` 0 errors, runtime bundle builds for standalone.production, test suite 24/24 — 9 contract tests (manifest + 13-route page projection, page quads, facade + error-state coverage, dark-mode theme wiring, runtime freshness, wx host-adapter boundary, route ids, i18n key parity) plus 15 page-behavior smoke tests that drive the real native page modules against the real bundled runtime in a simulated WeChat host (loads, states, navigation, favorite/publish/delete/send/task flows, the waiting_confirmation park with user confirm/cancel, validation and pull-down refresh).
+4. Flutter: `flutter analyze` No issues found, `flutter test` all green (52 tests) including the cross-surface route alignment test with a builder for every one of the 13 route ids, i18n layout compliance, settings screen, the runner permission-denied state, the full-intent chat router (agent dispatch, commerce cards), and the task confirmation/cancel loop.
 5. Desktop: `pnpm build:desktop` (PC prod bundle + `cargo build --release`) produces the self-contained `sdkwork-whatseek-pc-tauri.exe`; smoke test launches and terminates.
 6. `pnpm check` (12 sdkwork-specs validators) green.
 
@@ -79,6 +79,27 @@ standalone.production bundles (H5 390×844; PC 1440×900):
   initially still rendered the three-column card — the PC twin screen had not
   received the agents column — fixed in this round and re-verified
   (4 columns: 7 对话 / 0 应用 / 3 Agent / 11 联系人).
+
+## Rendered Acceptance of the Task-Confirmation Round (2026-10-03)
+
+Browser acceptance of the PRD §41 confirmation loop against the rebuilt
+standalone.production bundles (H5 390×844; PC 1440×900):
+
+- H5 chat: `帮我做一张促销海报` parks the chip at 待确认 with 确认完成 /
+  取消任务 actions rendered; 取消任务 resolves the chip to 已取消, appends
+  the localized outcome bubble, and lands 「帮我做一张促销海报」已取消。 in
+  the message center (unread badge 4 → 5). A second task resolves through
+  确认完成 to 已完成 with 「帮我写一篇新年文案」已完成。 (badge 5 → 6).
+- Reload reconciliation (found during acceptance): restored threads rendered
+  every historical chip as 排队中 because `activeTaskStates` is runtime-only;
+  both H5 and PC now reconcile chip states from the tasks client on mount
+  (verified: chips read 已取消/已完成 after reload; pinned by a ui-states
+  test on both surfaces).
+- en-US + dark mode: reply copy, chip labels, and action buttons all
+  localize (Got it!… / Cancelled / Completed / Cancel task); persistence
+  intact.
+- PC: desktop nav-rail shell renders the same park → cancel → confirm flow
+  with unread badge increments (4 → 5 → 6) and the wide-layout bubbles.
 
 ## Conformance Record (2026-10-03)
 
