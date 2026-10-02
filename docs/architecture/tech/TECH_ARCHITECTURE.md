@@ -11,7 +11,7 @@ Specs: ARCHITECTURE_DECISION_SPEC.md, DOCUMENTATION_SPEC.md
 
 ## 1. Architecture Overview
 
-WhatSeek Phase 1 is a mobile-first H5 single-page application. The product loop is: Chat input → intent recognition (rule-based in Phase 1, LLM-backed in Phase 2) → AI Router → domain capabilities (apps / generated apps / contacts / messages / tasks). The bottom shell hosts five tabs (对话/应用/通讯录/消息/我的); every capability package contributes routes and tab metadata to the shell, and the shell owns navigation chrome so all screens render inside one container.
+WhatSeek Phase 1 ships four aligned client surfaces off one shared service core: a mobile-first H5 single-page application (primary), a desktop-class PC browser application with a Tauri v2 desktop shell, a native WeChat mini-program, and a Flutter mobile application. All four render the same five tabs and consume the same domain logic through the shared package family (: route identities, PRD §10.1 intent rules, service ports + mock clients); surfaces never import each other’s UI implementations (APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md). The product loop is: Chat input → intent recognition (rule-based in Phase 1, LLM-backed in Phase 2) → AI Router → domain capabilities (apps / generated apps / contacts / messages / tasks). The bottom shell hosts five tabs (对话/应用/通讯录/消息/我的); every capability package contributes routes and tab metadata to the shell, and the shell owns navigation chrome so all screens render inside one container.
 
 All domain access flows UI hook → service → injected client. Phase 1 ships in-memory mock clients (localStorage-persisted) behind client interfaces so Phase 2 can swap in generated SDK clients without touching UI code.
 
@@ -30,6 +30,17 @@ All domain access flows UI hook → service → injected client. Phase 1 ships i
 | Package manager | pnpm with `workspace:*` internal deps and `catalog:` third-party pins | `PNPM_WORKSPACE_DEPENDENCY_SPEC.md`, `DEPENDENCY_MANAGEMENT_SPEC.md` |
 
 ## 3. System Boundaries And Modules
+
+### 3.1 Multi-Surface Layout
+
+| Surface | Root | Packages | Verification |
+| --- | --- | --- | --- |
+| Shared | `apps/sdkwork-whatseek-common/` | `sdkwork-whatseek-route-core`, `-intent-core`, `-service-core` | vitest (41 tests) |
+| H5 (primary) | `apps/sdkwork-whatseek-h5/` | `sdkwork-whatseek-h5-{core,commons,shell,chat,apps,contacts,messages,profile}` | vitest + build:h5:* |
+| PC + desktop | `apps/sdkwork-whatseek-pc/` | `sdkwork-whatseek-pc-{core,commons,shell,chat,apps,contacts,messages,profile}` + `-tauri` host | vitest + build:pc:* + cargo build |
+| WeChat mini-program | `apps/sdkwork-whatseek-mini-program/` | `sdkwork-whatseek-mp-{core,commons,shell,chat,apps,contacts,messages,profile}` | tsc + esbuild + node --test contract suite |
+| Flutter mobile | `apps/sdkwork-whatseek-flutter-mobile/` | `sdkwork_whatseek_flutter_mobile_{core,commons,shell,chat,apps,contacts,messages,profile}` | flutter analyze (0 issues) + flutter test (15) |
+
 
 Bounded context: `whatseek` (`specs/domain.yaml`). Packages (dependency direction: core/commons → shell → capability packages → app root src):
 

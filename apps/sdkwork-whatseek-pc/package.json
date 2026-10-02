@@ -22,7 +22,12 @@
     "build:dev": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment dev",
     "build:test": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment test",
     "build:staging": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment staging",
-    "build:prod": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment prod"
+    "build:prod": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment prod",
+    "dev:desktop": "pnpm --filter sdkwork-whatseek-pc-tauri exec cargo run --manifest-path src-tauri/Cargo.toml",
+    "build:desktop": "pnpm build:prod && pnpm --filter sdkwork-whatseek-pc-tauri exec cargo build --release --manifest-path src-tauri/Cargo.toml",
+    "build:desktop:prod": "pnpm build:desktop",
+    "desktop:dev": "pnpm dev:desktop",
+    "desktop:build:tauri": "pnpm build:desktop"
   },
   "dependencies": {
     "@sdkwork/whatseek-pc-apps": "workspace:*",

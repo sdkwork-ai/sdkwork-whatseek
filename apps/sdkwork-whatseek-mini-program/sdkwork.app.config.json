@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 3,
+  "kind": "sdkwork.app",
+  "app": {
+    "key": "sdkwork-whatseek-mini-program",
+    "name": "WhatSeek Mini Program",
+    "displayName": "问寻 WhatSeek 小程序",
+    "description": "WhatSeek (问寻) AI-native super app WeChat mini-program client.",
+    "vendor": "SDKWork",
+    "appType": "APP_REACT",
+    "versionSource": "package.json",
+    "identifiers": {
+      "weixinAppId": "touristappid"
+    }
+  },
+  "backend": {
+    "profileKey": "backend-root-admin",
+    "ownerMode": "tenant",
+    "grantMode": "current",
+    "platform": "MP_WEIXIN",
+    "appId": "sdkwork-whatseek-mini-program",
+    "organizationId": "0",
+    "tenantId": "100001",
+    "accessTokenPermissionScope": [
+      "iam:self"
+    ]
+  },
+  "runtime": {
+    "family": "mini-program",
+    "framework": "weixin-mini-program",
+    "runtimes": [
+      "MP_WEIXIN"
+    ],
+    "deliveryModes": [
+      "MP_WEIXIN"
+    ],
+    "defaultPlatform": "MP_WEIXIN",
+    "defaultArchitecture": "universal",
+    "supportedDeploymentProfiles": [
+      "standalone"
+    ],
+    "defaultDeploymentProfile": "standalone"
+  },
+  "media": {
+    "icons": {
+      "primary": {
+        "id": "sdkwork-whatseek-mp-primary-icon",
+        "type": "ICON",
+        "purpose": "PRIMARY",
+        "platform": "MP_WEIXIN",
+        "format": "PNG",
+        "width": 1024,
+        "height": 1024,
+        "enabled": true,
+        "url": "https://cdn.sdkwork.com/apps/sdkwork-whatseek/assets/icon-1024.png",
+        "metadata": {
+          "generatedPlaceholder": true
+        }
+      },
+      "platform": []
+    },
+    "screenshots": [],
+    "previews": []
+  },
+  "publish": {
+    "status": "DRAFT",
+    "platforms": [
+      "MP_WEIXIN"
+    ],
+    "installPlatforms": [
+      "MP_WEIXIN"
+    ],
+    "installSkill": false
+  },
+  "artifacts": {
+    "installConfig": {
+      "packages": []
+    }
+  },
+  "release": {
+    "currentVersion": "0.1.0",
+    "defaultChannel": "BETA",
+    "latest": {
+      "BETA": "0.1.0"
+    },
+    "notes": [
+      {
+        "version": "0.1.0",
+        "channel": "BETA",
+        "current": true,
+        "packageIds": []
+      }
+    ]
+  },
+  "security": {
+    "checksumRequired": true,
+    "signatureRequired": true,
+    "sbomRequired": true
+  },
+  "devApp": {
+    "sourceRoot": "apps/sdkwork-whatseek-mini-program",
+    "build": {
+      "targets": [
+        "mini-program"
+      ]
+    }
+  },
+  "metadata": {
+    "domain": "whatseek",
+    "capability": "super-app",
+    "standardOwner": "sdkwork-whatseek",
+    "deploymentConfig": "etc/sdkwork.deployment.config.json"
+  }
+}

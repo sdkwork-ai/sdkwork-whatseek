@@ -1,0 +1,7 @@
+<scroll-view scroll-y class="thread">
+  <view wx:for="{{messages}}" wx:key="id" class="bubble {{item.senderId === 'me' ? 'bubble-user' : 'bubble-ai'}}">{{item.content}}</view>
+</scroll-view>
+<view class="composer">
+  <input class="composer-input" value="{{input}}" placeholder="输入消息……" bindinput="onInput" confirm-type="send" bindconfirm="onSend" />
+  <button class="composer-send" size="mini" bindtap="onSend">发送</button>
+</view>

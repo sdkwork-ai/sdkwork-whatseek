@@ -1,0 +1,12 @@
+<view class="page-title">通讯录</view>
+<view class="page-sub">人、群、企业、供应商、Agent 与 AI 助手</view>
+<view class="panel">
+  <view wx:for="{{contacts}}" wx:key="id" class="row">
+    <view class="row-glyph">{{item.avatar}}</view>
+    <view class="contact-main">
+      <view class="row-title">{{item.name}}</view>
+      <view class="row-desc">{{item.bio}}</view>
+    </view>
+  </view>
+</view>
+<view wx:if="{{loading}}" class="empty">加载中…</view>

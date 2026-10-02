@@ -15,7 +15,7 @@ Application id: `sdkwork-whatseek`. Application code: `whatseek`. Domain: `whats
 ## Local Dictionary Structure
 
 - `AGENTS.md` is the repository execution entrypoint.
-- `apps/README.md` indexes application roots; `apps/sdkwork-whatseek-h5/` is the primary runnable H5 surface (the repository root itself is not an app surface).
+- `apps/README.md` indexes application roots: `apps/sdkwork-whatseek-common/` (shared family), `apps/sdkwork-whatseek-h5/` (primary H5), `apps/sdkwork-whatseek-pc/` (PC + desktop), `apps/sdkwork-whatseek-mini-program/` (WeChat), `apps/sdkwork-whatseek-flutter-mobile/` (Flutter mobile); the repository root itself is not an app surface.
 - `specs/` holds repository machine contracts (`component.spec.json`, `domain.yaml`).
 - `etc/` is the deployable-root source configuration index (`etc/sdkwork.deployment.config.json` + `etc/topology/*.env`); the H5 app root owns its own `apps/sdkwork-whatseek-h5/etc/`.
 - `docs/` holds the Canon documentation tree.
@@ -33,6 +33,10 @@ Use dynamic progressive loading: read this file, then the task row in `../sdkwor
 
 - Agent workflow / repository structure: `../sdkwork-specs/AGENTS_SPEC.md`, `../sdkwork-specs/SDKWORK_WORKSPACE_SPEC.md`, `../sdkwork-specs/DOCUMENTATION_SPEC.md`, `../sdkwork-specs/REPOSITORY_BASELINE_SPEC.md`
 - H5 app feature work: `../sdkwork-specs/APP_H5_ARCHITECTURE_SPEC.md`, `../sdkwork-specs/APP_MOBILE_REACT_UI_SPEC.md`, `../sdkwork-specs/FRONTEND_CODE_SPEC.md`, `../sdkwork-specs/UI_ARCHITECTURE_SPEC.md`
+- PC feature work: `../sdkwork-specs/APP_PC_ARCHITECTURE_SPEC.md`, `../sdkwork-specs/APP_PC_REACT_UI_SPEC.md`, `../sdkwork-specs/FRONTEND_CODE_SPEC.md`
+- Mini-program work: `../sdkwork-specs/MINI_PROGRAM_APP_ARCHITECTURE_SPEC.md`, `../sdkwork-specs/APP_MINI_PROGRAM_UI_SPEC.md`
+- Flutter work: `../sdkwork-specs/FLUTTER_APP_MOBILE_ARCHITECTURE_SPEC.md`, `../sdkwork-specs/APP_FLUTTER_UI_SPEC.md`
+- Cross-surface work: `../sdkwork-specs/APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md` (route ids, i18n keys, and the common shared family are the only cross-surface seams)
 - TypeScript work: `../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md`; language specs load on demand only
 - Styling / theme: `../sdkwork-specs/TAILWIND_CSS_INTEGRATION_SPEC.md`, `../sdkwork-specs/THEME_DARKMODE_SPEC.md`
 - i18n: `../sdkwork-specs/I18N_SPEC.md`

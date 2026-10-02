@@ -43,3 +43,19 @@ Thumbs.db
 .vscode/
 *.sqlite-shm
 *.sqlite-wal
+
+# ===== Multi-surface build output =====
+build/
+
+# Rust / Tauri build output
+target/
+**/target/
+
+# Dart/Flutter build output
+.dart_tool/
+**/.dart_tool/
+packages/sdkwork_whatseek_flutter_mobile_*/.flutter-plugins*
+
+# Generated composition output
+generated/
+

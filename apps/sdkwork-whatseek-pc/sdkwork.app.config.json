@@ -36,7 +36,8 @@
       "WEB"
     ],
     "deliveryModes": [
-      "WEB_URL"
+      "WEB_URL",
+      "DESKTOP_APP"
     ],
     "defaultPlatform": "WEB",
     "defaultArchitecture": "universal",
@@ -69,10 +70,12 @@
   "publish": {
     "status": "DRAFT",
     "platforms": [
-      "WEB"
+      "WEB",
+      "DESKTOP"
     ],
     "installPlatforms": [
-      "WEB"
+      "WEB",
+      "DESKTOP"
     ],
     "installSkill": false
   },
@@ -105,7 +108,8 @@
     "sourceRoot": "apps/sdkwork-whatseek-pc",
     "build": {
       "targets": [
-        "browser"
+        "browser",
+        "desktop"
       ]
     }
   },

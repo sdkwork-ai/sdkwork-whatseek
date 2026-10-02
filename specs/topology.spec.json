@@ -68,6 +68,12 @@
                 "script": "dev",
                 "defaultPort": 3100,
                 "portEnv": "SDKWORK_WHATSEEK_H5_DEV_PORT"
+              },
+              "pc-web": {
+                "applicationRoot": "apps/sdkwork-whatseek-pc",
+                "script": "dev",
+                "defaultPort": 3200,
+                "portEnv": "SDKWORK_WHATSEEK_PC_DEV_PORT"
               }
             }
           }
@@ -98,6 +104,13 @@
                 "buildOutput": "dist/standalone/test",
                 "deliveryMode": "static",
                 "spaFallback": "/index.html"
+              },
+              "pc-web": {
+                "applicationRoot": "apps/sdkwork-whatseek-pc",
+                "script": "build:test",
+                "buildOutput": "dist/standalone/test",
+                "deliveryMode": "static",
+                "spaFallback": "/index.html"
               }
             }
           }
@@ -122,6 +135,13 @@
                 "buildOutput": "dist/standalone/staging",
                 "deliveryMode": "static",
                 "spaFallback": "/index.html"
+              },
+              "pc-web": {
+                "applicationRoot": "apps/sdkwork-whatseek-pc",
+                "script": "build:staging",
+                "buildOutput": "dist/standalone/staging",
+                "deliveryMode": "static",
+                "spaFallback": "/index.html"
               }
             }
           }
@@ -142,6 +162,13 @@
             "renderers": {
               "h5": {
                 "applicationRoot": "apps/sdkwork-whatseek-h5",
+                "script": "build:prod",
+                "buildOutput": "dist/standalone/prod",
+                "deliveryMode": "static",
+                "spaFallback": "/index.html"
+              },
+              "pc-web": {
+                "applicationRoot": "apps/sdkwork-whatseek-pc",
                 "script": "build:prod",
                 "buildOutput": "dist/standalone/prod",
                 "deliveryMode": "static",

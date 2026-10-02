@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component-deployment",
+  "application": "sdkwork-whatseek-mini-program",
+  "parentDeploymentConfig": "../../../etc/sdkwork.deployment.config.json",
+  "parentTopologySpec": "../../../specs/topology.spec.json",
+  "profiles": {
+    "standalone.development": {
+      "source": "config/mini-program/runtime-env.standalone.development.json"
+    },
+    "standalone.test": {
+      "source": "config/mini-program/runtime-env.standalone.test.json"
+    },
+    "standalone.staging": {
+      "source": "config/mini-program/runtime-env.standalone.staging.json"
+    },
+    "standalone.production": {
+      "source": "config/mini-program/runtime-env.standalone.production.json"
+    }
+  },
+  "runtimeTarget": "mini-program"
+}

@@ -1,0 +1,6 @@
+{
+  "SDKWORK_ENVIRONMENT": "development",
+  "SDKWORK_DEPLOYMENT_PROFILE": "standalone",
+  "SDKWORK_PROFILE_ID": "standalone.development",
+  "SDKWORK_RUNTIME_TARGET": "flutter-android"
+}

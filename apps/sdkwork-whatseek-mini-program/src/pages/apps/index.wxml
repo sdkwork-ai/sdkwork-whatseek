@@ -1,0 +1,22 @@
+<view class="page-title">应用中心</view>
+<view class="search-bar">
+  <input class="search-input" placeholder="搜索应用，或者直接告诉我你要做什么" value="{{query}}" bindinput="onQueryInput" confirm-type="search" bindconfirm="onSearch" />
+  <button class="search-btn" size="mini" bindtap="onSearch">搜索</button>
+</view>
+<view class="cats">
+  <view wx:for="{{categories}}" wx:key="id" class="cat">{{item.icon}} {{item.id}}</view>
+</view>
+<view class="page-sub" wx:if="{{!loading}}">共 {{recommended.length}} 个应用</view>
+<view class="panel">
+  <block wx:if="{{!loading}}">
+    <view wx:for="{{recommended}}" wx:key="id" class="row">
+      <view class="row-glyph">{{item.icon}}</view>
+      <view class="app-main">
+        <view class="row-title">{{item.name}}</view>
+        <view class="row-desc">{{item.summary}}</view>
+      </view>
+      <navigator class="app-use" url="/detail/apps-detail/index?appId={{item.id}}">详情</navigator>
+    </view>
+  </block>
+</view>
+<view wx:if="{{loading}}" class="empty">加载中…</view>

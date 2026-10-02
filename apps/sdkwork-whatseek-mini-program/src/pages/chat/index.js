@@ -48,18 +48,21 @@ Page({
   },
 
   async onAction(event) {
-    const { kind, contactid, contactname, draft, requirement } = event.currentTarget.dataset;
-    const action =
-      kind === 'generate'
-        ? { kind: 'generate_app', requirement, modules: [] }
-        : { kind: 'confirm_send_message', contactId: contactid, contactName: contactname, draft };
+    const { kind, entryindex, contactid, contactname, draft } = event.currentTarget.dataset;
+    let action;
+    if (kind === 'generate') {
+      const entry = this.data.entries[Number(entryindex)];
+      const plan = entry && entry.cards ? entry.cards.plan : null;
+      action = { kind: 'generate_app', requirement: plan ? plan.requirement : '', modules: plan ? plan.modules : [] };
+    } else {
+      action = { kind: 'confirm_send_message', contactId: contactid, contactName: contactname, draft };
+    }
     try {
       const message = await appApi.chat.runAction(action);
       this.setData({
         entries: [...this.data.entries, { role: 'assistant', text: message }],
       });
     } catch (error) {
-      appApi.shell; // runtime present; show the failure inline
       this.setData({
         entries: [...this.data.entries, { role: 'assistant', text: '操作失败，请重试。' }],
       });

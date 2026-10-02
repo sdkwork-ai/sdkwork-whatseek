@@ -1,0 +1,35 @@
+name: sdkwork_whatseek_flutter_mobile
+description: WhatSeek (问寻) AI-native super app Flutter mobile client.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  sdkwork_whatseek_flutter_mobile_apps:
+    path: packages/sdkwork_whatseek_flutter_mobile_apps
+  sdkwork_whatseek_flutter_mobile_chat:
+    path: packages/sdkwork_whatseek_flutter_mobile_chat
+  sdkwork_whatseek_flutter_mobile_commons:
+    path: packages/sdkwork_whatseek_flutter_mobile_commons
+  sdkwork_whatseek_flutter_mobile_contacts:
+    path: packages/sdkwork_whatseek_flutter_mobile_contacts
+  sdkwork_whatseek_flutter_mobile_core:
+    path: packages/sdkwork_whatseek_flutter_mobile_core
+  sdkwork_whatseek_flutter_mobile_messages:
+    path: packages/sdkwork_whatseek_flutter_mobile_messages
+  sdkwork_whatseek_flutter_mobile_profile:
+    path: packages/sdkwork_whatseek_flutter_mobile_profile
+  sdkwork_whatseek_flutter_mobile_shell:
+    path: packages/sdkwork_whatseek_flutter_mobile_shell
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

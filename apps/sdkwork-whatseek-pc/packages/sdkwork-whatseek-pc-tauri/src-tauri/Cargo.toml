@@ -1,0 +1,25 @@
+[package]
+name = "sdkwork-whatseek-pc-tauri"
+version = "0.1.0"
+description = "WhatSeek (问寻) desktop shell — Tauri host for the PC browser surface."
+edition = "2021"
+rust-version = "1.77"
+license = "AGPL-3.0-or-later"
+publish = false
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = [] }
+
+[features]
+# This predicate is used by tauri builds to detect the custom protocol.
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = true

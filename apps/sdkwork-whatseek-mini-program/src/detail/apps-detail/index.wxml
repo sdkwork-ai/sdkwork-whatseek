@@ -1,0 +1,15 @@
+<view wx:if="{{app}}" class="detail">
+  <view class="detail-head">
+    <view class="detail-icon">{{app.icon}}</view>
+    <view>
+      <view class="row-title">{{app.name}}</view>
+      <view class="row-desc">{{app.developer}} · {{app.priceLabel}}</view>
+    </view>
+  </view>
+  <view class="panel detail-card">
+    <view class="row-desc">{{app.summary}}</view>
+  </view>
+  <button class="btn-brand detail-btn" data-appid="{{app.id}}" bindtap="onUse">立即使用</button>
+  <button class="detail-fav" data-appid="{{app.id}}" bindtap="onFavorite">收藏</button>
+</view>
+<view wx:else class="empty">加载中…</view>

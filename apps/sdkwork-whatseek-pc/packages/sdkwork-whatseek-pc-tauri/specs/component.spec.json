@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/whatseek-pc-tauri",
+    "displayName": "WhatSeek PC Tauri Host",
+    "version": "0.1.0",
+    "type": "react-package",
+    "root": "apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-tauri",
+    "domain": "whatseek",
+    "capability": "desktop-host",
+    "surface": "app",
+    "languages": [
+      "rust",
+      "typescript"
+    ],
+    "generated": false,
+    "manifests": [
+      "src-tauri/Cargo.toml",
+      "src-tauri/tauri.conf.json",
+      "package.json"
+    ]
+  },
+  "canonicalSpecs": [
+    {
+      "file": "CODE_STYLE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md",
+      "purpose": "Cross-language code style authority."
+    },
+    {
+      "file": "RUST_CODE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/RUST_CODE_SPEC.md",
+      "purpose": "Rust crate standard for the Tauri host."
+    },
+    {
+      "file": "NAMING_SPEC.md",
+      "path": "../../../../../sdkwork-specs/NAMING_SPEC.md",
+      "purpose": "Host package naming lattice."
+    },
+    {
+      "file": "APP_PC_ARCHITECTURE_SPEC.md",
+      "path": "../../../../../sdkwork-specs/APP_PC_ARCHITECTURE_SPEC.md",
+      "purpose": "PC architecture + desktop host rules."
+    }
+  ],
+  "contracts": {
+    "layerRole": "frontend-host",
+    "publicExports": [
+      "src-tauri/src/main.rs"
+    ],
+    "requiredPorts": [],
+    "runtimeEntrypoints": [
+      "src-tauri/src/main.rs",
+      "package.json#scripts.build:desktop"
+    ],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "permissionComposition": {},
+    "dependencyApiExports": [],
+    "dependencyApiSurfaces": [],
+    "events": [],
+    "configKeys": [
+      "src-tauri/tauri.conf.json"
+    ],
+    "providedPorts": []
+  },
+  "verification": {
+    "commands": [
+      "cargo check --manifest-path src-tauri/Cargo.toml",
+      "pnpm --filter sdkwork-whatseek-pc build:desktop"
+    ]
+  }
+}

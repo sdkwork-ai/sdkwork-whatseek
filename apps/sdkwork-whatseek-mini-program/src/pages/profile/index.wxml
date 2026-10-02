@@ -1,0 +1,15 @@
+<view class="page-title">我的</view>
+<view class="page-sub">你负责问，AI 负责寻</view>
+<view class="panel profile-card">
+  <view class="avatar">🙂</view>
+  <view>
+    <view class="row-title">访客</view>
+    <view class="row-desc">登录后同步你的数字资产</view>
+  </view>
+</view>
+<view class="panel" wx:if="{{summary}}">
+  <view class="row"><view class="stat">{{summary.chats}}</view><view class="stat-label">对话</view></view>
+  <view class="row"><view class="stat">{{summary.apps}}</view><view class="stat-label">应用</view></view>
+  <view class="row"><view class="stat">{{summary.contacts}}</view><view class="stat-label">联系人</view></view>
+</view>
+<view wx:if="{{loading}}" class="empty">加载中…</view>

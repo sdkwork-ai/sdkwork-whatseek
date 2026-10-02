@@ -34,10 +34,16 @@
     "framework": "react-h5",
     "runtimes": [
       "WEB",
-      "H5"
+      "H5",
+      "DESKTOP",
+      "MP_WEIXIN",
+      "APP_IOS",
+      "APP_ANDROID"
     ],
     "deliveryModes": [
-      "WEB_URL"
+      "WEB_URL",
+      "DESKTOP_APP",
+      "MP_WEIXIN"
     ],
     "defaultPlatform": "H5",
     "defaultArchitecture": "universal",
@@ -70,10 +76,20 @@
   "publish": {
     "status": "DRAFT",
     "platforms": [
-      "H5"
+      "WEB",
+      "H5",
+      "DESKTOP",
+      "MP_WEIXIN",
+      "APP_IOS",
+      "APP_ANDROID"
     ],
     "installPlatforms": [
-      "H5"
+      "WEB",
+      "H5",
+      "DESKTOP",
+      "MP_WEIXIN",
+      "APP_IOS",
+      "APP_ANDROID"
     ],
     "installSkill": false
   },
@@ -107,7 +123,10 @@
     "build": {
       "targets": [
         "browser",
-        "h5"
+        "h5",
+        "desktop",
+        "mini-program",
+        "flutter-android"
       ]
     }
   },

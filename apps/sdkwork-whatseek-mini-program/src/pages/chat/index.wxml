@@ -15,7 +15,7 @@
     </view>
   </block>
 
-  <block wx:for="{{entries}}" wx:key="index">
+  <block wx:for="{{entries}}" wx:key="index" wx:for-index="entryIndex">
     <view class="bubble {{item.role === 'user' ? 'bubble-user' : 'bubble-ai'}}">{{item.text}}</view>
 
     <block wx:if="{{item.cards}}">
@@ -24,7 +24,7 @@
         <view class="plan-modules">
           <view wx:for="{{item.cards.plan.modules}}" wx:for-item="mod" wx:key="*this" class="plan-module">✓ {{mod}}</view>
         </view>
-        <button class="btn-brand" data-kind="generate" data-requirement="{{item.cards.plan.requirement}}" bindtap="onAction">直接生成</button>
+        <button class="btn-brand" data-kind="generate" data-entryindex="{{entryIndex}}" bindtap="onAction">直接生成</button>
       </view>
 
       <view class="panel card" wx:if="{{item.cards.sendMessage}}">

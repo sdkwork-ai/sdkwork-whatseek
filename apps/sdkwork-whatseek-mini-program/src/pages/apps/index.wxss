@@ -1,0 +1,7 @@
+.search-bar { display: flex; gap: 16rpx; padding: 8rpx 32rpx 16rpx; }
+.search-input { flex: 1; background: var(--sdk-color-surface-panel); border: 1rpx solid var(--sdk-color-border-subtle); border-radius: 999rpx; padding: 14rpx 28rpx; font-size: 26rpx; }
+.search-btn { background: var(--sdk-color-brand); color: #fff; border-radius: 999rpx; font-size: 24rpx; padding: 0 28rpx; }
+.cats { display: flex; flex-wrap: wrap; gap: 12rpx; padding: 0 32rpx 16rpx; }
+.cat { font-size: 22rpx; border: 1rpx solid var(--sdk-color-border-subtle); border-radius: 999rpx; padding: 8rpx 20rpx; color: var(--sdk-color-text-secondary); background: var(--sdk-color-surface-panel); }
+.app-main { flex: 1; min-width: 0; }
+.app-use { font-size: 24rpx; color: #fff; background: var(--sdk-color-brand); border-radius: 999rpx; padding: 8rpx 24rpx; }

@@ -25,6 +25,7 @@ export interface PageApi {
     categories(): Promise<unknown[]>;
     detail(appId: string): Promise<unknown>;
     myApps(): Promise<unknown[]>;
+    open(appId: string): Promise<void>;
     generate(requirement: string): Promise<unknown>;
     publish(appId: string): Promise<unknown>;
   };
@@ -97,6 +98,7 @@ export function bootstrapRuntime(): PageApi {
       categories: () => apps.listCategories(),
       detail: (appId) => apps.getApp(appId),
       myApps: () => apps.listMyApps(),
+      open: (appId) => apps.openApp(appId),
       generate: (requirement) => apps.generateApp(requirement),
       publish: (appId) => apps.publishApp(appId),
     },

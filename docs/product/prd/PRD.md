@@ -79,7 +79,7 @@ Agent, Skill, 应用组合, 文件, 知识库, 应用发布, 开发者中心, �
 
 ## 7. Phases
 
-1. **Phase 1 — H5 P0 milestone (this repository)**: five-tab H5 super app with chat-first entry, intent recognition + AI routing over mock-backed services (app catalog, contacts, messages, generated apps), app center (search/category/detail/invoke/我的应用/最近使用/收藏), AI app generation flow (plan → generate → preview → modify → publish), contacts, unified messages with AI task notifications, profile with session + theme, i18n (zh-CN/en-US), dark mode. Standalone deployment profile; all services sit behind injectable client boundaries so Phase 2 swaps mocks for generated SDK clients.
+1. **Phase 1 — multi-surface P0 milestone (this repository)**: five-tab super app delivered across H5 (primary), PC browser + Tauri desktop shell, WeChat mini-program, and Flutter mobile, all with chat-first entry, intent recognition + AI routing over mock-backed services (app catalog, contacts, messages, generated apps), app center (search/category/detail/invoke/我的应用/最近使用/收藏), AI app generation flow (plan → generate → preview → modify → publish), contacts, unified messages with AI task notifications, profile with session + theme, i18n (zh-CN/en-US), dark mode. Standalone deployment profile; all services sit behind injectable client boundaries so Phase 2 swaps mocks for generated SDK clients.
 2. **Phase 2 — platform wiring**: replace mock clients with generated SDK clients (IAM session, appstore catalog, IM transport, LLM gateway); add cloud deployment profile.
 3. **Phase 3 — P1/P2 capabilities** per Scope.
 

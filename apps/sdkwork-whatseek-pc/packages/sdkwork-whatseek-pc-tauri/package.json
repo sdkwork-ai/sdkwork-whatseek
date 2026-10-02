@@ -1,0 +1,11 @@
+{
+  "name": "@sdkwork/whatseek-pc-tauri",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gen:icon": "node scripts/gen-icon.mjs",
+    "build": "cargo build --release --manifest-path src-tauri/Cargo.toml",
+    "check": "cargo check --manifest-path src-tauri/Cargo.toml"
+  }
+}

@@ -1,0 +1,12 @@
+<view class="page-title">消息</view>
+<view class="page-sub">私聊、通知与 AI 任务事件都在这里</view>
+<view class="panel">
+  <view wx:for="{{conversations}}" wx:key="id" class="row" data-id="{{item.id}}" bindtap="onConversationTap">
+    <view class="contact-main">
+      <view class="row-title">{{item.title}}</view>
+      <view class="row-desc">{{item.lastMessagePreview}}</view>
+    </view>
+    <view wx:if="{{item.unread > 0}}" class="unread">{{item.unread}}</view>
+  </view>
+</view>
+<view wx:if="{{loading}}" class="empty">加载中…</view>

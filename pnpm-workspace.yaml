@@ -8,6 +8,9 @@ packages:
   - apps/sdkwork-whatseek-mini-program
   - apps/sdkwork-whatseek-mini-program/packages/*
 
+allowBuilds:
+  esbuild: true
+
 catalog:
   react: ^19.2.8
   react-dom: ^19.2.8

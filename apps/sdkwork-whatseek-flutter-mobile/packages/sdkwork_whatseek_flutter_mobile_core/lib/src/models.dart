@@ -1,0 +1,259 @@
+/// Domain model for the WhatSeek Flutter surface. The shapes mirror the shared
+/// TS domain (`@sdkwork/whatseek-service-core`); Dart cannot import TS, so the
+/// contract is re-declared here and exercised by the alignment tests.
+library;
+
+/// PRD §15 application forms.
+enum WhatseekAppKind { web, mini, ai, agent, skill, external, enterprise, generated }
+
+/// PRD §20 lifecycle states for AI-generated apps.
+enum CreatedAppLifecycle { draft, generating, preview, published, updated, archived }
+
+/// PRD §26 contact kinds.
+enum ContactKind { person, group, org, agent, assistant }
+
+/// PRD §27 conversation kinds.
+enum ConversationKind { direct, group, system, app, agent, task }
+
+/// PRD §41 task states.
+enum TaskState {
+  pending,
+  running,
+  waitingConfirmation,
+  completed,
+  failed,
+  cancelled,
+  expired;
+
+  String get label => switch (this) {
+        TaskState.pending => '排队中',
+        TaskState.running => '执行中',
+        TaskState.waitingConfirmation => '待确认',
+        TaskState.completed => '已完成',
+        TaskState.failed => '失败',
+        TaskState.cancelled => '已取消',
+        TaskState.expired => '已过期',
+      };
+}
+
+class WhatseekApp {
+  const WhatseekApp({
+    required this.id,
+    required this.name,
+    required this.summary,
+    required this.developer,
+    required this.category,
+    required this.kind,
+    required this.icon,
+    required this.rating,
+    required this.usersLabel,
+    required this.priceLabel,
+    required this.aiCapability,
+    required this.tags,
+    required this.updatedAt,
+    required this.permissions,
+  });
+
+  final String id;
+  final String name;
+  final String summary;
+  final String developer;
+  final String category;
+  final WhatseekAppKind kind;
+  final String icon;
+  final double rating;
+  final String usersLabel;
+  final String priceLabel;
+  final bool aiCapability;
+  final List<String> tags;
+  final String updatedAt;
+  final List<String> permissions;
+}
+
+class CreatedApp {
+  const CreatedApp({
+    required this.id,
+    required this.name,
+    required this.requirement,
+    required this.modules,
+    required this.lifecycle,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.versions,
+    required this.icon,
+  });
+
+  final String id;
+  final String name;
+  final String requirement;
+  final List<String> modules;
+  final CreatedAppLifecycle lifecycle;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final List<String> versions;
+  final String icon;
+}
+
+class AppCategory {
+  const AppCategory({required this.id, required this.label, required this.icon});
+
+  final String id;
+  final String label;
+  final String icon;
+}
+
+class AppRecommendation {
+  const AppRecommendation({required this.app, required this.reason});
+
+  final WhatseekApp app;
+  final String reason;
+}
+
+class Contact {
+  const Contact({
+    required this.id,
+    required this.name,
+    required this.kind,
+    required this.bio,
+    required this.tags,
+    required this.avatar,
+    this.company,
+  });
+
+  final String id;
+  final String name;
+  final ContactKind kind;
+  final String bio;
+  final List<String> tags;
+  final String avatar;
+  final String? company;
+}
+
+class Conversation {
+  const Conversation({
+    required this.id,
+    required this.kind,
+    this.titleKey,
+    this.title,
+    this.contactId,
+    this.taskId,
+    required this.unread,
+    this.updatedAt,
+    this.lastMessagePreview,
+  });
+
+  final String id;
+  final ConversationKind kind;
+  final String? titleKey;
+  final String? title;
+  final String? contactId;
+  final String? taskId;
+  final int unread;
+  final DateTime? updatedAt;
+  final String? lastMessagePreview;
+}
+
+class ChatMessage {
+  const ChatMessage({
+    required this.id,
+    required this.conversationId,
+    required this.senderId,
+    required this.senderName,
+    required this.content,
+    required this.sentAt,
+  });
+
+  final String id;
+  final String conversationId;
+  final String senderId;
+  final String senderName;
+  final String content;
+  final DateTime sentAt;
+}
+
+class WhatseekTask {
+  const WhatseekTask({
+    required this.id,
+    required this.title,
+    required this.intent,
+    required this.state,
+    required this.createdAt,
+    required this.updatedAt,
+    this.resultSummary,
+    this.createdAppId,
+  });
+
+  final String id;
+  final String title;
+  final String intent;
+  final TaskState state;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String? resultSummary;
+  final String? createdAppId;
+}
+
+/// Chat card payload rendered under an AI reply.
+class ChatCard {
+  const ChatCard({
+    required this.type,
+    this.apps = const [],
+    this.contacts = const [],
+    this.planTitle = '',
+    this.planModules = const [],
+    this.planRequirement = '',
+    this.contactId = '',
+    this.contactName = '',
+    this.draft = '',
+    this.commerceDomain = '',
+    this.commerceItems = const [],
+  });
+
+  final String type;
+  final List<AppRecommendation> apps;
+  final List<Contact> contacts;
+  final String planTitle;
+  final List<String> planModules;
+  final String planRequirement;
+  final String contactId;
+  final String contactName;
+  final String draft;
+  final String commerceDomain;
+  final List<CommerceResult> commerceItems;
+}
+
+class CommerceResult {
+  const CommerceResult({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.priceLabel,
+  });
+
+  final String id;
+  final String title;
+  final String subtitle;
+  final String priceLabel;
+}
+
+class ChatReply {
+  const ChatReply({required this.text, this.cards = const [], this.taskId});
+
+  final String text;
+  final List<ChatCard> cards;
+  final String? taskId;
+}
+
+class SessionUser {
+  const SessionUser({
+    required this.id,
+    required this.name,
+    required this.avatar,
+    required this.isVisitor,
+  });
+
+  final String id;
+  final String name;
+  final String avatar;
+  final bool isVisitor;
+}

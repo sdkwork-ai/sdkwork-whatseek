@@ -14,14 +14,14 @@ Out of scope: IAM/identity services, commerce order/payment processing, IM trans
 
 - Application code: `whatseek`
 - Repository: `sdkwork-whatseek`
-- Primary surface: `apps/sdkwork-whatseek-h5/` (mobile-first H5)
+- Primary surface: `apps/sdkwork-whatseek-h5/` (mobile-first H5), aligned with the PC (browser + Tauri desktop), WeChat mini-program, and Flutter mobile surfaces
 - Bottom navigation: 对话 (Chat) ｜ 应用 (Apps) ｜ 通讯录 (Contacts) ｜ 消息 (Messages) ｜ 我的 (Profile)
 
 ## Standard Layout
 
 | Directory | Purpose |
 | --- | --- |
-| `apps/` | Application roots. `apps/sdkwork-whatseek-h5/` is the primary runnable surface. |
+| `apps/` | Application roots: `sdkwork-whatseek-common` (shared contracts/ports), `sdkwork-whatseek-h5` (primary mobile-first H5), `sdkwork-whatseek-pc` (desktop-class PC + Tauri desktop shell), `sdkwork-whatseek-mini-program` (WeChat), `sdkwork-whatseek-flutter-mobile` (iOS/Android). |
 | `apis/` | API contracts (reserved; inactive). |
 | `sdks/` | SDK families (reserved; inactive). |
 | `crates/` | Generated API assembly scaffold only (`sdkwork-api-whatseek-assembly`, owned by `api:assembly:materialize`). |
@@ -43,6 +43,8 @@ Intentionally absent standard directories: `database/` (no owned persistence yet
 - Domain: `whatseek`
 - H5 app root: `apps/sdkwork-whatseek-h5/`
 - H5 packages: `sdkwork-whatseek-h5-core`, `sdkwork-whatseek-h5-commons`, `sdkwork-whatseek-h5-shell`, `sdkwork-whatseek-h5-<capability>`
+- PC packages: `sdkwork-whatseek-pc-<role>`; mini-program packages: `sdkwork-whatseek-mp-<capability>`; Flutter packages: `sdkwork_whatseek_flutter_mobile_<capability>`
+- Shared (cross-architecture): `sdkwork-whatseek-route-core`, `sdkwork-whatseek-intent-core`, `sdkwork-whatseek-service-core` under `apps/sdkwork-whatseek-common/packages/`
 
 ## Documentation Canon
 
