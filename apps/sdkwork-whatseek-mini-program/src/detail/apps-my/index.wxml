@@ -1,0 +1,36 @@
+<view class="my-head">
+  <view class="page-title">我的应用</view>
+  <button class="my-create" size="mini" bindtap="onCreate">+ 创建</button>
+</view>
+
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state">
+  <view class="state-title">加载失败</view>
+  <view class="state-desc">{{error}}</view>
+  <button class="retry-btn" bindtap="onRetry">重试</button>
+</view>
+
+<view wx:elif="{{apps.length === 0}}" class="state">
+  <view class="state-title">还没有创建过应用</view>
+  <view class="state-desc">去对话页描述需求，或直接创建一个</view>
+  <button class="retry-btn" bindtap="onCreate">创建应用</button>
+</view>
+
+<block wx:else>
+  <view wx:for="{{apps}}" wx:key="id" class="panel my-item">
+    <view class="row">
+      <view class="row-glyph">{{item.icon}}</view>
+      <view class="my-main">
+        <view class="row-title">{{item.name}}</view>
+        <view class="row-desc">{{item.requirement}}</view>
+      </view>
+      <view class="badge {{item.lifecycle === 'published' ? 'badge-published' : ''}}">{{item.lifecycleLabel}}</view>
+    </view>
+    <view class="my-actions">
+      <button class="my-action my-action-brand" size="mini" data-id="{{item.id}}" bindtap="onRun">运行</button>
+      <button wx:if="{{item.lifecycle !== 'published'}}" class="my-action" size="mini" data-id="{{item.id}}" bindtap="onPublish">发布</button>
+      <button class="my-action my-action-danger" size="mini" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onDelete">删除</button>
+    </view>
+  </view>
+</block>

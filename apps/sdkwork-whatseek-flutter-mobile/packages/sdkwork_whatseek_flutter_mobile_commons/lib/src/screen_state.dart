@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'i18n/commons_strings.dart';
+
 /// The five mandatory UI states (FRONTEND_CODE_SPEC §11 analog): loading,
 /// empty, error, permissionDenied, success. `success` renders [child].
 enum ScreenStateKind { loading, empty, error, permissionDenied, success }
@@ -46,31 +48,23 @@ class ScreenState extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title ??
-                  switch (state) {
-                    ScreenStateKind.loading => '加载中…',
-                    ScreenStateKind.empty => '这里还空空如也',
-                    ScreenStateKind.error => '出错了',
-                    ScreenStateKind.permissionDenied => '没有权限',
-                    _ => '',
-                  },
+                  WhatseekCommonsStrings.of(context, 'state.${state.name}.title'),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 4),
             Text(
               message ??
-                  switch (state) {
-                    ScreenStateKind.loading => '正在为你获取内容',
-                    ScreenStateKind.empty => '换个方式试试，或者直接告诉问寻你想做什么',
-                    ScreenStateKind.error => '内容没有加载成功，请重试',
-                    ScreenStateKind.permissionDenied => '当前账号无权访问该内容',
-                    _ => '',
-                  },
+                  WhatseekCommonsStrings.of(
+                      context, 'state.${state.name}.description'),
               style: Theme.of(context).textTheme.bodySmall,
               textAlign: TextAlign.center,
             ),
             if (state == ScreenStateKind.error && onRetry != null) ...[
               const SizedBox(height: 12),
-              FilledButton(onPressed: onRetry, child: const Text('重试')),
+              FilledButton(
+                onPressed: onRetry,
+                child: Text(WhatseekCommonsStrings.of(context, 'state.retry')),
+              ),
             ],
           ],
         ),

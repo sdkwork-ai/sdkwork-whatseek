@@ -4,3 +4,4 @@
 library;
 
 export 'src/whatseek_shell.dart';
+export 'src/i18n/shell_strings.dart';

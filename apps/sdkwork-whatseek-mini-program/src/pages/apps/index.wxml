@@ -1,14 +1,39 @@
-<view class="page-title">应用中心</view>
+<view class="apps-head">
+  <view class="page-title">应用中心</view>
+  <button class="apps-create" size="mini" bindtap="onCreate">+ 创建</button>
+</view>
+
 <view class="search-bar">
   <input class="search-input" placeholder="搜索应用，或者直接告诉我你要做什么" value="{{query}}" bindinput="onQueryInput" confirm-type="search" bindconfirm="onSearch" />
   <button class="search-btn" size="mini" bindtap="onSearch">搜索</button>
 </view>
+
 <view class="cats">
-  <view wx:for="{{categories}}" wx:key="id" class="cat">{{item.icon}} {{item.id}}</view>
+  <view wx:for="{{categories}}" wx:key="id" class="cat" data-id="{{item.id}}" bindtap="onCategoryTap">{{item.icon}} {{item.id}}</view>
 </view>
-<view class="page-sub" wx:if="{{!loading}}">共 {{recommended.length}} 个应用</view>
-<view class="panel">
-  <block wx:if="{{!loading}}">
+
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state">
+  <view class="state-title">加载失败</view>
+  <view class="state-desc">{{error}}</view>
+  <button class="retry-btn" bindtap="onRetry">重试</button>
+</view>
+
+<block wx:else>
+  <view class="apps-entries">
+    <view class="row apps-entry" bindtap="onMyApps">
+      <view class="row-glyph">🧩</view>
+      <view class="apps-entry-main">
+        <view class="row-title">我的应用</view>
+        <view class="row-desc">管理你创建和收藏的应用</view>
+      </view>
+      <view class="row-arrow">›</view>
+    </view>
+  </view>
+
+  <view class="page-sub">推荐应用 · 共 {{recommended.length}} 个</view>
+  <view class="panel">
     <view wx:for="{{recommended}}" wx:key="id" class="row">
       <view class="row-glyph">{{item.icon}}</view>
       <view class="app-main">
@@ -17,6 +42,5 @@
       </view>
       <navigator class="app-use" url="/detail/apps-detail/index?appId={{item.id}}">详情</navigator>
     </view>
-  </block>
-</view>
-<view wx:if="{{loading}}" class="empty">加载中…</view>
+  </view>
+</block>

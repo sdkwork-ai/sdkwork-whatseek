@@ -32,10 +32,18 @@ trace:
 
 1. `pnpm typecheck` 0 errors and `pnpm -r test` all suites green (common 41, H5, PC, profile/shell/contacts/messages).
 2. `pnpm build:h5:prod` and `pnpm build:pc:prod` PASS via the canonical browser build runner.
-3. Mini-program: `tsc` 0 errors, runtime bundle builds for standalone.production, contract suite 5/5 (manifest alignment, page quads, runtime freshness, wx host-adapter boundary).
-4. Flutter: `flutter analyze` No issues found, `flutter test` 15/15 including the cross-surface route alignment test.
+3. Mini-program: `tsc` 0 errors, runtime bundle builds for standalone.production, contract suite 8/8 (manifest + 13-route page projection, page quads, facade + error-state coverage, dark-mode theme wiring, runtime freshness, wx host-adapter boundary, route ids, i18n key parity).
+4. Flutter: `flutter analyze` No issues found, `flutter test` all green (33 tests) including the cross-surface route alignment test with a builder for every one of the 13 route ids, i18n layout compliance, settings screen, and the runner permission-denied state.
 5. Desktop: `cargo build` produces `sdkwork-whatseek-pc-tauri.exe`; smoke test launches and terminates.
 6. `pnpm check` (12 sdkwork-specs validators) green.
+
+## Commercial-Delivery Closeout (2026-10-02)
+
+After the P0 milestone, the surface-gap audit closed the remaining functional deltas so every surface covers the full 13-route contract:
+
+- Mini-program: dedicated pages for `apps.search`, `apps.runner`, `apps.create`, `apps.my`, `contacts.detail`, `profile.settings` (13/13 route ids addressable), real favorite/publish/delete/direct-conversation interactions, per-page loading/empty/error+retry states, task-state chip in chat, native dark mode (`darkmode` + `theme.json` + token overrides).
+- Flutter: `AppsSearchScreen`, `SettingsScreen`, real `AppRunnerScreen` replace the placeholder; all 8 secondary routes have builders; zh-CN/en-US i18n fragments per package under `lib/src/i18n/`; light/dark `ThemeData` + persisted appearance (shared_preferences); settings and search entries on the profile/apps tab roots.
+- Shared catalog: `crm-manager` is the `enterprise`-kind app, making the documented visitor permission-denied runner state reachable on all four surfaces (previously dead code on H5/PC).
 
 ## Verification
 

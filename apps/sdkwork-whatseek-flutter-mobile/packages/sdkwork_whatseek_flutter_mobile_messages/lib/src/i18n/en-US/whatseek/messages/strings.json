@@ -1,10 +1,17 @@
 {
+  "kind": {
+    "system": "Notifications",
+    "app": "App notice",
+    "task": "AI task"
+  },
   "home": {
     "title": "Messages",
     "subtitle": "Chats, notifications, and AI task events in one place"
   },
   "conversation": {
-    "composerHint": "Type a message…",
+    "title": "Conversation",
+    "emptyTitle": "No messages yet",
+    "inputPlaceholder": "Type a message…",
     "send": "Send"
   }
 }

@@ -3,8 +3,34 @@
     "title": "Me",
     "visitor": "Visitor",
     "visitorHint": "Sign in to sync your digital assets",
+    "asset": {
+      "chats": "Chats",
+      "apps": "Apps",
+      "contacts": "Contacts"
+    },
     "myApps": "My apps",
     "favorites": "Favorites",
+    "settings": "Settings",
     "brand": "You ask, AI seeks"
+  },
+  "settings": {
+    "title": "Settings",
+    "darkMode": "Appearance",
+    "darkModeHint": "Switch light / dark theme",
+    "mode": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": "Language",
+    "locale": {
+      "zhCN": "简体中文",
+      "enUS": "English"
+    },
+    "about": "About",
+    "version": "Version",
+    "routeContracts": "Route contracts",
+    "brandTitle": "WhatSeek",
+    "brandMessage": "You ask, AI seeks."
   }
 }

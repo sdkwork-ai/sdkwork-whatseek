@@ -1,0 +1,145 @@
+import 'package:flutter/material.dart';
+
+import "package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart";
+
+/// Localized UI strings for the apps capability.
+///
+/// Source of truth: `lib/src/i18n/<locale>/whatseek/apps/strings.json`
+/// (APP_FLUTTER_UI_SPEC §i18n layout). The maps below mirror those fragments;
+/// `test/i18n_layout_test.dart` parses the fragments and fails on drift.
+const Map<String, Map<String, String>> whatseekAppsStrings = {
+  'zh-CN': {
+    'home.title': '应用中心',
+    'home.searchPlaceholder': '搜索应用，或者直接告诉我你要做什么',
+    'home.recommended': '为你推荐',
+    'search.title': '搜索应用',
+    'search.inputLabel': '搜索应用',
+    'search.resultCount': '找到 {{count}} 个应用',
+    'search.matchedOn': '匹配 {{keyword}}',
+    'search.emptyTitle': '没有找到合适的应用',
+    'search.emptyDescription': '没关系——告诉问寻你想做什么，AI 可以直接帮你创建一个。',
+    'search.createFallback': '没有合适的？',
+    'search.createFallbackAction': '让 AI 帮你创建一个',
+    'detail.title': '应用详情',
+    'detail.notFound': '应用不存在',
+    'detail.aiCapability': 'AI 能力',
+    'detail.use': '立即使用',
+    'detail.createFrom': '基于此创建',
+    'detail.users': '{{users}} 人在用',
+    'runner.title': '运行应用',
+    'runner.running': '运行中',
+    'runner.previewNote': '这是应用运行预览。正式版将在云端沙箱中运行真实应用。',
+    'create.title': 'AI 创建应用',
+    'create.placeholder': '例如：帮我创建一个跨境客户管理系统',
+    'create.planAction': '生成方案',
+    'create.generateAction': '直接生成',
+    'create.previewTitle': '预览：{{name}}',
+    'create.moduleCount': '{{count}} 个模块',
+    'create.publishAction': '发布到我的应用',
+    'create.published': '已发布！应用已保存到「我的应用」。',
+    'my.title': '我的应用',
+    'my.emptyCreatedTitle': '还没有创建应用',
+    'my.emptyCreatedDescription': '用一句自然语言，让 AI 帮你生成第一个应用',
+    'lifecycle.draft': '草稿',
+    'lifecycle.generating': '生成中',
+    'lifecycle.preview': '预览',
+    'lifecycle.published': '已发布',
+    'lifecycle.updated': '已更新',
+    'lifecycle.archived': '已归档',
+    'category.efficiency': '效率',
+    'category.office': '办公',
+    'category.coding': '编程',
+    'category.design': '设计',
+    'category.image': '图片',
+    'category.video': '视频',
+    'category.audio': '音频',
+    'category.ecommerce': '电商',
+    'category.marketing': '营销',
+    'category.education': '教育',
+    'category.finance': '金融',
+    'category.life': '生活',
+    'category.social': '社交',
+    'category.games': '游戏',
+    'category.enterprise': '企业',
+    'category.agent': 'AI Agent',
+  },
+  'en-US': {
+    'home.title': 'App Center',
+    'home.searchPlaceholder': 'Search apps, or just tell me what you need',
+    'home.recommended': 'Recommended',
+    'search.title': 'Search apps',
+    'search.inputLabel': 'Search apps',
+    'search.resultCount': '{{count}} apps found',
+    'search.matchedOn': 'matches {{keyword}}',
+    'search.emptyTitle': 'No suitable app found',
+    'search.emptyDescription':
+        "That's fine — tell WhatSeek what you need and AI can create one for you.",
+    'search.createFallback': 'Nothing fits?',
+    'search.createFallbackAction': 'Let AI create one',
+    'detail.title': 'App details',
+    'detail.notFound': 'App not found',
+    'detail.aiCapability': 'AI capability',
+    'detail.use': 'Use now',
+    'detail.createFrom': 'Create from this',
+    'detail.users': '{{users}} users',
+    'runner.title': 'Run app',
+    'runner.running': 'Running',
+    'runner.previewNote':
+        'This is an app runtime preview. The production version runs real apps in a cloud sandbox.',
+    'create.title': 'AI app creation',
+    'create.placeholder': 'e.g. Create a cross-border CRM for me',
+    'create.planAction': 'Generate plan',
+    'create.generateAction': 'Generate now',
+    'create.previewTitle': 'Preview: {{name}}',
+    'create.moduleCount': '{{count}} modules',
+    'create.publishAction': 'Publish to My apps',
+    'create.published': 'Published! The app is saved under "My apps".',
+    'my.title': 'My apps',
+    'my.emptyCreatedTitle': 'No apps created yet',
+    'my.emptyCreatedDescription': 'Use one sentence and let AI generate your first app',
+    'lifecycle.draft': 'Draft',
+    'lifecycle.generating': 'Generating',
+    'lifecycle.preview': 'Preview',
+    'lifecycle.published': 'Published',
+    'lifecycle.updated': 'Updated',
+    'lifecycle.archived': 'Archived',
+    'category.efficiency': 'Efficiency',
+    'category.office': 'Office',
+    'category.coding': 'Coding',
+    'category.design': 'Design',
+    'category.image': 'Image',
+    'category.video': 'Video',
+    'category.audio': 'Audio',
+    'category.ecommerce': 'Commerce',
+    'category.marketing': 'Marketing',
+    'category.education': 'Education',
+    'category.finance': 'Finance',
+    'category.life': 'Lifestyle',
+    'category.social': 'Social',
+    'category.games': 'Games',
+    'category.enterprise': 'Enterprise',
+    'category.agent': 'AI Agent',
+  },
+};
+
+class WhatseekAppsStrings {
+  WhatseekAppsStrings._();
+
+  static const _set = WhatseekStringSet(whatseekAppsStrings);
+
+  /// Resolve an apps string for the ambient locale (zh fallback).
+  static String of(
+    BuildContext context,
+    String key, [
+    Map<String, Object?> params = const {},
+  ]) =>
+      _set.of(context, key, params);
+
+  /// Resolve an apps string for an explicit locale (tests, shell-less use).
+  static String resolve(
+    String locale,
+    String key, [
+    Map<String, Object?> params = const {},
+  ]) =>
+      _set.resolve(locale, key, params);
+}

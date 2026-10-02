@@ -18,6 +18,13 @@
   <block wx:for="{{entries}}" wx:key="index" wx:for-index="entryIndex">
     <view class="bubble {{item.role === 'user' ? 'bubble-user' : 'bubble-ai'}}">{{item.text}}</view>
 
+    <view wx:if="{{item.taskId}}" class="task-chip-row">
+      <view class="chip" data-entryindex="{{entryIndex}}" bindtap="onTaskTap">
+        <view class="chip-dot"></view>
+        <text>{{item.taskState || '任务已创建 · 点按查看状态'}}</text>
+      </view>
+    </view>
+
     <block wx:if="{{item.cards}}">
       <view class="panel card" wx:if="{{item.cards.plan}}">
         <view class="row-title">{{item.cards.plan.title}}</view>
@@ -49,6 +56,27 @@
             <view class="app-reason">匹配 {{app.reason}} · {{app.priceLabel}}</view>
           </view>
           <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">使用</navigator>
+        </view>
+      </view>
+
+      <view class="panel card" wx:if="{{item.cards.contacts.length > 0}}">
+        <view wx:for="{{item.cards.contacts}}" wx:for-item="contact" wx:key="id" class="row" data-id="{{contact.id}}" bindtap="onContactTap">
+          <view class="app-main">
+            <view class="row-title">{{contact.name}}</view>
+            <view class="row-desc">{{contact.bio}}</view>
+          </view>
+          <view class="row-arrow">›</view>
+        </view>
+      </view>
+
+      <view class="panel card" wx:if="{{item.cards.commerce}}">
+        <view class="row-title">{{item.cards.commerce.domain}} · 为你找到</view>
+        <view wx:for="{{item.cards.commerce.items}}" wx:for-item="item2" wx:key="id" class="row">
+          <view class="app-main">
+            <view class="row-title">{{item2.title}}</view>
+            <view class="row-desc">{{item2.subtitle}}</view>
+          </view>
+          <view class="commerce-price">{{item2.priceLabel}}</view>
         </view>
       </view>
     </block>

@@ -46,6 +46,34 @@ export async function generateApp(requirement: string): Promise<CreatedApp> {
   return port.createAppFromPlan(requirement, plan.modules);
 }
 
+export function draftCreationPlan(requirement: string): { title: string; modules: string[] } {
+  return appsPort().draftCreationPlan(requirement);
+}
+
+export async function createAppFromPlan(requirement: string, modules: readonly string[]): Promise<CreatedApp> {
+  return appsPort().createAppFromPlan(requirement, modules);
+}
+
 export async function publishApp(appId: string): Promise<CreatedApp> {
   return appsPort().publishApp(appId);
+}
+
+export async function deleteMyApp(appId: string): Promise<void> {
+  await appsPort().deleteMyApp(appId);
+}
+
+export async function listFavoriteApps(): Promise<WhatseekApp[]> {
+  return appsPort().listFavorites();
+}
+
+export async function toggleFavoriteApp(appId: string): Promise<boolean> {
+  return appsPort().toggleFavorite(appId);
+}
+
+export async function listRecentApps(): Promise<WhatseekApp[]> {
+  return appsPort().listRecent();
+}
+
+export async function listAppsByCategory(categoryId: string): Promise<WhatseekApp[]> {
+  return appsPort().listByCategory(categoryId);
 }

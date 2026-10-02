@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import "package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart";
 import "package:sdkwork_whatseek_flutter_mobile_commons/sdkwork_whatseek_flutter_mobile_commons.dart";
 
-/// 应用 tab root (PRD §13): search prompt, categories, recommended apps.
+import 'i18n/apps_strings.dart';
+
+/// 应用 tab root (PRD §13): the search entry opens the dedicated search route
+/// (`app.whatseek.apps.search`), recommended apps fill the home list.
 class AppsHomeScreen extends StatefulWidget {
   const AppsHomeScreen({super.key, this.onOpenApp});
 
@@ -14,43 +17,60 @@ class AppsHomeScreen extends StatefulWidget {
 }
 
 class _AppsHomeScreenState extends State<AppsHomeScreen> {
-  late Future<List<AppRecommendation>> _results;
-  String _query = '';
+  late Future<List<WhatseekApp>> _recommended;
 
   @override
   void initState() {
     super.initState();
-    _results = WhatseekRuntime.instance.apps.searchApps('');
+    _recommended = WhatseekRuntime.instance.apps.listRecommended();
   }
 
-  void _search(String query) {
-    setState(() {
-      _query = query;
-      _results = WhatseekRuntime.instance.apps.searchApps(query);
-    });
+  void _openSearch(String query) {
+    Navigator.of(context).pushNamed(
+      'app.whatseek.apps.search',
+      arguments: query.trim(),
+    );
+  }
+
+  void _openDetail(String appId) {
+    if (widget.onOpenApp != null) {
+      widget.onOpenApp!(appId);
+      return;
+    }
+    Navigator.of(context).pushNamed('app.whatseek.apps.detail', arguments: appId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('应用中心')),
+      appBar: AppBar(title: Text(WhatseekAppsStrings.of(context, 'home.title'))),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
-              decoration: const InputDecoration(
-                hintText: '搜索应用，或者直接告诉我你要做什么',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(24))),
+              decoration: InputDecoration(
+                hintText: WhatseekAppsStrings.of(context, 'home.searchPlaceholder'),
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(24))),
                 isDense: true,
               ),
-              onSubmitted: _search,
+              onSubmitted: _openSearch,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                WhatseekAppsStrings.of(context, 'home.recommended'),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<AppRecommendation>>(
-              future: _results,
+            child: FutureBuilder<List<WhatseekApp>>(
+              future: _recommended,
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
                   return const ScreenState(state: ScreenStateKind.loading);
@@ -58,27 +78,28 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
                 if (snapshot.hasError) {
                   return ScreenState(
                     state: ScreenStateKind.error,
-                    onRetry: () => _search(_query),
+                    onRetry: () => setState(() {
+                      _recommended = WhatseekRuntime.instance.apps.listRecommended();
+                    }),
                   );
                 }
-                final results = snapshot.data ?? const <AppRecommendation>[];
+                final results = snapshot.data ?? const <WhatseekApp>[];
                 if (results.isEmpty) {
-                  return const ScreenState(state: ScreenStateKind.empty);
+                  return ScreenState(
+                    state: ScreenStateKind.empty,
+                    title: WhatseekAppsStrings.of(context, 'search.emptyTitle'),
+                  );
                 }
                 return ListView.builder(
                   itemCount: results.length,
                   itemBuilder: (context, index) {
-                    final recommendation = results[index];
-                    final app = recommendation.app;
+                    final app = results[index];
                     return ListTile(
                       leading: Text(app.icon, style: const TextStyle(fontSize: 28)),
                       title: Text(app.name),
                       subtitle: Text(app.summary, maxLines: 2, overflow: TextOverflow.ellipsis),
                       trailing: Text(app.priceLabel),
-                      onTap: () => Navigator.of(context).pushNamed(
-                        'app.whatseek.apps.detail',
-                        arguments: app.id,
-                      ),
+                      onTap: () => _openDetail(app.id),
                     );
                   },
                 );

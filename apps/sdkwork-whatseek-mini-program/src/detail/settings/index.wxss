@@ -1,0 +1,16 @@
+.settings-block { align-items: flex-start; }
+.settings-main { flex: 1; }
+.settings-options { display: flex; gap: 16rpx; margin-top: 16rpx; }
+.settings-option {
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  background-color: var(--sdk-color-surface-canvas);
+  color: var(--sdk-color-text-secondary);
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  padding: 0 32rpx;
+}
+.settings-option-active {
+  background-color: var(--sdk-color-brand);
+  border-color: var(--sdk-color-brand);
+  color: #ffffff;
+}

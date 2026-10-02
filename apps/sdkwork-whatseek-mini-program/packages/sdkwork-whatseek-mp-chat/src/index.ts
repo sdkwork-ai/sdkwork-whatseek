@@ -101,3 +101,11 @@ export async function runCardAction(action: ChatCardAction): Promise<string> {
   const outcome = await chat.runCardAction(action);
   return replyText({ contentKey: outcome.message });
 }
+
+export async function taskStatus(taskId: string): Promise<{ id: string; title: string; state: string; resultSummary?: string } | null> {
+  const task = await getWhatseekClient('tasks').getTask(taskId);
+  if (task === null) {
+    return null;
+  }
+  return { id: task.id, title: task.title, state: task.state, resultSummary: task.resultSummary };
+}

@@ -11,21 +11,27 @@
       "root": "detail",
       "pages": [
         "apps-detail/index",
-        "conversation/index"
+        "apps-search/index",
+        "apps-runner/index",
+        "apps-create/index",
+        "apps-my/index",
+        "contact-detail/index",
+        "conversation/index",
+        "settings/index"
       ]
     }
   ],
   "window": {
     "navigationBarTitleText": "问寻 WhatSeek",
-    "navigationBarBackgroundColor": "#2563eb",
-    "navigationBarTextStyle": "white",
-    "backgroundColor": "#f7f8fa"
+    "navigationBarBackgroundColor": "@navBg",
+    "navigationBarTextStyle": "@navTxt",
+    "backgroundColor": "@bg"
   },
   "tabBar": {
-    "color": "#71717a",
-    "selectedColor": "#2563eb",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "black",
+    "color": "@tabColor",
+    "selectedColor": "@tabSelected",
+    "backgroundColor": "@tabBg",
+    "borderStyle": "@tabBorder",
     "list": [
       {
         "pagePath": "pages/chat/index",
@@ -49,6 +55,8 @@
       }
     ]
   },
+  "darkmode": true,
+  "themeLocation": "theme.json",
   "lazyCodeLoading": "requiredComponents",
   "sitemapLocation": "sitemap.json"
 }

@@ -1,5 +1,7 @@
 .detail-head { display: flex; align-items: center; gap: 24rpx; padding: 40rpx 32rpx 16rpx; }
 .detail-icon { font-size: 80rpx; }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 12rpx; padding: 0 32rpx 16rpx; }
 .detail-card { padding: 24rpx; }
 .detail-btn { margin: 24rpx 32rpx; }
 .detail-fav { text-align: center; color: var(--sdk-color-text-secondary); font-size: 26rpx; padding: 12rpx; }
+.detail-fav-active { color: var(--sdk-color-brand); }

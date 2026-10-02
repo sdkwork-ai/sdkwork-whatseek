@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  shared_preferences: ^2.5.5
   sdkwork_whatseek_flutter_mobile_apps:
     path: packages/sdkwork_whatseek_flutter_mobile_apps
   sdkwork_whatseek_flutter_mobile_chat:

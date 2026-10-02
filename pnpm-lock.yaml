@@ -649,6 +649,9 @@ importers:
       '@sdkwork/whatseek-mp-chat':
         specifier: workspace:*
         version: link:packages/sdkwork-whatseek-mp-chat
+      '@sdkwork/whatseek-mp-commons':
+        specifier: workspace:*
+        version: link:packages/sdkwork-whatseek-mp-commons
       '@sdkwork/whatseek-mp-contacts':
         specifier: workspace:*
         version: link:packages/sdkwork-whatseek-mp-contacts
@@ -1133,6 +1136,8 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.11(@types/node@24.19.0)(jsdom@29.1.1)(vite@8.3.1(@types/node@24.19.0))
+
+  apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-tauri: {}
 
 packages:
 

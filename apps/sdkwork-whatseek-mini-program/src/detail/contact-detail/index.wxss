@@ -1,0 +1,8 @@
+.contact-card { display: flex; flex-direction: column; align-items: center; gap: 12rpx; padding: 48rpx 32rpx; }
+.contact-avatar { font-size: 112rpx; }
+.contact-name { font-size: 36rpx; font-weight: 600; }
+.contact-value { flex: 1; text-align: right; font-size: 26rpx; color: var(--sdk-color-text-secondary); }
+.contact-tags-row { align-items: flex-start; flex-wrap: wrap; }
+.contact-tags { display: flex; flex-wrap: wrap; gap: 12rpx; flex: 1; justify-content: flex-end; }
+.contact-actions { padding: 8rpx 32rpx; }
+.contact-btn { width: 100%; }

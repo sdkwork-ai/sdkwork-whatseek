@@ -1,12 +1,31 @@
 <view class="page-title">通讯录</view>
 <view class="page-sub">人、群、企业、供应商、Agent 与 AI 助手</view>
-<view class="panel">
-  <view wx:for="{{contacts}}" wx:key="id" class="row">
+
+<view class="search-bar">
+  <input class="search-input" placeholder="搜索联系人、群聊或企业" value="{{query}}" bindinput="onQueryInput" confirm-type="search" bindconfirm="onSearch" />
+  <button class="search-btn" size="mini" bindtap="onSearch">搜索</button>
+</view>
+
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state">
+  <view class="state-title">加载失败</view>
+  <view class="state-desc">{{error}}</view>
+  <button class="retry-btn" bindtap="onRetry">重试</button>
+</view>
+
+<view wx:elif="{{contacts.length === 0}}" class="state">
+  <view class="state-title">没有找到匹配的联系人</view>
+  <view class="state-desc">换个关键词试试</view>
+</view>
+
+<view wx:else class="panel">
+  <view wx:for="{{contacts}}" wx:key="id" class="row" data-id="{{item.id}}" bindtap="onContactTap">
     <view class="row-glyph">{{item.avatar}}</view>
     <view class="contact-main">
       <view class="row-title">{{item.name}}</view>
       <view class="row-desc">{{item.bio}}</view>
     </view>
+    <view class="row-arrow">›</view>
   </view>
 </view>
-<view wx:if="{{loading}}" class="empty">加载中…</view>

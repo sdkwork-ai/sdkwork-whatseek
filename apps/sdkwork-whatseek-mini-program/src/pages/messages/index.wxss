@@ -1,2 +1,2 @@
 .contact-main { flex: 1; min-width: 0; }
-.unread { min-width: 32rpx; text-align: center; background: #dc2626; color: #fff; font-size: 20rpx; border-radius: 999rpx; padding: 4rpx 10rpx; }
+.unread { min-width: 32rpx; text-align: center; background: var(--sdk-color-danger); color: #fff; font-size: 20rpx; border-radius: 999rpx; padding: 4rpx 10rpx; }

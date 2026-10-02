@@ -1,15 +1,27 @@
-<view wx:if="{{app}}" class="detail">
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state">
+  <view class="state-title">无法打开应用</view>
+  <view class="state-desc">{{error}}</view>
+  <button class="retry-btn" bindtap="onRetry">重试</button>
+</view>
+
+<view wx:elif="{{app}}" class="detail">
   <view class="detail-head">
     <view class="detail-icon">{{app.icon}}</view>
     <view>
       <view class="row-title">{{app.name}}</view>
-      <view class="row-desc">{{app.developer}} · {{app.priceLabel}}</view>
+      <view class="row-desc">{{app.developer}} · {{app.priceLabel}} · ⭐ {{app.rating}}</view>
     </view>
+  </view>
+  <view class="detail-tags">
+    <view wx:for="{{app.tags}}" wx:key="*this" class="badge">{{item}}</view>
   </view>
   <view class="panel detail-card">
     <view class="row-desc">{{app.summary}}</view>
   </view>
-  <button class="btn-brand detail-btn" data-appid="{{app.id}}" bindtap="onUse">立即使用</button>
-  <button class="detail-fav" data-appid="{{app.id}}" bindtap="onFavorite">收藏</button>
+  <button class="btn-brand detail-btn" bindtap="onUse">立即使用</button>
+  <button class="detail-fav {{favorite ? 'detail-fav-active' : ''}}" disabled="{{favoriting}}" bindtap="onFavorite">
+    {{favorite ? '★ 已收藏' : '☆ 收藏'}}{{favoriting ? '…' : ''}}
+  </button>
 </view>
-<view wx:else class="empty">加载中…</view>

@@ -25,15 +25,28 @@ enum TaskState {
   cancelled,
   expired;
 
-  String get label => switch (this) {
-        TaskState.pending => '排队中',
-        TaskState.running => '执行中',
-        TaskState.waitingConfirmation => '待确认',
-        TaskState.completed => '已完成',
-        TaskState.failed => '失败',
-        TaskState.cancelled => '已取消',
-        TaskState.expired => '已过期',
+  /// i18n key for the localized label (`whatseek.chat.task.*`, aligned with
+  /// the H5 chat fragment).
+  String get labelKey => switch (this) {
+        TaskState.pending => 'whatseek.chat.task.pending',
+        TaskState.running => 'whatseek.chat.task.running',
+        TaskState.waitingConfirmation => 'whatseek.chat.task.waiting_confirmation',
+        TaskState.completed => 'whatseek.chat.task.completed',
+        TaskState.failed => 'whatseek.chat.task.failed',
+        TaskState.cancelled => 'whatseek.chat.task.cancelled',
+        TaskState.expired => 'whatseek.chat.task.expired',
       };
+}
+
+/// Thrown when the session lacks access to an app (PRD §16: enterprise apps
+/// require a named account) — the mock counterpart of an app-api
+/// permission-denied ProblemDetail, rendered as the runner's
+/// permission-denied state (H5 parity).
+class WhatseekPermissionDeniedException implements Exception {
+  const WhatseekPermissionDeniedException();
+
+  @override
+  String toString() => 'WhatseekPermissionDeniedException';
 }
 
 class WhatseekApp {
@@ -95,10 +108,12 @@ class CreatedApp {
 }
 
 class AppCategory {
-  const AppCategory({required this.id, required this.label, required this.icon});
+  const AppCategory({required this.id, required this.labelKey, required this.icon});
 
   final String id;
-  final String label;
+
+  /// i18n key for the localized label (`whatseek.apps.category.*`).
+  final String labelKey;
   final String icon;
 }
 
@@ -237,11 +252,28 @@ class CommerceResult {
 }
 
 class ChatReply {
-  const ChatReply({required this.text, this.cards = const [], this.taskId});
+  const ChatReply({
+    required this.text,
+    this.params = const {},
+    this.cards = const [],
+    this.taskId,
+  });
 
+  /// Reply copy as an i18n key (`whatseek.chat.reply.*`) — the UI translates
+  /// it and falls back to the raw text (H5 `defaultValue` semantics).
   final String text;
+  final Map<String, Object?> params;
   final List<ChatCard> cards;
   final String? taskId;
+}
+
+/// Serializable result of a card action; [messageKey] is an i18n key
+/// (`whatseek.chat.reply.action.*`) translated by the chat screen.
+class ChatActionOutcome {
+  const ChatActionOutcome({required this.messageKey, this.params = const {}});
+
+  final String messageKey;
+  final Map<String, Object?> params;
 }
 
 class SessionUser {

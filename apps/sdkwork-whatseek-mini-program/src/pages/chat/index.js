@@ -1,6 +1,7 @@
 // 对话 tab — AI chat entry (PRD §8/§9). Logic comes from the bundled runtime;
 // this page layer only binds data and events (MINI_PROGRAM_APP_ARCHITECTURE_SPEC
-// §Packages vs platform pages).
+// §Packages vs platform pages). Assistant turns carry card views and an
+// optional task chip whose state refreshes through the shared TasksPort.
 const { appApi } = require('../../runtime/app.js');
 
 Page({
@@ -35,7 +36,7 @@ Page({
       this.setData({
         entries: [
           ...entries,
-          { role: 'assistant', text: turn.replyText, cards: turn.cards, taskId: turn.taskId },
+          { role: 'assistant', text: turn.replyText, cards: turn.cards, taskId: turn.taskId, taskState: '' },
         ],
         sending: false,
       });
@@ -67,5 +68,29 @@ Page({
         entries: [...this.data.entries, { role: 'assistant', text: '操作失败，请重试。' }],
       });
     }
+  },
+
+  async onTaskTap(event) {
+    const entryindex = Number(event.currentTarget.dataset.entryindex);
+    const entry = this.data.entries[entryindex];
+    if (!entry || !entry.taskId) return;
+    try {
+      const task = await appApi.chat.taskStatus(entry.taskId);
+      if (task === null) {
+        appApi.shell.toast('任务不存在');
+        return;
+      }
+      const label = appApi.shell.taskStateLabel(task.state);
+      this.setData({
+        [`entries[${entryindex}].taskState`]: task.resultSummary ? `${label} · ${task.resultSummary}` : label,
+      });
+    } catch (error) {
+      appApi.shell.toast('任务状态获取失败');
+    }
+  },
+
+  onContactTap(event) {
+    const contactId = event.currentTarget.dataset.id;
+    appApi.shell.navigate(`/detail/contact-detail/index?contactId=${contactId}`);
   },
 });

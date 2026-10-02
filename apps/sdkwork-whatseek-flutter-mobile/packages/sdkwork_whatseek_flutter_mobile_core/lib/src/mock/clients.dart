@@ -121,7 +121,7 @@ class MockMessagesClient {
       const Conversation(
         id: 'conv-task-video',
         kind: ConversationKind.task,
-        titleKey: 'AI 任务',
+        titleKey: 'whatseek.messages.kind.task',
         taskId: 'task-demo-video',
         unread: 1,
         lastMessagePreview: '你要求的视频已经生成。',
@@ -212,7 +212,7 @@ class MockMessagesClient {
       Conversation(
         id: conversationId,
         kind: ConversationKind.task,
-        titleKey: 'AI 任务',
+        titleKey: 'whatseek.messages.kind.task',
         taskId: task.id,
         unread: 1,
         updatedAt: now,
@@ -294,6 +294,8 @@ class MockTasksClient {
 }
 
 /// Mock AI chat client: the AI Router (PRD §11) — Dart port of the TS mock.
+/// Replies carry i18n keys (`whatseek.chat.reply.*`) so the UI translates
+/// them with raw-text fallback (H5 parity).
 class MockChatClient {
   MockChatClient({
     required this.apps,
@@ -301,6 +303,8 @@ class MockChatClient {
     required this.messages,
     required this.tasks,
   });
+
+  static const String _replyPrefix = 'whatseek.chat.reply.';
 
   final MockAppsClient apps;
   final MockContactsClient contacts;
@@ -315,13 +319,13 @@ class MockChatClient {
         final results = await apps.searchApps(trimmed);
         if (results.isNotEmpty) {
           return ChatReply(
-            text: '找到适合你的应用：',
+            text: '${_replyPrefix}searchAppFound',
             cards: [ChatCard(type: 'app_results', apps: results.take(3).toList())],
           );
         }
         final plan = apps.draftCreationPlan(trimmed);
         return ChatReply(
-          text: '没有找到现成的应用 —— 我可以直接帮你创建一个：',
+          text: '${_replyPrefix}searchAppNotFoundCreate',
           cards: [
             ChatCard(
               type: 'app_plan',
@@ -334,7 +338,7 @@ class MockChatClient {
       case 'CREATE_APP':
         final plan = apps.draftCreationPlan(trimmed);
         return ChatReply(
-          text: '好的，我准备创建，方案如下：',
+          text: '${_replyPrefix}createAppPlan',
           cards: [
             ChatCard(
               type: 'app_plan',
@@ -350,11 +354,11 @@ class MockChatClient {
             ? await contacts.searchContacts(name)
             : await contacts.listContacts();
         if (matches.isEmpty) {
-          return const ChatReply(text: '通讯录里没有找到这个联系人。');
+          return const ChatReply(text: '${_replyPrefix}sendMessageContactNotFound');
         }
         final contact = matches.first;
         return ChatReply(
-          text: '我找到了联系人，发送前请确认：',
+          text: '${_replyPrefix}sendMessageConfirm',
           cards: [
             ChatCard(
               type: 'send_message_confirm',
@@ -368,14 +372,14 @@ class MockChatClient {
         final matches = await contacts.searchContacts(trimmed);
         if (matches.isNotEmpty) {
           return ChatReply(
-            text: '找到这些联系人：',
+            text: '${_replyPrefix}searchPersonFound',
             cards: [ChatCard(type: 'contact_results', contacts: matches.take(4).toList())],
           );
         }
-        return const ChatReply(text: '没有找到相关联系人。');
+        return const ChatReply(text: '${_replyPrefix}searchPersonNotFound');
       case 'SEARCH_SUPPLIER':
         return const ChatReply(
-          text: '为你找到这些供应商（商业生态预览）：',
+          text: '${_replyPrefix}searchSupplier',
           cards: [
             ChatCard(
               type: 'commerce_results',
@@ -399,19 +403,17 @@ class MockChatClient {
         );
       case 'SEARCH_PRODUCT':
       case 'SEARCH_SERVICE':
-        return const ChatReply(text: '商业生态预览（Phase 2 接入完整供需网络）：');
+        return const ChatReply(text: '${_replyPrefix}commercePreview');
       case 'CREATE_CONTENT':
         final task = await tasks.createTask(title: trimmed, intent: intent.intent);
         await tasks.updateTaskState(task.id, TaskState.completed, resultSummary: trimmed);
-        return ChatReply(text: '收到！任务已完成。', taskId: task.id);
+        return ChatReply(text: '${_replyPrefix}createContentAccepted', taskId: task.id);
       default:
-        return const ChatReply(
-          text: '我是问寻 AI。你可以让我找应用、创建应用、找供应商，或者联系某人——直接说就行。',
-        );
+        return const ChatReply(text: '${_replyPrefix}general');
     }
   }
 
-  Future<String> runCardAction(Map<String, Object?> action) async {
+  Future<ChatActionOutcome> runCardAction(Map<String, Object?> action) async {
     final kind = action['kind'] as String?;
     switch (kind) {
       case 'generate_app':
@@ -433,16 +435,19 @@ class MockChatClient {
             createdAppId: created.id,
           ),
         );
-        return '已生成应用「${created.name}」，可以在「我的应用」中查看。';
+        return ChatActionOutcome(
+          messageKey: '${_replyPrefix}actionAppGenerated',
+          params: {'name': created.name},
+        );
       case 'confirm_send_message':
         final contactId = action['contactId'] as String? ?? '';
         final draft = action['draft'] as String? ?? '';
         final conversation = await messages.openDirectConversation(contactId);
         await messages.sendMessage(conversation.id, draft);
         await messages.markRead(conversation.id);
-        return '消息已发送，可以在「消息」中继续对话。';
+        return const ChatActionOutcome(messageKey: '${_replyPrefix}actionMessageSent');
       default:
-        return '好的。';
+        return const ChatActionOutcome(messageKey: '${_replyPrefix}actionNavigated');
     }
   }
 }

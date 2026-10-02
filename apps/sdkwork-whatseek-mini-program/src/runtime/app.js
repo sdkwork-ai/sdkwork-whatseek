@@ -24,7 +24,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var define_SDKWORK_RUNTIME_ENV_default;
 var init_define_SDKWORK_RUNTIME_ENV = __esm({
   "<define:__SDKWORK_RUNTIME_ENV__>"() {
-    define_SDKWORK_RUNTIME_ENV_default = { environment: "production", deploymentProfile: "standalone", profileId: "standalone.production", runtimeTarget: "mini-program", appApiBaseUrl: "/", sdkBaseUrl: "/" };
+    define_SDKWORK_RUNTIME_ENV_default = { environment: "development", deploymentProfile: "standalone", profileId: "standalone.development", runtimeTarget: "mini-program", appApiBaseUrl: "/", sdkBaseUrl: "/" };
   }
 });
 
@@ -150,7 +150,9 @@ var init_catalog = __esm({
         summary: "\u8F7B\u91CF\u5BA2\u6237\u7BA1\u7406\uFF1A\u5BA2\u6237\u5217\u8868\u3001\u8DDF\u8FDB\u8BB0\u5F55\u3001\u6807\u7B7E\u4E0E\u7EDF\u8BA1\u770B\u677F\u3002",
         developer: "\u4E91\u9014\u8F6F\u4EF6",
         category: "enterprise",
-        kind: "web",
+        // The enterprise-kind app: visitors get the runner permission-denied
+        // state (H5/PC/mini-program/Flutter runner parity).
+        kind: "enterprise",
         icon: "\u{1F91D}",
         rating: 4.5,
         usersLabel: "1.1\u4E07",
@@ -1478,6 +1480,7 @@ __export(src_exports, {
   runCardAction: () => runCardAction,
   sendChatTurn: () => sendChatTurn,
   setChatLocale: () => setChatLocale,
+  taskStatus: () => taskStatus,
   toCardView: () => toCardView
 });
 function setChatLocale(locale) {
@@ -1525,6 +1528,13 @@ async function runCardAction(action) {
   const outcome = await chat.runCardAction(action);
   return replyText({ contentKey: outcome.message });
 }
+async function taskStatus(taskId) {
+  const task = await getWhatseekClient("tasks").getTask(taskId);
+  if (task === null) {
+    return null;
+  }
+  return { id: task.id, title: task.title, state: task.state, resultSummary: task.resultSummary };
+}
 var REPLY_TEXT, chatLocale;
 var init_src3 = __esm({
   "packages/sdkwork-whatseek-mp-chat/src/index.ts"() {
@@ -1558,15 +1568,22 @@ var init_src3 = __esm({
 var src_exports2 = {};
 __export(src_exports2, {
   appsPort: () => appsPort,
+  createAppFromPlan: () => createAppFromPlan,
+  deleteMyApp: () => deleteMyApp,
+  draftCreationPlan: () => draftCreationPlan,
   favoriteApp: () => favoriteApp,
   generateApp: () => generateApp,
   getApp: () => getApp,
+  listAppsByCategory: () => listAppsByCategory,
   listCategories: () => listCategories,
+  listFavoriteApps: () => listFavoriteApps,
   listMyApps: () => listMyApps,
+  listRecentApps: () => listRecentApps,
   listRecommended: () => listRecommended,
   openApp: () => openApp,
   publishApp: () => publishApp,
-  searchApps: () => searchApps
+  searchApps: () => searchApps,
+  toggleFavoriteApp: () => toggleFavoriteApp
 });
 function appsPort() {
   return getWhatseekClient("apps");
@@ -1597,8 +1614,29 @@ async function generateApp(requirement) {
   const plan = port.draftCreationPlan(requirement);
   return port.createAppFromPlan(requirement, plan.modules);
 }
+function draftCreationPlan(requirement) {
+  return appsPort().draftCreationPlan(requirement);
+}
+async function createAppFromPlan(requirement, modules) {
+  return appsPort().createAppFromPlan(requirement, modules);
+}
 async function publishApp(appId) {
   return appsPort().publishApp(appId);
+}
+async function deleteMyApp(appId) {
+  await appsPort().deleteMyApp(appId);
+}
+async function listFavoriteApps() {
+  return appsPort().listFavorites();
+}
+async function toggleFavoriteApp(appId) {
+  return appsPort().toggleFavorite(appId);
+}
+async function listRecentApps() {
+  return appsPort().listRecent();
+}
+async function listAppsByCategory(categoryId) {
+  return appsPort().listByCategory(categoryId);
 }
 var init_src4 = __esm({
   "packages/sdkwork-whatseek-mp-apps/src/index.ts"() {
@@ -1655,6 +1693,7 @@ __export(src_exports4, {
   listMessages: () => listMessages,
   markRead: () => markRead,
   messagesPort: () => messagesPort,
+  openDirectConversation: () => openDirectConversation,
   sendMessage: () => sendMessage,
   unreadTotal: () => unreadTotal
 });
@@ -1675,6 +1714,9 @@ async function markRead(conversationId) {
 }
 async function unreadTotal() {
   return messagesPort().getUnreadTotal();
+}
+async function openDirectConversation(contactId) {
+  return messagesPort().openDirectConversation(contactId);
 }
 var init_src6 = __esm({
   "packages/sdkwork-whatseek-mp-messages/src/index.ts"() {
@@ -1721,6 +1763,40 @@ var init_src7 = __esm({
   }
 });
 
+// packages/sdkwork-whatseek-mp-commons/src/index.ts
+var src_exports6 = {};
+__export(src_exports6, {
+  TASK_STATE_LABELS: () => TASK_STATE_LABELS,
+  formatCountLabel: () => formatCountLabel,
+  truncate: () => truncate
+});
+function formatCountLabel(count) {
+  if (count >= 1e4) {
+    const wan = count / 1e4;
+    return `${wan >= 10 ? wan.toFixed(0) : wan.toFixed(1)}\u4E07`;
+  }
+  return String(count);
+}
+function truncate(text, max) {
+  return text.length > max ? `${text.slice(0, max)}\u2026` : text;
+}
+var TASK_STATE_LABELS;
+var init_src8 = __esm({
+  "packages/sdkwork-whatseek-mp-commons/src/index.ts"() {
+    "use strict";
+    init_define_SDKWORK_RUNTIME_ENV();
+    TASK_STATE_LABELS = {
+      pending: "\u6392\u961F\u4E2D",
+      running: "\u6267\u884C\u4E2D",
+      waiting_confirmation: "\u5F85\u786E\u8BA4",
+      completed: "\u5DF2\u5B8C\u6210",
+      failed: "\u5931\u8D25",
+      cancelled: "\u5DF2\u53D6\u6D88",
+      expired: "\u5DF2\u8FC7\u671F"
+    };
+  }
+});
+
 // src/bootstrap/runtime.ts
 var runtime_exports = {};
 __export(runtime_exports, {
@@ -1736,6 +1812,12 @@ init_src2();
 var hostPort = null;
 function bindMiniProgramHost(port) {
   hostPort = port;
+}
+function getMiniProgramHost() {
+  if (hostPort === null) {
+    throw new Error("mini-program host not bound; call bindMiniProgramHost in bootstrap/runtime.ts");
+  }
+  return hostPort;
 }
 var runtimeConfig = null;
 function bindRuntimeConfig(config) {
@@ -1816,6 +1898,7 @@ function bootstrapRuntime() {
   const contacts = (init_src5(), __toCommonJS(src_exports3));
   const messages = (init_src6(), __toCommonJS(src_exports4));
   const profile = (init_src7(), __toCommonJS(src_exports5));
+  const commons = (init_src8(), __toCommonJS(src_exports6));
   return {
     chat: {
       async send(text) {
@@ -1823,7 +1906,8 @@ function bootstrapRuntime() {
       },
       async runAction(action) {
         return chat.runCardAction(action);
-      }
+      },
+      taskStatus: (taskId) => chat.taskStatus(taskId)
     },
     apps: {
       search: (query) => apps.searchApps(query),
@@ -1833,7 +1917,14 @@ function bootstrapRuntime() {
       myApps: () => apps.listMyApps(),
       open: (appId) => apps.openApp(appId),
       generate: (requirement) => apps.generateApp(requirement),
-      publish: (appId) => apps.publishApp(appId)
+      publish: (appId) => apps.publishApp(appId),
+      draftPlan: (requirement) => apps.draftCreationPlan(requirement),
+      createFromPlan: (requirement, modules) => apps.createAppFromPlan(requirement, modules),
+      deleteMyApp: (appId) => apps.deleteMyApp(appId),
+      favorites: () => apps.listFavoriteApps(),
+      toggleFavorite: (appId) => apps.toggleFavoriteApp(appId),
+      recents: () => apps.listRecentApps(),
+      byCategory: (categoryId) => apps.listAppsByCategory(categoryId)
     },
     contacts: {
       search: (query) => contacts.searchContacts(query),
@@ -1844,15 +1935,25 @@ function bootstrapRuntime() {
       thread: (conversationId) => messages.listMessages(conversationId),
       send: (conversationId, content) => messages.sendMessage(conversationId, content),
       markRead: (conversationId) => messages.markRead(conversationId),
-      unread: () => messages.unreadTotal()
+      unread: () => messages.unreadTotal(),
+      openDirect: (contactId) => messages.openDirectConversation(contactId)
     },
     profile: {
-      summary: () => profile.loadProfileSummary()
+      summary: () => profile.loadProfileSummary(),
+      getAppearance: () => profile.getAppearanceSettings(),
+      setAppearance: (next) => profile.setAppearanceSettings(next),
+      setLocale: (locale) => {
+        profile.setAppearanceSettings({ locale });
+        chat.setChatLocale(locale);
+      }
     },
     shell: {
       tabs: TAB_PAGE_PATHS,
       labels: { ...TAB_LABELS },
-      titles: { ...PAGE_TITLES }
+      titles: { ...PAGE_TITLES },
+      toast: (title) => getMiniProgramHost().showToast(title),
+      navigate: (url) => getMiniProgramHost().navigateTo(url),
+      taskStateLabel: (state) => commons.TASK_STATE_LABELS[state] ?? state
     }
   };
 }

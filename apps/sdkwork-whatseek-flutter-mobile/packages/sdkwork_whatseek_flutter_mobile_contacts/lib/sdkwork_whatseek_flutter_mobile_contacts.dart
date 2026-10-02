@@ -4,3 +4,4 @@ library;
 
 export 'src/contacts_home_screen.dart';
 export 'src/contact_detail_screen.dart';
+export 'src/i18n/contacts_strings.dart';

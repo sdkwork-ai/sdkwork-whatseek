@@ -1,0 +1,21 @@
+.my-head { display: flex; align-items: center; justify-content: space-between; padding-right: 32rpx; }
+.my-create {
+  background: var(--sdk-color-brand);
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  padding: 0 28rpx;
+}
+.my-item { padding-bottom: 8rpx; }
+.my-main { flex: 1; min-width: 0; }
+.my-actions { display: flex; justify-content: flex-end; gap: 16rpx; padding: 0 24rpx 20rpx; }
+.my-action {
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  background: var(--sdk-color-surface-canvas);
+  color: var(--sdk-color-text-secondary);
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  padding: 0 28rpx;
+}
+.my-action-brand { background: var(--sdk-color-brand); color: #fff; border-color: var(--sdk-color-brand); }
+.my-action-danger { color: var(--sdk-color-danger); }

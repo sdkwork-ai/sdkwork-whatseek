@@ -1,12 +1,26 @@
 <view class="page-title">消息</view>
 <view class="page-sub">私聊、通知与 AI 任务事件都在这里</view>
-<view class="panel">
+
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state">
+  <view class="state-title">加载失败</view>
+  <view class="state-desc">{{error}}</view>
+  <button class="retry-btn" bindtap="onRetry">重试</button>
+</view>
+
+<view wx:elif="{{conversations.length === 0}}" class="state">
+  <view class="state-title">还没有会话</view>
+  <view class="state-desc">去对话页和 AI 聊聊，或从通讯录发起私聊</view>
+</view>
+
+<view wx:else class="panel">
   <view wx:for="{{conversations}}" wx:key="id" class="row" data-id="{{item.id}}" bindtap="onConversationTap">
     <view class="contact-main">
       <view class="row-title">{{item.title}}</view>
       <view class="row-desc">{{item.lastMessagePreview}}</view>
     </view>
     <view wx:if="{{item.unread > 0}}" class="unread">{{item.unread}}</view>
+    <view class="row-arrow">›</view>
   </view>
 </view>
-<view wx:if="{{loading}}" class="empty">加载中…</view>

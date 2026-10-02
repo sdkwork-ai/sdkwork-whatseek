@@ -1,15 +1,36 @@
-/* WhatSeek mini-program global styles — semantic tokens mirror the H5/PC theme. */
+/* WhatSeek mini-program global styles — semantic tokens mirror the H5/PC theme.
+   Dark overrides follow `@media (prefers-color-scheme)` (app.json darkmode). */
 page {
   --sdk-color-surface-canvas: #f7f8fa;
   --sdk-color-surface-panel: #ffffff;
+  --sdk-color-surface-muted: #f4f4f5;
   --sdk-color-text-primary: #18181b;
   --sdk-color-text-secondary: #52525b;
   --sdk-color-text-muted: #a1a1aa;
   --sdk-color-brand: #2563eb;
+  --sdk-color-brand-soft: #dbeafe;
+  --sdk-color-success: #16a34a;
+  --sdk-color-danger: #dc2626;
   --sdk-color-border-subtle: #e4e4e7;
   background-color: var(--sdk-color-surface-canvas);
   color: var(--sdk-color-text-primary);
   font-size: 28rpx;
+}
+
+@media (prefers-color-scheme: dark) {
+  page {
+    --sdk-color-surface-canvas: #101012;
+    --sdk-color-surface-panel: #1c1c1f;
+    --sdk-color-surface-muted: #27272a;
+    --sdk-color-text-primary: #f4f4f5;
+    --sdk-color-text-secondary: #d4d4d8;
+    --sdk-color-text-muted: #71717a;
+    --sdk-color-brand: #60a5fa;
+    --sdk-color-brand-soft: #1e3a8a;
+    --sdk-color-success: #4ade80;
+    --sdk-color-danger: #f87171;
+    --sdk-color-border-subtle: #3f3f46;
+  }
 }
 
 .panel {
@@ -33,6 +54,7 @@ page {
 .row-title { font-size: 30rpx; font-weight: 500; color: var(--sdk-color-text-primary); }
 .row-desc { font-size: 24rpx; color: var(--sdk-color-text-secondary); margin-top: 4rpx; }
 .row-glyph { font-size: 40rpx; }
+.row-arrow { color: var(--sdk-color-text-muted); font-size: 28rpx; }
 
 .btn-brand {
   background-color: var(--sdk-color-brand);
@@ -44,6 +66,65 @@ page {
   font-weight: 600;
 }
 
+.btn-ghost {
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  background-color: var(--sdk-color-surface-canvas);
+  color: var(--sdk-color-text-secondary);
+  border-radius: 999rpx;
+  padding: 16rpx 0;
+  text-align: center;
+  font-size: 26rpx;
+}
+
 .page-title { font-size: 40rpx; font-weight: 600; padding: 32rpx 32rpx 8rpx; }
 .page-sub { font-size: 24rpx; color: var(--sdk-color-text-muted); padding: 0 32rpx 16rpx; }
-.empty { text-align: center; color: var(--sdk-color-text-muted); padding: 80rpx 0; font-size: 26rpx; }
+
+/* Screen states (APP_MINI_PROGRAM_UI_SPEC: loading / empty / error + retry). */
+.state { text-align: center; color: var(--sdk-color-text-muted); padding: 80rpx 32rpx; font-size: 26rpx; }
+.state-title { font-size: 30rpx; font-weight: 500; color: var(--sdk-color-text-secondary); }
+.state-desc { margin-top: 8rpx; font-size: 24rpx; }
+.retry-btn {
+  margin: 24rpx auto 0;
+  width: 240rpx;
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  background-color: var(--sdk-color-surface-panel);
+  color: var(--sdk-color-brand);
+  border-radius: 999rpx;
+  padding: 12rpx 0;
+  font-size: 26rpx;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  background-color: var(--sdk-color-brand-soft);
+  color: var(--sdk-color-brand);
+  font-size: 22rpx;
+  border-radius: 999rpx;
+  padding: 6rpx 20rpx;
+}
+
+.chip-dot { width: 12rpx; height: 12rpx; border-radius: 50%; background-color: var(--sdk-color-success); }
+
+.badge {
+  font-size: 20rpx;
+  color: var(--sdk-color-text-muted);
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  border-radius: 999rpx;
+  padding: 2rpx 14rpx;
+}
+
+.badge-published { color: var(--sdk-color-success); border-color: var(--sdk-color-success); }
+
+.search-bar { display: flex; gap: 16rpx; padding: 8rpx 32rpx 16rpx; }
+.search-input {
+  flex: 1;
+  background: var(--sdk-color-surface-panel);
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  border-radius: 999rpx;
+  padding: 14rpx 28rpx;
+  font-size: 26rpx;
+  color: var(--sdk-color-text-primary);
+}
+.search-btn { background: var(--sdk-color-brand); color: #fff; border-radius: 999rpx; font-size: 24rpx; padding: 0 28rpx; }

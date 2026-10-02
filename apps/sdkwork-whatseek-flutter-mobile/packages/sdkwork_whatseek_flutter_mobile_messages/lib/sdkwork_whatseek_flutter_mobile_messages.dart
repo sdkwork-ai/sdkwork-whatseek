@@ -4,3 +4,4 @@ library;
 
 export 'src/messages_home_screen.dart';
 export 'src/conversation_screen.dart';
+export 'src/i18n/messages_strings.dart';

@@ -4,12 +4,19 @@ import 'package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mo
 
 import 'i18n/chat_strings.dart';
 
-/// One rendered chat turn.
+/// One rendered chat turn. Assistant text carries an i18n key (raw service
+/// text passes through unresolved).
 class ChatEntry {
-  ChatEntry({required this.role, required this.text, this.cards = const []});
+  ChatEntry({
+    required this.role,
+    required this.text,
+    this.params = const {},
+    this.cards = const [],
+  });
 
   final String role;
   final String text;
+  final Map<String, Object?> params;
   final List<ChatCard> cards;
 }
 
@@ -27,11 +34,11 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _input = TextEditingController();
   bool _sending = false;
 
-  static const List<String> _suggestions = [
-    '帮我找一个视频剪辑工具',
-    '帮我做一个库存管理系统',
-    '给张三发消息，告诉他下午三点开会',
-    '找一个支持定制的手机壳供应商',
+  static const List<String> _suggestionKeys = [
+    'suggest.searchApp',
+    'suggest.createApp',
+    'suggest.sendMessage',
+    'suggest.searchSupplier',
   ];
 
   Future<void> _send(String text) async {
@@ -46,12 +53,17 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final reply = await WhatseekRuntime.instance.chat.handleSend(trimmed);
       setState(() {
-        _entries.add(ChatEntry(role: 'assistant', text: reply.text, cards: reply.cards));
+        _entries.add(ChatEntry(
+          role: 'assistant',
+          text: reply.text,
+          params: reply.params,
+          cards: reply.cards,
+        ));
         _sending = false;
       });
     } on Exception {
       setState(() {
-        _entries.add(ChatEntry(role: 'assistant', text: '出了点问题，请重试。'));
+        _entries.add(ChatEntry(role: 'assistant', text: 'reply.error'));
         _sending = false;
       });
     }
@@ -59,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _runAction(BuildContext context, ChatCard card) async {
     final runtime = WhatseekRuntime.instance;
-    final message = switch (card.type) {
+    final outcome = switch (card.type) {
       'app_plan' => await runtime.chat.runCardAction({
           'kind': 'generate_app',
           'requirement': card.planRequirement,
@@ -71,10 +83,14 @@ class _ChatScreenState extends State<ChatScreen> {
           'contactName': card.contactName,
           'draft': card.draft,
         }),
-      _ => '好的。',
+      _ => await runtime.chat.runCardAction({'kind': 'unknown'}),
     };
     setState(() {
-      _entries.add(ChatEntry(role: 'assistant', text: message));
+      _entries.add(ChatEntry(
+        role: 'assistant',
+        text: outcome.messageKey,
+        params: outcome.params,
+      ));
     });
   }
 
@@ -88,7 +104,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('对话')),
+      appBar: AppBar(title: Text(WhatseekChatStrings.of(context, 'home.title'))),
       body: Column(
         children: [
           Expanded(
@@ -99,11 +115,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     itemCount: _entries.length + (_sending ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == _entries.length) {
-                        return const Align(
+                        return Align(
                           alignment: Alignment.centerLeft,
                           child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Text('问寻正在思考…'),
+                            padding: const EdgeInsets.all(8),
+                            child: Text(WhatseekChatStrings.of(context, 'home.thinking')),
                           ),
                         );
                       }
@@ -123,18 +139,20 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(WhatseekChatStrings.home('heroTitle'), style: Theme.of(context).textTheme.headlineSmall),
+          Text(WhatseekChatStrings.of(context, 'home.heroTitle'),
+              style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 4),
-          Text(WhatseekChatStrings.home('heroSubtitle'), style: Theme.of(context).textTheme.bodySmall),
+          Text(WhatseekChatStrings.of(context, 'home.heroSubtitle'),
+              style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 24),
-          for (final suggestion in _suggestions)
+          for (final key in _suggestionKeys)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
               child: SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: () => _send(suggestion),
-                  child: Text(suggestion),
+                  onPressed: () => _send(WhatseekChatStrings.of(context, key)),
+                  child: Text(WhatseekChatStrings.of(context, key)),
                 ),
               ),
             ),
@@ -160,7 +178,9 @@ class _ChatScreenState extends State<ChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              entry.text,
+              isUser
+                  ? entry.text
+                  : WhatseekChatStrings.of(context, entry.text, entry.params),
               style: TextStyle(color: isUser ? scheme.onPrimary : scheme.onSurface),
             ),
             for (final card in entry.cards) ...[
@@ -190,14 +210,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   contentPadding: EdgeInsets.zero,
                   leading: Text(recommendation.app.icon, style: const TextStyle(fontSize: 24)),
                   title: Text(recommendation.app.name),
-                  subtitle: Text('${recommendation.app.summary}\n匹配 ${recommendation.reason} · ${recommendation.app.priceLabel}'),
+                  subtitle: Text(
+                    '${recommendation.app.summary}\n'
+                    '${WhatseekChatStrings.of(context, 'card.recommendReason', {'keyword': recommendation.reason})}'
+                    ' · ${recommendation.app.priceLabel}',
+                  ),
                   isThreeLine: true,
                   trailing: FilledButton.tonal(
                     onPressed: () => Navigator.of(context).pushNamed(
                       'app.whatseek.apps.runner',
                       arguments: recommendation.app.id,
                     ),
-                    child: const Text('使用'),
+                    child: Text(WhatseekChatStrings.of(context, 'card.useNow')),
                   ),
                 ),
             ],
@@ -211,23 +235,26 @@ class _ChatScreenState extends State<ChatScreen> {
               const SizedBox(height: 8),
               FilledButton(
                 onPressed: _sending ? null : () => _runAction(context, card),
-                child: const Text('直接生成'),
+                child: Text(WhatseekChatStrings.of(context, 'card.generateNow')),
               ),
             ],
           ),
         'send_message_confirm' => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('发送给 ${card.contactName}：', style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                WhatseekChatStrings.of(context, 'card.sendTo', {'name': card.contactName}),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               const SizedBox(height: 4),
               Text(card.draft),
               const SizedBox(height: 8),
               FilledButton(
                 onPressed: () => _runAction(context, card),
-                child: const Text('确认发送'),
+                child: Text(WhatseekChatStrings.of(context, 'card.confirmSend')),
               ),
               const SizedBox(height: 4),
-              Text('涉及对外发送，需要你明确确认后才会执行。',
+              Text(WhatseekChatStrings.of(context, 'card.confirmNote'),
                   style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
@@ -246,8 +273,10 @@ class _ChatScreenState extends State<ChatScreen> {
         'commerce_results' => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${card.commerceDomain} 结果（商业生态预览）',
-                  style: Theme.of(context).textTheme.bodySmall),
+              Text(
+                WhatseekChatStrings.of(context, commerceTitleKey(card.commerceDomain)),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               for (final item in card.commerceItems)
                 ListTile(
                   dense: true,
@@ -263,6 +292,13 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  /// Commerce result headers are keyed per domain (H5 card.commerce.*).
+  static String commerceTitleKey(String domain) => switch (domain) {
+        'supplier' => 'card.commerce.supplier',
+        'service' => 'card.commerce.service',
+        _ => 'card.commerce.product',
+      };
+
   Widget _buildComposer(BuildContext context) {
     return SafeArea(
       child: Padding(
@@ -273,7 +309,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TextField(
                 controller: _input,
                 decoration: InputDecoration(
-                  hintText: WhatseekChatStrings.home('composerHint'),
+                  hintText: WhatseekChatStrings.of(context, 'home.inputPlaceholder'),
                   border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(24))),
                   isDense: true,
                 ),
@@ -284,6 +320,7 @@ class _ChatScreenState extends State<ChatScreen> {
             IconButton.filled(
               onPressed: _sending ? null : () => _send(_input.text),
               icon: const Icon(Icons.send),
+              tooltip: WhatseekChatStrings.of(context, 'home.send'),
             ),
           ],
         ),

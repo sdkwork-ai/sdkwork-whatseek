@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import "package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart";
 import "package:sdkwork_whatseek_flutter_mobile_commons/sdkwork_whatseek_flutter_mobile_commons.dart";
 
+import 'i18n/apps_strings.dart';
+
 /// 我的应用 (PRD §21): created + favorited apps.
 class MyAppsScreen extends StatefulWidget {
   const MyAppsScreen({super.key});
@@ -23,7 +25,7 @@ class _MyAppsScreenState extends State<MyAppsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('我的应用')),
+      appBar: AppBar(title: Text(WhatseekAppsStrings.of(context, 'my.title'))),
       body: FutureBuilder<List<CreatedApp>>(
         future: _myApps,
         builder: (context, snapshot) {
@@ -32,10 +34,10 @@ class _MyAppsScreenState extends State<MyAppsScreen> {
           }
           final apps = snapshot.data ?? const <CreatedApp>[];
           if (apps.isEmpty) {
-            return const ScreenState(
+            return ScreenState(
               state: ScreenStateKind.empty,
-              title: '还没有创建应用',
-              message: '用一句自然语言，让 AI 帮你生成第一个应用',
+              title: WhatseekAppsStrings.of(context, 'my.emptyCreatedTitle'),
+              message: WhatseekAppsStrings.of(context, 'my.emptyCreatedDescription'),
             );
           }
           return ListView(
@@ -44,12 +46,11 @@ class _MyAppsScreenState extends State<MyAppsScreen> {
                 ListTile(
                   leading: const Text('🧩', style: TextStyle(fontSize: 26)),
                   title: Text(app.name),
-                  subtitle: Text('${app.modules.length} 个模块 · v${app.versions.last}'),
-                  trailing: Chip(label: Text(switch (app.lifecycle) {
-                    CreatedAppLifecycle.preview => '预览',
-                    CreatedAppLifecycle.published => '已发布',
-                    _ => app.lifecycle.name,
-                  })),
+                  subtitle: Text(
+                    '${WhatseekAppsStrings.of(context, 'create.moduleCount', {'count': app.modules.length})}'
+                    ' · v${app.versions.last}',
+                  ),
+                  trailing: Chip(label: Text(_lifecycleLabel(context, app.lifecycle))),
                 ),
             ],
           );
@@ -57,4 +58,7 @@ class _MyAppsScreenState extends State<MyAppsScreen> {
       ),
     );
   }
+
+  static String _lifecycleLabel(BuildContext context, CreatedAppLifecycle lifecycle) =>
+      WhatseekAppsStrings.of(context, 'lifecycle.${lifecycle.name}');
 }

@@ -80,7 +80,9 @@ export const WHATSEEK_CATALOG: readonly WhatseekApp[] = [
     summary: '轻量客户管理：客户列表、跟进记录、标签与统计看板。',
     developer: '云途软件',
     category: 'enterprise',
-    kind: 'web',
+    // The enterprise-kind app: visitors get the runner permission-denied
+    // state (H5/PC/mini-program/Flutter runner parity).
+    kind: 'enterprise',
     icon: '🤝',
     rating: 4.5,
     usersLabel: '1.1万',

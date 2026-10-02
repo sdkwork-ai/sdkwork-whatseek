@@ -1,7 +1,23 @@
-<scroll-view scroll-y class="thread">
-  <view wx:for="{{messages}}" wx:key="id" class="bubble {{item.senderId === 'me' ? 'bubble-user' : 'bubble-ai'}}">{{item.content}}</view>
-</scroll-view>
+<view wx:if="{{loading}}" class="state thread-state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state thread-state">
+  <view class="state-title">加载失败</view>
+  <view class="state-desc">{{error}}</view>
+  <button class="retry-btn" bindtap="onRetry">重试</button>
+</view>
+
+<view wx:elif="{{messages.length === 0}}" class="state thread-state">
+  <view class="state-title">还没有消息</view>
+  <view class="state-desc">发送第一条消息开始对话</view>
+</view>
+
+<block wx:else>
+  <scroll-view scroll-y class="thread" scroll-into-view="msg-{{messages.length - 1}}">
+    <view wx:for="{{messages}}" wx:key="id" id="msg-{{index}}" class="bubble {{item.senderId === 'me' ? 'bubble-user' : 'bubble-ai'}}">{{item.content}}</view>
+  </scroll-view>
+</block>
+
 <view class="composer">
   <input class="composer-input" value="{{input}}" placeholder="输入消息……" bindinput="onInput" confirm-type="send" bindconfirm="onSend" />
-  <button class="composer-send" size="mini" bindtap="onSend">发送</button>
+  <button class="composer-send" size="mini" disabled="{{sending || loading}}" bindtap="onSend">{{sending ? '…' : '发送'}}</button>
 </view>

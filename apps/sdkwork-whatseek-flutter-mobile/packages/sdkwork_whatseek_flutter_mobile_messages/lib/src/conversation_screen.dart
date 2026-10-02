@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import "package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart";
+import "package:sdkwork_whatseek_flutter_mobile_commons/sdkwork_whatseek_flutter_mobile_commons.dart";
+
+import 'i18n/messages_strings.dart';
 
 /// One conversation: message thread + composer (PRD §27).
 class ConversationScreen extends StatefulWidget {
@@ -49,43 +52,49 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('会话')),
+      appBar: AppBar(title: Text(WhatseekMessagesStrings.of(context, 'conversation.title'))),
       body: Column(
         children: [
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
-                : ListView(
-                    padding: const EdgeInsets.all(12),
-                    children: [
-                      for (final message in _messages)
-                        Align(
-                          alignment: message.senderId == 'me'
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 4),
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            constraints: BoxConstraints(
-                                maxWidth: MediaQuery.of(context).size.width * 0.78),
-                            decoration: BoxDecoration(
-                              color: message.senderId == 'me'
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Text(
-                              message.content,
-                              style: TextStyle(
-                                color: message.senderId == 'me'
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.onSurface,
+                : _messages.isEmpty
+                    ? ScreenState(
+                        state: ScreenStateKind.empty,
+                        title: WhatseekMessagesStrings.of(context, 'conversation.emptyTitle'),
+                      )
+                    : ListView(
+                        padding: const EdgeInsets.all(12),
+                        children: [
+                          for (final message in _messages)
+                            Align(
+                              alignment: message.senderId == 'me'
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(vertical: 4),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                constraints: BoxConstraints(
+                                    maxWidth: MediaQuery.of(context).size.width * 0.78),
+                                decoration: BoxDecoration(
+                                  color: message.senderId == 'me'
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  message.content,
+                                  style: TextStyle(
+                                    color: message.senderId == 'me'
+                                        ? Theme.of(context).colorScheme.onPrimary
+                                        : Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                    ],
-                  ),
+                        ],
+                      ),
           ),
           SafeArea(
             child: Padding(
@@ -95,9 +104,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   Expanded(
                     child: TextField(
                       controller: _input,
-                      decoration: const InputDecoration(
-                        hintText: '输入消息……',
-                        border: OutlineInputBorder(
+                      decoration: InputDecoration(
+                        hintText:
+                            WhatseekMessagesStrings.of(context, 'conversation.inputPlaceholder'),
+                        border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(24))),
                         isDense: true,
                       ),
@@ -105,7 +115,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  IconButton.filled(onPressed: _send, icon: const Icon(Icons.send)),
+                  IconButton.filled(
+                    onPressed: _send,
+                    icon: const Icon(Icons.send),
+                    tooltip: WhatseekMessagesStrings.of(context, 'conversation.send'),
+                  ),
                 ],
               ),
             ),

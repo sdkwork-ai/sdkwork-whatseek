@@ -1,23 +1,71 @@
 {
   "home": {
     "title": "App Center",
-    "searchHint": "Search apps, or just tell me what you need",
-    "empty": "No suitable app found"
+    "searchPlaceholder": "Search apps, or just tell me what you need",
+    "recommended": "Recommended"
+  },
+  "search": {
+    "title": "Search apps",
+    "inputLabel": "Search apps",
+    "resultCount": "{{count}} apps found",
+    "matchedOn": "matches {{keyword}}",
+    "emptyTitle": "No suitable app found",
+    "emptyDescription": "That's fine — tell WhatSeek what you need and AI can create one for you.",
+    "createFallback": "Nothing fits?",
+    "createFallbackAction": "Let AI create one"
   },
   "detail": {
+    "title": "App details",
+    "notFound": "App not found",
+    "aiCapability": "AI capability",
     "use": "Use now",
-    "createFrom": "Create from this"
+    "createFrom": "Create from this",
+    "users": "{{users}} users"
   },
-  "my": {
-    "title": "My apps",
-    "emptyTitle": "No apps created yet",
-    "emptyHint": "Use one sentence and let AI generate your first app"
+  "runner": {
+    "title": "Run app",
+    "running": "Running",
+    "previewNote": "This is an app runtime preview. The production version runs real apps in a cloud sandbox."
   },
   "create": {
     "title": "AI app creation",
-    "plan": "Generate plan",
-    "generate": "Generate now",
-    "publish": "Publish to My apps",
+    "placeholder": "e.g. Create a cross-border CRM for me",
+    "planAction": "Generate plan",
+    "generateAction": "Generate now",
+    "previewTitle": "Preview: {{name}}",
+    "moduleCount": "{{count}} modules",
+    "publishAction": "Publish to My apps",
     "published": "Published! The app is saved under \"My apps\"."
+  },
+  "my": {
+    "title": "My apps",
+    "emptyCreatedTitle": "No apps created yet",
+    "emptyCreatedDescription": "Use one sentence and let AI generate your first app"
+  },
+  "lifecycle": {
+    "draft": "Draft",
+    "generating": "Generating",
+    "preview": "Preview",
+    "published": "Published",
+    "updated": "Updated",
+    "archived": "Archived"
+  },
+  "category": {
+    "efficiency": "Efficiency",
+    "office": "Office",
+    "coding": "Coding",
+    "design": "Design",
+    "image": "Image",
+    "video": "Video",
+    "audio": "Audio",
+    "ecommerce": "Commerce",
+    "marketing": "Marketing",
+    "education": "Education",
+    "finance": "Finance",
+    "life": "Lifestyle",
+    "social": "Social",
+    "games": "Games",
+    "enterprise": "Enterprise",
+    "agent": "AI Agent"
   }
 }

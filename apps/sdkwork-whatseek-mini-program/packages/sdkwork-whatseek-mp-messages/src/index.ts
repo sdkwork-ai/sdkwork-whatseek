@@ -31,3 +31,7 @@ export async function markRead(conversationId: string): Promise<void> {
 export async function unreadTotal(): Promise<number> {
   return messagesPort().getUnreadTotal();
 }
+
+export async function openDirectConversation(contactId: string): Promise<Conversation> {
+  return messagesPort().openDirectConversation(contactId);
+}

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import "package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart";
 import "package:sdkwork_whatseek_flutter_mobile_commons/sdkwork_whatseek_flutter_mobile_commons.dart";
 
+import 'i18n/contacts_strings.dart';
+
 /// Contact detail (PRD §26): profile, tags, company, and a 发消息 action that
 /// opens (or creates) the direct conversation.
 class ContactDetailScreen extends StatefulWidget {
@@ -37,7 +39,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('联系人详情')),
+      appBar: AppBar(title: Text(WhatseekContactsStrings.of(context, 'detail.title'))),
       body: FutureBuilder<Contact?>(
         future: _contact,
         builder: (context, snapshot) {
@@ -46,7 +48,10 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           }
           final contact = snapshot.data;
           if (contact == null) {
-            return const ScreenState(state: ScreenStateKind.empty);
+            return ScreenState(
+              state: ScreenStateKind.empty,
+              title: WhatseekContactsStrings.of(context, 'detail.notFound'),
+            );
           }
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -63,13 +68,14 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
               ),
               const SizedBox(height: 16),
               if (contact.company != null) ...[
-                Text('公司', style: Theme.of(context).textTheme.titleSmall),
+                Text(WhatseekContactsStrings.of(context, 'detail.company'),
+                    style: Theme.of(context).textTheme.titleSmall),
                 Text(contact.company!),
               ],
               const SizedBox(height: 24),
               FilledButton(
                 onPressed: () => _openConversation(context, contact),
-                child: const Text('发消息'),
+                child: Text(WhatseekContactsStrings.of(context, 'detail.sendMessage')),
               ),
             ],
           );

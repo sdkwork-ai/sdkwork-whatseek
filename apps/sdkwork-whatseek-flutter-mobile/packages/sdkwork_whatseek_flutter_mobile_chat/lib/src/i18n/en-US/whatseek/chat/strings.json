@@ -1,10 +1,41 @@
 {
   "home": {
+    "title": "Chat",
     "heroTitle": "What do you want to do?",
     "heroSubtitle": "Just tell me.",
-    "composerHint": "Type a message…",
+    "inputPlaceholder": "Type a message…",
+    "inputLabel": "Message input",
+    "send": "Send",
     "thinking": "WhatSeek is thinking…",
     "newTopic": "Start a new chat"
+  },
+  "suggest": {
+    "searchApp": "Find me a video editing tool",
+    "createApp": "Build me an inventory management system",
+    "sendMessage": "Message Zhang San about the 3pm meeting",
+    "searchSupplier": "Find a customizable phone case supplier"
+  },
+  "task": {
+    "pending": "Pending",
+    "running": "Running",
+    "waiting_confirmation": "Waiting confirmation",
+    "completed": "Completed",
+    "failed": "Failed",
+    "cancelled": "Cancelled",
+    "expired": "Expired"
+  },
+  "card": {
+    "recommendReason": "matches {{keyword}}",
+    "useNow": "Use",
+    "generateNow": "Generate now",
+    "sendTo": "Send to {{name}}:",
+    "confirmSend": "Confirm send",
+    "confirmNote": "This sends a message to someone else; it runs only after your explicit confirmation.",
+    "commerce": {
+      "product": "Product results (commerce preview)",
+      "supplier": "Supplier results (commerce preview)",
+      "service": "Service results (commerce preview)"
+    }
   },
   "reply": {
     "searchAppFound": "I found apps that fit:",
@@ -19,7 +50,7 @@
     "createContentAccepted": "Got it! The task completed.",
     "general": "I am WhatSeek AI. Ask me to find apps, create apps, find suppliers, or reach someone.",
     "error": "Something went wrong. Please retry.",
-    "actionAppGenerated": "Generated app \"{name}\" — see it under My apps.",
+    "actionAppGenerated": "Generated app \"{{name}}\" — see it under My apps.",
     "actionMessageSent": "Message sent — continue the conversation in Messages.",
     "actionNavigated": "Done."
   }

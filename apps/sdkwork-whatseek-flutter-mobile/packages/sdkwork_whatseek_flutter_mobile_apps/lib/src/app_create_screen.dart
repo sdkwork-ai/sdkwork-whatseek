@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import "package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart";
 
+import 'i18n/apps_strings.dart';
+
 /// AI app creation flow (PRD §17/§18): requirement → plan → generate → preview
 /// → publish to 我的应用.
 class AppCreateScreen extends StatefulWidget {
@@ -66,26 +68,32 @@ class _AppCreateScreenState extends State<AppCreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('AI 创建应用')),
+      appBar: AppBar(title: Text(WhatseekAppsStrings.of(context, 'create.title'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           TextField(
             controller: _requirement,
             maxLines: 3,
-            decoration: const InputDecoration(
-              hintText: '例如：帮我创建一个跨境客户管理系统',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: WhatseekAppsStrings.of(context, 'create.placeholder'),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 12),
-          FilledButton(onPressed: _makePlan, child: const Text('生成方案')),
+          FilledButton(
+            onPressed: _makePlan,
+            child: Text(WhatseekAppsStrings.of(context, 'create.planAction')),
+          ),
           if (_plan != null) ...[
             const SizedBox(height: 16),
             Text(_plan!.title, style: Theme.of(context).textTheme.titleMedium),
             for (final module in _plan!.modules) Text('✓ $module'),
             const SizedBox(height: 12),
-            FilledButton(onPressed: _generating ? null : _generate, child: const Text('直接生成')),
+            FilledButton(
+              onPressed: _generating ? null : _generate,
+              child: Text(WhatseekAppsStrings.of(context, 'create.generateAction')),
+            ),
           ],
           if (_generating) const Padding(
             padding: EdgeInsets.all(24),
@@ -93,15 +101,25 @@ class _AppCreateScreenState extends State<AppCreateScreen> {
           ),
           if (_created != null) ...[
             const SizedBox(height: 16),
-            Text('预览：${_created!.name}',
-                style: Theme.of(context).textTheme.titleMedium),
-            Text('v${_created!.versions.last} · ${_created!.modules.length} 个模块'),
+            Text(
+              WhatseekAppsStrings.of(context, 'create.previewTitle', {'name': _created!.name}),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Text(
+              '${WhatseekAppsStrings.of(context, 'create.moduleCount', {'count': _created!.modules.length})}'
+              ' · v${_created!.versions.last}',
+            ),
             const SizedBox(height: 12),
             if (_created!.lifecycle == CreatedAppLifecycle.published)
-              Text('已发布！应用已保存到「我的应用」。',
-                  style: TextStyle(color: Theme.of(context).colorScheme.primary))
+              Text(
+                WhatseekAppsStrings.of(context, 'create.published'),
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              )
             else
-              FilledButton(onPressed: _publish, child: const Text('发布到我的应用')),
+              FilledButton(
+                onPressed: _publish,
+                child: Text(WhatseekAppsStrings.of(context, 'create.publishAction')),
+              ),
           ],
         ],
       ),

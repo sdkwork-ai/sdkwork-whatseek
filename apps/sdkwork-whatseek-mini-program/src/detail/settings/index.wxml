@@ -1,0 +1,37 @@
+<view class="page-title">设置</view>
+
+<view class="panel">
+  <view class="row settings-block">
+    <view>
+      <view class="row-title">深色模式</view>
+      <view class="row-desc">跟随微信的深色模式设置（当前：{{systemTheme === 'dark' ? '深色' : '浅色'}}）</view>
+    </view>
+  </view>
+  <view class="row settings-block">
+    <view class="settings-main">
+      <view class="row-title">语言 Language</view>
+      <view class="row-desc">切换对话回复的语言</view>
+      <view class="settings-options">
+        <button class="settings-option {{locale === 'zh-CN' ? 'settings-option-active' : ''}}" size="mini" data-locale="zh-CN" bindtap="onLocale">简体中文</button>
+        <button class="settings-option {{locale === 'en-US' ? 'settings-option-active' : ''}}" size="mini" data-locale="en-US" bindtap="onLocale">English</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="panel">
+  <view class="row">
+    <view class="row-glyph">✨</view>
+    <view>
+      <view class="row-title">问寻 WhatSeek</view>
+      <view class="row-desc">你负责问，AI 负责寻。版本 {{version}}</view>
+    </view>
+  </view>
+  <view class="row">
+    <view class="row-glyph">🔗</view>
+    <view>
+      <view class="row-title">跨端路由契约</view>
+      <view class="row-desc">13 个路由 id 与 H5 / PC / 小程序 / Flutter 对齐</view>
+    </view>
+  </view>
+</view>

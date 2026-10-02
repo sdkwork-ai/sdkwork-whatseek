@@ -1,34 +1,44 @@
 // i18n layout + drift guard: every Flutter capability package must ship
-// zh-CN/en-US fragments (APP_FLUTTER_UI_SPEC §i18n layout) with identical key
-// sets, and the Dart string maps must match the chat fragments exactly.
+// zh-CN/en-US fragments under `lib/src/i18n/<locale>/whatseek/<capability>/`
+// (APP_FLUTTER_UI_SPEC §i18n layout) with identical key sets, and each
+// package's Dart string map must mirror its fragments exactly.
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:sdkwork_whatseek_flutter_mobile_apps/sdkwork_whatseek_flutter_mobile_apps.dart';
 import 'package:sdkwork_whatseek_flutter_mobile_chat/sdkwork_whatseek_flutter_mobile_chat.dart';
+import 'package:sdkwork_whatseek_flutter_mobile_commons/sdkwork_whatseek_flutter_mobile_commons.dart';
+import 'package:sdkwork_whatseek_flutter_mobile_contacts/sdkwork_whatseek_flutter_mobile_contacts.dart';
+import 'package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart';
+import 'package:sdkwork_whatseek_flutter_mobile_messages/sdkwork_whatseek_flutter_mobile_messages.dart';
+import 'package:sdkwork_whatseek_flutter_mobile_profile/sdkwork_whatseek_flutter_mobile_profile.dart';
+import 'package:sdkwork_whatseek_flutter_mobile_shell/sdkwork_whatseek_flutter_mobile_shell.dart';
 
-const packages = [
-  'core',
-  'commons',
-  'shell',
-  'chat',
-  'apps',
-  'contacts',
-  'messages',
-  'profile',
-];
+/// package-name suffix -> the Dart string map exposed by its loader.
+const Map<String, Map<String, Map<String, String>>> dartStringMaps = {
+  'core': whatseekCoreStrings,
+  'commons': whatseekCommonsStrings,
+  'shell': whatseekShellStrings,
+  'chat': chatStrings,
+  'apps': whatseekAppsStrings,
+  'contacts': whatseekContactsStrings,
+  'messages': whatseekMessagesStrings,
+  'profile': whatseekProfileStrings,
+};
 
-Set<String> keyPaths(dynamic value, [String prefix = '']) {
-  if (value is! Map<String, dynamic>) {
-    return {prefix};
+/// Flattens a nested JSON fragment into dotted `section.key` -> value.
+Map<String, String> flatten(dynamic value, [String prefix = '']) {
+  if (value is Map<String, dynamic>) {
+    final flattened = <String, String>{};
+    value.forEach((key, child) {
+      final path = prefix.isEmpty ? key : '$prefix.$key';
+      flattened.addAll(flatten(child, path));
+    });
+    return flattened;
   }
-  final keys = <String>{};
-  value.forEach((key, child) {
-    final path = prefix.isEmpty ? key : '$prefix.$key';
-    keys.addAll(keyPaths(child, path));
-  });
-  return keys;
+  return {prefix: '$value'};
 }
 
 Map<String, dynamic> readFragment(String pkg, String locale) {
@@ -41,25 +51,39 @@ Map<String, dynamic> readFragment(String pkg, String locale) {
 
 void main() {
   test('every_package_ships_zh_and_en_fragments_with_key_parity', () {
-    for (final pkg in packages) {
-      final zh = keyPaths(readFragment(pkg, 'zh-CN'));
-      final en = keyPaths(readFragment(pkg, 'en-US'));
-      expect(en, equals(zh), reason: 'locale key drift in $pkg');
+    for (final pkg in dartStringMaps.keys) {
+      final zh = flatten(readFragment(pkg, 'zh-CN'));
+      final en = flatten(readFragment(pkg, 'en-US'));
+      expect(en.keys.toSet(), equals(zh.keys.toSet()),
+          reason: 'locale key drift in $pkg');
     }
   });
 
-  test('chat_home_maps_match_the_chat_fragments_exactly', () {
-    final zhHome = readFragment('chat', 'zh-CN')['home'] as Map<String, dynamic>;
-    final enHome = readFragment('chat', 'en-US')['home'] as Map<String, dynamic>;
-    expect(chatHomeStrings['zh-CN'], equals(zhHome), reason: 'zh map drift');
-    expect(chatHomeStrings['en-US'], equals(enHome), reason: 'en map drift');
+  test('every_dart_string_map_mirrors_its_fragments_exactly', () {
+    for (final entry in dartStringMaps.entries) {
+      for (final locale in const ['zh-CN', 'en-US']) {
+        final fragment = flatten(readFragment(entry.key, locale));
+        final dartMap = entry.value[locale];
+        expect(dartMap, isNotNull, reason: 'missing Dart map: ${entry.key}/$locale');
+        expect(dartMap, equals(fragment),
+            reason: 'Dart map drift in ${entry.key}/$locale');
+      }
+    }
   });
 
-  test('home_loader_resolves_keys_with_zh_fallback', () {
-    WhatseekChatStrings.locale = 'zh-CN';
-    expect(WhatseekChatStrings.home('heroTitle'), equals('你想做什么？'));
-    WhatseekChatStrings.locale = 'en-US';
-    expect(WhatseekChatStrings.home('heroTitle'), equals('What do you want to do?'));
-    WhatseekChatStrings.locale = 'zh-CN';
+  test('loaders_resolve_with_zh_fallback_and_interpolation', () {
+    expect(WhatseekChatStrings.resolve('zh-CN', 'home.heroTitle'), equals('你想做什么？'));
+    expect(WhatseekChatStrings.resolve('en-US', 'home.heroTitle'),
+        equals('What do you want to do?'));
+    // Unknown keys fall back to zh-CN, then to the key itself.
+    expect(WhatseekChatStrings.resolve('en-US', 'home.thinking'),
+        equals('WhatSeek is thinking…'));
+    expect(WhatseekAppsStrings.resolve('zh-CN', 'search.resultCount', {'count': 3}),
+        equals('找到 3 个应用'));
+    expect(WhatseekAppsStrings.resolve('en-US', 'search.resultCount', {'count': 3}),
+        equals('3 apps found'));
+    // Raw service text passes through unresolved (H5 defaultValue semantics).
+    expect(WhatseekChatStrings.resolve('zh-CN', '下午三点开会记得参加。'),
+        equals('下午三点开会记得参加。'));
   });
 }

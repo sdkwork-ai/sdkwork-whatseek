@@ -3,3 +3,5 @@
 library;
 
 export 'src/profile_home_screen.dart';
+export 'src/settings_screen.dart';
+export 'src/i18n/profile_strings.dart';

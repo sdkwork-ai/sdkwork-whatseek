@@ -3,6 +3,8 @@
     "title": "Contacts"
   },
   "detail": {
+    "title": "Contact details",
+    "notFound": "Contact not found",
     "company": "Company",
     "sendMessage": "Message"
   }

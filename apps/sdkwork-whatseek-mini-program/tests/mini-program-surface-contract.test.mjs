@@ -23,7 +23,16 @@ test('app.json projects_exactly_the_five_tab_pages_and_the_detail_subpackage', (
   ]);
   assert.equal(manifest.subPackages.length, 1);
   assert.equal(manifest.subPackages[0].root, 'detail');
-  assert.deepEqual(manifest.subPackages[0].pages, ['apps-detail/index', 'conversation/index']);
+  assert.deepEqual(manifest.subPackages[0].pages, [
+    'apps-detail/index',
+    'apps-search/index',
+    'apps-runner/index',
+    'apps-create/index',
+    'apps-my/index',
+    'contact-detail/index',
+    'conversation/index',
+    'settings/index',
+  ]);
   assert.equal(manifest.tabBar.list.length, 5);
   assert.deepEqual(
     manifest.tabBar.list.map((entry) => entry.text),
@@ -46,6 +55,41 @@ test('every_declared_page_has_a_complete_index_quad', () => {
       assert.ok(existsSync(file), `missing ${page}.${extension}`);
     }
   }
+});
+
+test('every_page_loads_data_through_the_runtime_facade_with_states', () => {
+  const manifest = JSON.parse(readFileSync(path.join(surfaceRoot, 'src', 'app.json'), 'utf8'));
+  const pageFiles = [
+    ...manifest.pages,
+    ...manifest.subPackages.flatMap((subpackage) => subpackage.pages.map((page) => `${subpackage.root}/${page}`)),
+  ];
+  for (const page of pageFiles) {
+    const js = readFileSync(path.join(surfaceRoot, 'src', `${page}.js`), 'utf8');
+    assert.ok(
+      js.includes("require('../../runtime/app.js')") || js.includes("require('../runtime/app.js')"),
+      `${page}.js must consume the bundled runtime facade`,
+    );
+    // Every page owns its loading/empty/error states (APP_MINI_PROGRAM_UI_SPEC
+    // §UI states): either a try/catch, a retry handler, or an error field.
+    assert.ok(
+      /catch\s*\(/u.test(js) || /onRetry/u.test(js),
+      `${page}.js must handle load errors (try/catch or onRetry)`,
+    );
+  }
+});
+
+test('native_dark_mode_is_wired_through_theme_json_with_locale_parity', () => {
+  const manifest = JSON.parse(readFileSync(path.join(surfaceRoot, 'src', 'app.json'), 'utf8'));
+  assert.equal(manifest.darkmode, true, 'app.json must enable darkmode');
+  assert.equal(manifest.themeLocation, 'theme.json');
+  const theme = JSON.parse(readFileSync(path.join(surfaceRoot, 'src', 'theme.json'), 'utf8'));
+  assert.deepEqual([...Object.keys(theme.light)].sort(), [...Object.keys(theme.dark)].sort(), 'theme locale drift');
+  for (const key of ['navBg', 'navTxt', 'bg', 'tabBg', 'tabColor', 'tabSelected']) {
+    assert.ok(theme.light[key], `missing light theme symbol ${key}`);
+    assert.ok(theme.dark[key], `missing dark theme symbol ${key}`);
+  }
+  const wxss = readFileSync(path.join(surfaceRoot, 'src', 'app.wxss'), 'utf8');
+  assert.ok(wxss.includes('@media (prefers-color-scheme: dark)'), 'app.wxss must override tokens for dark');
 });
 
 test('runtime_bundle_exists_and_is_profile_stamped', () => {

@@ -3,6 +3,8 @@
     "title": "通讯录"
   },
   "detail": {
+    "title": "联系人详情",
+    "notFound": "联系人不存在",
     "company": "公司",
     "sendMessage": "发消息"
   }

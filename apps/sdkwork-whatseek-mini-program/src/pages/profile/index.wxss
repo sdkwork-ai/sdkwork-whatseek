@@ -2,3 +2,4 @@
 .avatar { font-size: 64rpx; }
 .stat { font-size: 40rpx; font-weight: 600; }
 .stat-label { font-size: 22rpx; color: var(--sdk-color-text-muted); margin-left: 12rpx; }
+.profile-row-main { flex: 1; min-width: 0; }

@@ -22,6 +22,7 @@
     "@sdkwork/whatseek-intent-core": "workspace:*",
     "@sdkwork/whatseek-mp-apps": "workspace:*",
     "@sdkwork/whatseek-mp-chat": "workspace:*",
+    "@sdkwork/whatseek-mp-commons": "workspace:*",
     "@sdkwork/whatseek-mp-contacts": "workspace:*",
     "@sdkwork/whatseek-mp-core": "workspace:*",
     "@sdkwork/whatseek-mp-messages": "workspace:*",

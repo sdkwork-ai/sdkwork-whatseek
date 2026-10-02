@@ -1,10 +1,41 @@
 {
   "home": {
+    "title": "对话",
     "heroTitle": "你想做什么？",
     "heroSubtitle": "告诉我就可以。",
-    "composerHint": "输入消息……",
+    "inputPlaceholder": "输入消息……",
+    "inputLabel": "消息输入框",
+    "send": "发送",
     "thinking": "问寻正在思考…",
     "newTopic": "开始新对话"
+  },
+  "suggest": {
+    "searchApp": "帮我找一个视频剪辑工具",
+    "createApp": "帮我做一个库存管理系统",
+    "sendMessage": "给张三发消息，告诉他下午三点开会",
+    "searchSupplier": "找一个支持定制的手机壳供应商"
+  },
+  "task": {
+    "pending": "排队中",
+    "running": "执行中",
+    "waiting_confirmation": "待确认",
+    "completed": "已完成",
+    "failed": "失败",
+    "cancelled": "已取消",
+    "expired": "已过期"
+  },
+  "card": {
+    "recommendReason": "匹配 {{keyword}}",
+    "useNow": "使用",
+    "generateNow": "直接生成",
+    "sendTo": "发送给 {{name}}：",
+    "confirmSend": "确认发送",
+    "confirmNote": "涉及对外发送，需要你明确确认后才会执行。",
+    "commerce": {
+      "product": "商品结果（商业生态预览）",
+      "supplier": "供应商结果（商业生态预览）",
+      "service": "服务结果（商业生态预览）"
+    }
   },
   "reply": {
     "searchAppFound": "找到适合你的应用：",
@@ -19,7 +50,7 @@
     "createContentAccepted": "收到！任务已完成。",
     "general": "我是问寻 AI。你可以让我找应用、创建应用、找供应商，或者联系某人——直接说就行。",
     "error": "出了点问题，请重试。",
-    "actionAppGenerated": "已生成应用「{name}」，可以在「我的应用」中查看。",
+    "actionAppGenerated": "已生成应用「{{name}}」，可以在「我的应用」中查看。",
     "actionMessageSent": "消息已发送，可以在「消息」中继续对话。",
     "actionNavigated": "好的。"
   }

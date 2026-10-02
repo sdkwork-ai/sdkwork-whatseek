@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import "package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart";
 import "package:sdkwork_whatseek_flutter_mobile_commons/sdkwork_whatseek_flutter_mobile_commons.dart";
 
-/// 我的 tab root: personal digital asset center.
+import 'i18n/profile_strings.dart';
+
+/// 我的 tab root: personal digital asset center + the settings entry.
 class ProfileHomeScreen extends StatefulWidget {
   const ProfileHomeScreen({super.key});
 
@@ -12,7 +14,7 @@ class ProfileHomeScreen extends StatefulWidget {
 }
 
 class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
-  late final Future<(int, int, int)> _assets;
+  late Future<(int, int, int)> _assets;
 
   @override
   void initState() {
@@ -31,7 +33,7 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('我的')),
+      appBar: AppBar(title: Text(WhatseekProfileStrings.of(context, 'home.title'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -42,8 +44,10 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('访客', style: Theme.of(context).textTheme.titleLarge),
-                  Text('登录后同步你的数字资产', style: Theme.of(context).textTheme.bodySmall),
+                  Text(WhatseekProfileStrings.of(context, 'home.visitor'),
+                      style: Theme.of(context).textTheme.titleLarge),
+                  Text(WhatseekProfileStrings.of(context, 'home.visitorHint'),
+                      style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ],
@@ -56,9 +60,15 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _AssetStat(count: assets.$1, label: '对话'),
-                  _AssetStat(count: assets.$2, label: '应用'),
-                  _AssetStat(count: assets.$3, label: '联系人'),
+                  _AssetStat(
+                      count: assets.$1,
+                      label: WhatseekProfileStrings.of(context, 'home.asset.chats')),
+                  _AssetStat(
+                      count: assets.$2,
+                      label: WhatseekProfileStrings.of(context, 'home.asset.apps')),
+                  _AssetStat(
+                      count: assets.$3,
+                      label: WhatseekProfileStrings.of(context, 'home.asset.contacts')),
                 ],
               );
             },
@@ -66,17 +76,22 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
           const SizedBox(height: 24),
           ListTile(
             leading: const Text('🧩', style: TextStyle(fontSize: 24)),
-            title: const Text('我的应用'),
+            title: Text(WhatseekProfileStrings.of(context, 'home.myApps')),
             onTap: () => Navigator.of(context).pushNamed('app.whatseek.apps.my'),
           ),
-          const ListTile(
-            leading: Text('⭐', style: TextStyle(fontSize: 24)),
-            title: Text('收藏'),
+          ListTile(
+            leading: const Text('⭐', style: TextStyle(fontSize: 24)),
+            title: Text(WhatseekProfileStrings.of(context, 'home.favorites')),
           ),
-          const ListTile(
-            leading: Text('✨', style: TextStyle(fontSize: 24)),
-            title: Text('WhatSeek 问寻'),
-            subtitle: Text('你负责问，AI 负责寻'),
+          ListTile(
+            leading: const Text('⚙️', style: TextStyle(fontSize: 24)),
+            title: Text(WhatseekProfileStrings.of(context, 'home.settings')),
+            onTap: () => Navigator.of(context).pushNamed('app.whatseek.profile.settings'),
+          ),
+          ListTile(
+            leading: const Text('✨', style: TextStyle(fontSize: 24)),
+            title: Text(WhatseekProfileStrings.of(context, 'settings.brandTitle')),
+            subtitle: Text(WhatseekProfileStrings.of(context, 'home.brand')),
           ),
         ],
       ),

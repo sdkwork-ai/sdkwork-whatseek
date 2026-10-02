@@ -50,22 +50,22 @@ class MockAppsClient {
   Future<List<WhatseekApp>> listHot() async => _catalog.take(8).toList();
 
   Future<List<AppCategory>> listCategories() async => const [
-        AppCategory(id: 'efficiency', label: '效率', icon: '⚡'),
-        AppCategory(id: 'office', label: '办公', icon: '🗂️'),
-        AppCategory(id: 'coding', label: '编程', icon: '💻'),
-        AppCategory(id: 'design', label: '设计', icon: '🎨'),
-        AppCategory(id: 'image', label: '图片', icon: '🖼️'),
-        AppCategory(id: 'video', label: '视频', icon: '🎬'),
-        AppCategory(id: 'audio', label: '音频', icon: '🎧'),
-        AppCategory(id: 'ecommerce', label: '电商', icon: '🛒'),
-        AppCategory(id: 'marketing', label: '营销', icon: '📣'),
-        AppCategory(id: 'education', label: '教育', icon: '📚'),
-        AppCategory(id: 'finance', label: '金融', icon: '💰'),
-        AppCategory(id: 'life', label: '生活', icon: '🍵'),
-        AppCategory(id: 'social', label: '社交', icon: '💬'),
-        AppCategory(id: 'games', label: '游戏', icon: '🎮'),
-        AppCategory(id: 'enterprise', label: '企业', icon: '🏢'),
-        AppCategory(id: 'agent', label: 'AI Agent', icon: '🤖'),
+        AppCategory(id: 'efficiency', labelKey: 'whatseek.apps.category.efficiency', icon: '⚡'),
+        AppCategory(id: 'office', labelKey: 'whatseek.apps.category.office', icon: '🗂️'),
+        AppCategory(id: 'coding', labelKey: 'whatseek.apps.category.coding', icon: '💻'),
+        AppCategory(id: 'design', labelKey: 'whatseek.apps.category.design', icon: '🎨'),
+        AppCategory(id: 'image', labelKey: 'whatseek.apps.category.image', icon: '🖼️'),
+        AppCategory(id: 'video', labelKey: 'whatseek.apps.category.video', icon: '🎬'),
+        AppCategory(id: 'audio', labelKey: 'whatseek.apps.category.audio', icon: '🎧'),
+        AppCategory(id: 'ecommerce', labelKey: 'whatseek.apps.category.ecommerce', icon: '🛒'),
+        AppCategory(id: 'marketing', labelKey: 'whatseek.apps.category.marketing', icon: '📣'),
+        AppCategory(id: 'education', labelKey: 'whatseek.apps.category.education', icon: '📚'),
+        AppCategory(id: 'finance', labelKey: 'whatseek.apps.category.finance', icon: '💰'),
+        AppCategory(id: 'life', labelKey: 'whatseek.apps.category.life', icon: '🍵'),
+        AppCategory(id: 'social', labelKey: 'whatseek.apps.category.social', icon: '💬'),
+        AppCategory(id: 'games', labelKey: 'whatseek.apps.category.games', icon: '🎮'),
+        AppCategory(id: 'enterprise', labelKey: 'whatseek.apps.category.enterprise', icon: '🏢'),
+        AppCategory(id: 'agent', labelKey: 'whatseek.apps.category.agent', icon: '🤖'),
       ];
 
   Future<WhatseekApp?> getApp(String appId) async {
@@ -75,6 +75,21 @@ class MockAppsClient {
       }
     }
     return null;
+  }
+
+  /// Opens an app (PRD 应用调用): records it as recently used on success and
+  /// throws [WhatseekPermissionDeniedException] for enterprise apps when the
+  /// session is a visitor (H5 parity). Returns `null` when the app is unknown.
+  Future<WhatseekApp?> openApp(String appId, {bool isVisitor = false}) async {
+    final app = await getApp(appId);
+    if (app == null) {
+      return null;
+    }
+    if (app.kind == WhatseekAppKind.enterprise && isVisitor) {
+      throw const WhatseekPermissionDeniedException();
+    }
+    await recordRecent(appId);
+    return app;
   }
 
   Future<void> recordRecent(String appId) async {
@@ -289,7 +304,9 @@ const List<WhatseekApp> kDefaultCatalog = [
     summary: '轻量客户管理：客户列表、跟进记录、标签与统计看板。',
     developer: '云途软件',
     category: 'enterprise',
-    kind: WhatseekAppKind.web,
+    // Enterprise-kind app (service-core parity): visitors get the runner
+    // permission-denied state.
+    kind: WhatseekAppKind.enterprise,
     icon: '🤝',
     rating: 4.5,
     usersLabel: '1.1万',
