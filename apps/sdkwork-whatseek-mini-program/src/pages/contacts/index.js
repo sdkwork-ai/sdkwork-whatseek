@@ -14,14 +14,20 @@ Page({
     this.load();
   },
 
-  async load() {
-    this.setData({ loading: true, error: '' });
+  async load(options = {}) {
+    const silent = options.silent === true;
+    this.setData(silent ? { error: '' } : { loading: true, error: '' });
     try {
       const contacts = await appApi.contacts.search(this.data.query.trim());
       this.setData({ contacts, loading: false });
     } catch (error) {
       this.setData({ loading: false, error: '加载失败，请稍后重试。' });
     }
+  },
+
+  async onPullDownRefresh() {
+    await this.load({ silent: true });
+    wx.stopPullDownRefresh();
   },
 
   onQueryInput(event) {

@@ -78,6 +78,27 @@ test('every_page_loads_data_through_the_runtime_facade_with_states', () => {
   }
 });
 
+test('list_pages_support_pull_down_refresh_and_forms_show_validation_messages', () => {
+  // APP_MINI_PROGRAM_UI_SPEC §7: lists must support refresh; forms must show
+  // validation messages.
+  const listPages = [
+    'pages/apps',
+    'pages/contacts',
+    'pages/messages',
+    'detail/apps-my',
+    'detail/apps-search',
+  ];
+  for (const page of listPages) {
+    const json = JSON.parse(readFileSync(path.join(surfaceRoot, 'src', `${page}/index.json`), 'utf8'));
+    assert.equal(json.enablePullDownRefresh, true, `${page} must enable pull-down refresh`);
+    const js = readFileSync(path.join(surfaceRoot, 'src', `${page}/index.js`), 'utf8');
+    assert.match(js, /onPullDownRefresh/u, `${page} must handle onPullDownRefresh`);
+    assert.match(js, /stopPullDownRefresh/u, `${page} must stop pull-down refresh`);
+  }
+  const createJs = readFileSync(path.join(surfaceRoot, 'src', 'detail/apps-create/index.js'), 'utf8');
+  assert.match(createJs, /请先描述/u, 'create form must show a validation message for empty requirement');
+});
+
 test('native_dark_mode_is_wired_through_theme_json_with_locale_parity', () => {
   const manifest = JSON.parse(readFileSync(path.join(surfaceRoot, 'src', 'app.json'), 'utf8'));
   assert.equal(manifest.darkmode, true, 'app.json must enable darkmode');

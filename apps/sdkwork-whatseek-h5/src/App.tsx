@@ -16,7 +16,9 @@ import { whatseekRouteElements, whatseekRouteTable } from './bootstrap/routes.js
  */
 export function App() {
   const { t } = useTranslation();
-  const fallback = <ScreenState state="loading" titleKey="whatseek.chat.home.title" />;
+  // Route-agnostic lazy fallback: ScreenState falls back to the generic
+  // per-state copy (加载中…), never a specific tab's title.
+  const fallback = <ScreenState state="loading" />;
   return (
     <AuthGate>
       <Routes>

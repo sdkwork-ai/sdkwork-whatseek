@@ -5,6 +5,27 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — Spec hardening + rendered-surface visual acceptance
+
+- **Mini-program** (APP_MINI_PROGRAM_UI_SPEC §7): pull-down refresh wired on
+  the five list pages (apps / contacts / messages / apps-my / apps-search,
+  silent refresh without loading flicker) and the creation form now shows a
+  validation message for an empty requirement; contract suite 8 → 9 tests.
+- **H5/PC**: the lazy-route Suspense fallback no longer hardcodes the chat
+  title — ScreenState falls back to the generic per-state copy (加载中…) on
+  every route.
+- **Rendered visual acceptance** (browser, mobile 390×844 for H5, 1440×900
+  for PC, against the standalone.production bundles): H5 verified all 13
+  routes plus the chat suggestion→card flow, runner success, the enterprise
+  visitor permission-denied state, contacts→detail→direct
+  conversation→send with the live unread-badge decrement, profile asset
+  summary, and persisted dark mode + en-US; PC verified the desktop nav-rail
+  shell, the wide app center, and the permission-denied state. Playwright
+  locator clicks hang on this app's React tree — the acceptance harness used
+  coordinate/evaluate clicks; the conversation composer's Enter-to-send is a
+  harness event-dispatch quirk (form semantics verified in code), not an app
+  defect.
+
 ### 2026-10-02 — Commercial-delivery closeout: full 13-route coverage on every surface
 
 - **Mini-program** (`apps/sdkwork-whatseek-mini-program`): added the six missing

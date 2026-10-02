@@ -1,3 +1,4 @@
 {
-  "navigationBarTitleText": "我的应用"
+  "navigationBarTitleText": "我的应用",
+  "enablePullDownRefresh": true
 }

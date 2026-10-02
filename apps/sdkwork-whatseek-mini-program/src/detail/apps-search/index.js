@@ -47,6 +47,14 @@ Page({
     }
   },
 
+  async onPullDownRefresh() {
+    const query = this.data.query.trim();
+    if (query.length > 0) {
+      await this.search(query);
+    }
+    wx.stopPullDownRefresh();
+  },
+
   onResultTap(event) {
     const appId = event.currentTarget.dataset.id;
     appApi.shell.navigate(`/detail/apps-detail/index?appId=${appId}`);

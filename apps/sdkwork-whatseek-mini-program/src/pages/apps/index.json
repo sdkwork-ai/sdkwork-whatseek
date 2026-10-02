@@ -1,3 +1,4 @@
 {
-  "navigationBarTitleText": "应用中心"
+  "navigationBarTitleText": "应用中心",
+  "enablePullDownRefresh": true
 }

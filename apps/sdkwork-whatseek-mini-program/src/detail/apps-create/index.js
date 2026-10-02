@@ -19,12 +19,16 @@ Page({
   },
 
   onRequirementInput(event) {
-    this.setData({ requirement: event.detail.value });
+    this.setData({ requirement: event.detail.value, error: '' });
   },
 
   async onDraftPlan() {
     const requirement = this.data.requirement.trim();
-    if (requirement.length === 0 || this.data.working) return;
+    if (this.data.working) return;
+    if (requirement.length === 0) {
+      this.setData({ error: '请先描述你想做的应用，再生成方案。' });
+      return;
+    }
     this.setData({ working: true, error: '' });
     try {
       const plan = await Promise.resolve(appApi.apps.draftPlan(requirement));

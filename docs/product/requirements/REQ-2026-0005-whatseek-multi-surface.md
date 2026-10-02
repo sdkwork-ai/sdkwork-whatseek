@@ -45,6 +45,15 @@ After the P0 milestone, the surface-gap audit closed the remaining functional de
 - Flutter: `AppsSearchScreen`, `SettingsScreen`, real `AppRunnerScreen` replace the placeholder; all 8 secondary routes have builders; zh-CN/en-US i18n fragments per package under `lib/src/i18n/`; light/dark `ThemeData` + persisted appearance (shared_preferences); settings and search entries on the profile/apps tab roots.
 - Shared catalog: `crm-manager` is the `enterprise`-kind app, making the documented visitor permission-denied runner state reachable on all four surfaces (previously dead code on H5/PC).
 
+## Visual Acceptance (2026-10-03)
+
+Rendered-surface acceptance against the standalone.production bundles (browser harness; mobile 390×844 for H5, desktop 1440×900 for PC):
+
+- H5: all 13 routes rendered and exercised — chat suggestion→card flow, runner success preview, enterprise visitor permission-denied state, contacts filter/list→detail→发消息→direct conversation→send (unread badge decrements live), profile asset summary, apps home with recorded recents, create/my-apps, and persisted dark mode + en-US locale.
+- PC: desktop nav-rail shell, wide app center (categories/recents/hot), and the permission-denied state.
+- Mini-program: covered by the 9-test contract suite (page quads, facade boundary, states, refresh, dark-mode wiring) — WeChat DevTools rendering is outside this environment's reach and remains the pre-store smoke step.
+- Follow-up fix from acceptance: the lazy-route Suspense fallback no longer shows the chat title on every route (generic loading copy).
+
 ## Verification
 
 ```bash
