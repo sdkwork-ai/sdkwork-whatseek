@@ -90,6 +90,8 @@ function check() {
     () => run('node', ['../sdkwork-specs/tools/check-app-manifest-standard.mjs', '--root', '.']),
     () => run('node', ['../sdkwork-specs/tools/check-component-port-bindings.mjs', '--root', '.']),
     () => run('node', ['../sdkwork-specs/tools/check-tailwind-integration.mjs', '--root', '.']),
+    () => run('node', ['../sdkwork-specs/tools/check-workspace-packages-layout.mjs', '--root', path.join('apps', 'sdkwork-whatseek-common'), '--mode', 'enforce']),
+    () => run('node', ['../sdkwork-specs/tools/check-client-host-packages.mjs', '--root', path.join('apps', 'sdkwork-whatseek-pc')]),
   ];
   for (const step of steps) {
     const stepStatus = step();

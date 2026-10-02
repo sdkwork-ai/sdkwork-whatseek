@@ -1,5 +1,7 @@
 # sdkwork-whatseek-common
 
+repository-kind: shared-package-family
+
 Shared cross-architecture package-family root for WhatSeek (`APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md` line 56): contracts, service ports, and domain logic with **no UI runtime dependency**. Not a runnable client surface.
 
 | Package | Purpose | Consumers |

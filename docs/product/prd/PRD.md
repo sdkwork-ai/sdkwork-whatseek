@@ -89,6 +89,7 @@ Agent, Skill, 应用组合, 文件, 知识库, 应用发布, 开发者中心, �
 - `../requirements/REQ-2026-0002-whatseek-ai-chat-intent.md` — AI chat, intent recognition, AI routing, task states.
 - `../requirements/REQ-2026-0003-whatseek-app-center.md` — app discovery, search, detail, invoke, 我的应用, AI app creation.
 - `../requirements/REQ-2026-0004-whatseek-contacts-messages.md` — contacts, unified messages, AI task notifications, profile/digital assets.
+- `../requirements/REQ-2026-0005-whatseek-multi-surface.md` — multi-surface delivery: PC + Tauri desktop, WeChat mini-program, and Flutter mobile off the shared service core.
 
 ## 9. Open Questions
 
