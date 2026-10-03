@@ -10,11 +10,11 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: WhatseekShell(
         destinations: const [
-          ('对话', Icons.auto_awesome),
-          ('应用', Icons.grid_view),
-          ('通讯录', Icons.people),
-          ('消息', Icons.chat_bubble),
-          ('我的', Icons.person),
+          ('对话', Icons.auto_awesome_outlined, Icons.auto_awesome),
+          ('应用', Icons.grid_view_outlined, Icons.grid_view),
+          ('通讯录', Icons.people_outline, Icons.people),
+          ('消息', Icons.chat_bubble_outline, Icons.chat_bubble),
+          ('我的', Icons.person_outline, Icons.person),
         ],
         currentIndex: 0,
         onDestinationSelected: (_) {},

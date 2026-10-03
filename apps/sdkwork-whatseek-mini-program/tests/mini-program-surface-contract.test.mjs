@@ -40,6 +40,13 @@ test('app.json projects_exactly_the_five_tab_pages_and_the_detail_subpackage', (
   );
   for (const entry of manifest.tabBar.list) {
     assert.ok(manifest.pages.includes(entry.pagePath), `tab page missing from pages: ${entry.pagePath}`);
+    // Tab icon-state norm (APP_MINI_PROGRAM_UI_SPEC §7): outline icon for the
+    // unselected tab, filled glyph for the selected tab — never color alone.
+    assert.match(entry.iconPath ?? '', /-outline\.png$/u, `tab ${entry.text} missing an outline iconPath`);
+    assert.match(entry.selectedIconPath ?? '', /-filled\.png$/u, `tab ${entry.text} missing a filled selectedIconPath`);
+    for (const icon of [entry.iconPath, entry.selectedIconPath]) {
+      assert.ok(existsSync(path.join(surfaceRoot, 'src', icon)), `tab icon asset missing: ${icon}`);
+    }
   }
 });
 

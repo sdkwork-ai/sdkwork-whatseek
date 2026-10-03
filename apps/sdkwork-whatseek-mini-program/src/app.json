@@ -35,23 +35,33 @@
     "list": [
       {
         "pagePath": "pages/chat/index",
-        "text": "对话"
+        "text": "对话",
+        "iconPath": "assets/tabbar/chat-outline.png",
+        "selectedIconPath": "assets/tabbar/chat-filled.png"
       },
       {
         "pagePath": "pages/apps/index",
-        "text": "应用"
+        "text": "应用",
+        "iconPath": "assets/tabbar/apps-outline.png",
+        "selectedIconPath": "assets/tabbar/apps-filled.png"
       },
       {
         "pagePath": "pages/contacts/index",
-        "text": "通讯录"
+        "text": "通讯录",
+        "iconPath": "assets/tabbar/contacts-outline.png",
+        "selectedIconPath": "assets/tabbar/contacts-filled.png"
       },
       {
         "pagePath": "pages/messages/index",
-        "text": "消息"
+        "text": "消息",
+        "iconPath": "assets/tabbar/messages-outline.png",
+        "selectedIconPath": "assets/tabbar/messages-filled.png"
       },
       {
         "pagePath": "pages/profile/index",
-        "text": "我的"
+        "text": "我的",
+        "iconPath": "assets/tabbar/profile-outline.png",
+        "selectedIconPath": "assets/tabbar/profile-filled.png"
       }
     ]
   },

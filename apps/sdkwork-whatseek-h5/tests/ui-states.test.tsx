@@ -14,6 +14,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { applyColorMode, getWhatseekClient, readAppliedColorMode, changeWhatseekLocale, resetWhatseekClients, useSessionStore } from '@sdkwork/whatseek-h5-core';
 import { useChatStore } from '@sdkwork/whatseek-h5-chat';
 import { AppRunnerScreen } from '@sdkwork/whatseek-h5-apps';
+import { TabBar } from '@sdkwork/whatseek-h5-shell';
 import { ContactsHomeScreen } from '@sdkwork/whatseek-h5-contacts';
 import { ChatHomeScreen } from '@sdkwork/whatseek-h5-chat';
 import { ScreenState } from '@sdkwork/whatseek-h5-commons';
@@ -74,6 +75,7 @@ describe('ScreenState five states', () => {
 describe('ChatHomeScreen (chat-first entry)', () => {
   it('renders_the_hero_and_suggestions_when_the_thread_is_empty', async () => {
     renderAt(<ChatHomeScreen />, '/chat');
+    expect(screen.getByRole('heading', { name: '对话' })).toBeTruthy();
     expect(await screen.findByText('你想做什么？')).toBeTruthy();
     expect(screen.getByText('帮我找一个视频剪辑工具')).toBeTruthy();
   });
@@ -255,6 +257,21 @@ describe('ChatHomeScreen (chat-first entry)', () => {
       },
       { timeout: 3000 },
     );
+  });
+
+  it('marks_the_selected_tab_with_a_filled_icon_and_unselected_with_outline', () => {
+    render(
+      <MemoryRouter initialEntries={['/chat']}>
+        <TabBar />
+      </MemoryRouter>,
+    );
+    const activeLink = document.querySelector('a[aria-current="page"]');
+    expect(activeLink).not.toBeNull();
+    expect(activeLink?.getAttribute('href')).toBe('/chat');
+    expect(activeLink?.querySelector('svg')?.getAttribute('fill')).toBe('currentColor');
+    for (const link of document.querySelectorAll('a:not([aria-current="page"])')) {
+      expect(link.querySelector('svg')?.getAttribute('fill')).toBe('none');
+    }
   });
 });
 

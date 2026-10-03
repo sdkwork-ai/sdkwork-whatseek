@@ -14,6 +14,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { applyColorMode, getWhatseekClient, readAppliedColorMode, changeWhatseekLocale, resetWhatseekClients, useSessionStore } from '@sdkwork/whatseek-pc-core';
 import { useChatStore } from '@sdkwork/whatseek-pc-chat';
 import { AppRunnerScreen } from '@sdkwork/whatseek-pc-apps';
+import { DesktopNavRail } from '@sdkwork/whatseek-pc-shell';
 import { ContactsHomeScreen } from '@sdkwork/whatseek-pc-contacts';
 import { ChatHomeScreen } from '@sdkwork/whatseek-pc-chat';
 import { ScreenState } from '@sdkwork/whatseek-pc-commons';
@@ -255,6 +256,21 @@ describe('ChatHomeScreen (chat-first entry)', () => {
       },
       { timeout: 3000 },
     );
+  });
+
+  it('marks_the_selected_tab_with_a_filled_icon_and_unselected_with_outline', () => {
+    render(
+      <MemoryRouter initialEntries={['/chat']}>
+        <DesktopNavRail />
+      </MemoryRouter>,
+    );
+    const activeLink = document.querySelector('a[aria-current="page"]');
+    expect(activeLink).not.toBeNull();
+    expect(activeLink?.getAttribute('href')).toBe('/chat');
+    expect(activeLink?.querySelector('svg')?.getAttribute('fill')).toBe('currentColor');
+    for (const link of document.querySelectorAll('a:not([aria-current="page"])')) {
+      expect(link.querySelector('svg')?.getAttribute('fill')).toBe('none');
+    }
   });
 });
 

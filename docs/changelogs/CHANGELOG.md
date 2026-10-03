@@ -5,6 +5,37 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — Tab-bar icon states: filled selected / outline unselected, codified in sdkwork-specs
+
+- **Norm first**: `APP_MOBILE_REACT_UI_SPEC` §5, `APP_MINI_PROGRAM_UI_SPEC` §7,
+  and `APP_FLUTTER_UI_SPEC` §5 gain a `MUST`-level rule — the selected tab
+  renders a filled icon, unselected tabs render the outline glyph of the same
+  icon, selection is never conveyed by color alone; platform native
+  selected-icon slots (`selectedIconPath`, `NavigationDestination(selectedIcon:)`)
+  `MUST` be used where they exist.
+- **H5**: the tab bar computes the active tab (`aria-current="page"`) and
+  fills the glyph (`fill="currentColor"`) for it, outline for the rest —
+  selection now readable without color. Pinned by a render test
+  (`marks_the_selected_tab_with_a_filled_icon_and_unselected_with_outline`).
+- **PC**: the desktop nav rail mirrors the same filled/outline treatment
+  (test twin).
+- **Flutter**: `WhatseekShell` destinations carry `(label, icon, selectedIcon)`
+  and render through `NavigationDestination(icon:/selectedIcon:)` with
+  Material outline/filled pairs per tab (auto_awesome, grid_view, people,
+  chat_bubble, person).
+- **Mini-program**: the native tabBar gains real icons — a generator script
+  (`scripts/gen-tabbar-icons.mjs`, pure Node rasterizer) emits five
+  outline/filled 81×81 PNG pairs (`src/assets/tabbar/`), wired through
+  `iconPath`/`selectedIconPath`; the surface-contract test pins every tab to
+  the pair and asserts the assets exist.
+- Vitest note: the H5 config inlines `@sdkwork/whatseek-h5-shell`
+  (`server.deps.inline`) — externalized source-linked workspace packages
+  pre-bundle through esbuild, which rewrites their internal
+  `@sdkwork/whatseek-h5-*` imports into unresolvable optimized ids.
+- Verification: `pnpm verify` EXIT=0, H5/PC prod builds PASS, mp 25 tests,
+  Flutter 54 tests + analyze clean; rendered screenshots confirm filled
+  active glyphs on the H5 tab bar.
+
 ### 2026-10-03 — Acceptance sweep of the tech-blue round: localized app-kind chips, desktop + dark-mode verification
 
 - Rendered sweep of the full-bleed restyle on PC 1440×900 (应用/消息/我的 —

@@ -11,8 +11,10 @@ class WhatseekShell extends StatelessWidget {
     required this.child,
   });
 
-  /// One entry per tab root: (label, icon).
-  final List<(String, IconData)> destinations;
+  /// One entry per tab root: (label, outline icon, filled icon). The filled
+  /// glyph marks the selected destination and the outline glyph the rest
+  /// (tab icon-state norm in APP_FLUTTER_UI_SPEC §5).
+  final List<(String, IconData, IconData)> destinations;
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
   final Widget child;
@@ -25,8 +27,12 @@ class WhatseekShell extends StatelessWidget {
         selectedIndex: currentIndex,
         onDestinationSelected: onDestinationSelected,
         destinations: [
-          for (final (label, icon) in destinations)
-            NavigationDestination(icon: Icon(icon), label: label),
+          for (final (label, icon, selectedIcon) in destinations)
+            NavigationDestination(
+              icon: Icon(icon),
+              selectedIcon: Icon(selectedIcon),
+              label: label,
+            ),
         ],
       ),
     );

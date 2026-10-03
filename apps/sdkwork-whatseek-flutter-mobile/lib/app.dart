@@ -31,12 +31,14 @@ class _WhatseekAppState extends State<WhatseekApp> {
   /// H5 brand palette seed (`--sdk-ref-brand-500`: #1677ff tech blue).
   static const Color _brand = Color(0xFF1677FF);
 
-  static const Map<TabId, IconData> _tabIcons = {
-    TabId.chat: Icons.auto_awesome,
-    TabId.apps: Icons.grid_view,
-    TabId.contacts: Icons.people,
-    TabId.messages: Icons.chat_bubble,
-    TabId.profile: Icons.person,
+  /// Outline glyph for the unselected destination, filled for the selected
+  /// one (tab icon-state norm in APP_FLUTTER_UI_SPEC §5).
+  static const Map<TabId, (IconData, IconData)> _tabIcons = {
+    TabId.chat: (Icons.auto_awesome_outlined, Icons.auto_awesome),
+    TabId.apps: (Icons.grid_view_outlined, Icons.grid_view),
+    TabId.contacts: (Icons.people_outline, Icons.people),
+    TabId.messages: (Icons.chat_bubble_outline, Icons.chat_bubble),
+    TabId.profile: (Icons.person_outline, Icons.person),
   };
 
   @override
@@ -112,7 +114,8 @@ class _WhatseekAppState extends State<WhatseekApp> {
                 for (final route in kTabRootRoutes)
                   (
                     WhatseekCoreStrings.of(context, 'shell.tab.${route.tab!.name}'),
-                    _tabIcons[route.tab!]!,
+                    _tabIcons[route.tab!]!.$1,
+                    _tabIcons[route.tab!]!.$2,
                   ),
               ],
               currentIndex: _currentIndex,

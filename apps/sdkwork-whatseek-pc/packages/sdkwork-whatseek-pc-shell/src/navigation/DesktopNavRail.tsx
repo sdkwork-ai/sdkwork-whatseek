@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 import { useTranslation } from 'react-i18next';
 import {
@@ -26,12 +26,15 @@ const TAB_ICONS: Record<TabId, LucideIcon> = {
 /**
  * Desktop navigation rail (APP_PC_REACT_UI_SPEC.md: large-screen navigation —
  * sidebar/rail, never phone-first bottom tabs). The five tab identities are
- * the same cross-surface contract as H5/mini-program/Flutter.
+ * the same cross-surface contract as H5/mini-program/Flutter. Icon states
+ * mirror the mobile tab-bar norm: the selected rail item renders the filled
+ * glyph, unselected items stay outline.
  */
 export function DesktopNavRail() {
   const { t } = useTranslation();
   const unreadMessages = useTabBadgeStore((state) => state.unreadMessages);
   const user = useSessionStore((state) => state.user);
+  const { pathname } = useLocation();
   return (
     <aside
       aria-label={t('whatseek.shell.navrail.label')}
@@ -47,21 +50,26 @@ export function DesktopNavRail() {
         <ul className="space-y-1">
           {WHATSEEK_TABS.map((tab) => {
             const Icon = TAB_ICONS[tab.id];
+            const isActive = pathname === tab.path || pathname.startsWith(`${tab.path}/`);
             const badge = tab.id === 'messages' && unreadMessages > 0 ? unreadMessages : null;
             return (
               <li key={tab.id}>
                 <NavLink
                   to={tab.path}
-                  className={({ isActive }) =>
-                    cx(
-                      'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
-                      isActive
-                        ? 'bg-brand-soft text-brand'
-                        : 'text-secondary hover:bg-panel-muted hover:text-primary',
-                    )
-                  }
+                  aria-current={isActive ? 'page' : undefined}
+                  className={cx(
+                    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-brand-soft text-brand'
+                      : 'text-secondary hover:bg-panel-muted hover:text-primary',
+                  )}
                 >
-                  <Icon aria-hidden="true" strokeWidth={1.75} className="h-5 w-5" />
+                  <Icon
+                    aria-hidden="true"
+                    strokeWidth={1.75}
+                    fill={isActive ? 'currentColor' : 'none'}
+                    className="h-5 w-5"
+                  />
                   <span className="flex-1">{t(tab.titleKey)}</span>
                   {badge !== null ? (
                     <span

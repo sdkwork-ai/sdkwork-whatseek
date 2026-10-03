@@ -32,6 +32,19 @@ export default defineConfig(({ mode }) => {
     test: {
       environment: 'jsdom',
       include: ['tests/**/*.test.?(c|m)[jt]s?(x)'],
+      // Workspace packages are source-linked (`main: ./src/index.ts`); they
+      // must be inlined as source instead of pre-bundled, otherwise the
+      // optimizer rewrites their internal `@sdkwork/whatseek-h5-*` imports to
+      // optimized ids that cannot resolve against the linked sources.
+      // Inline the source-linked shell package: externalized workspace deps
+      // pre-bundle through esbuild, which rewrites internal
+      // `@sdkwork/whatseek-h5-*` imports into optimized ids that cannot
+      // resolve against the linked sources.
+      server: {
+        deps: {
+          inline: [/@sdkwork\/whatseek-h5-shell/u],
+        },
+      },
     },
     // `runtimeProfile` is resolved for parity with the canonical browser build
     // runner (mode = `<deploymentProfile>.<environment>`); the value is part of

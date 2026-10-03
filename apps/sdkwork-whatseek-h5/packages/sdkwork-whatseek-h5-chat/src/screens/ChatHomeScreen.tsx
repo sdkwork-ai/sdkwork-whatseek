@@ -92,9 +92,16 @@ export function ChatHomeScreen() {
     })();
   };
 
+  const titleBar = (
+    <header className="shrink-0 px-4 pt-4 pb-1">
+      <h1 className="text-lg font-semibold text-primary">{t('whatseek.chat.home.title')}</h1>
+    </header>
+  );
+
   if (error) {
     return (
       <div className="flex h-full flex-col">
+        {titleBar}
         <ScreenState
           state="error"
           onRetry={() => {
@@ -108,6 +115,7 @@ export function ChatHomeScreen() {
 
   return (
     <div className="flex h-full flex-col" data-retry={retryToken}>
+      {titleBar}
       {isEmpty ? (
         <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
           <p className="text-2xl font-semibold text-primary">{t('whatseek.chat.home.heroTitle')}</p>
@@ -130,7 +138,7 @@ export function ChatHomeScreen() {
         <div className="flex-1 space-y-3 px-4 pt-4 pb-2">
           {entries.map((entry) => (
             <div key={entry.id} className={entry.role === 'user' ? 'flex justify-end' : 'flex justify-start'}>
-              <div className={entry.role === 'user' ? 'max-w-[80%] space-y-2' : 'w-full max-w-[92%] space-y-2'}>
+              <div className={entry.role === 'user' ? 'max-w-[80%] space-y-2' : 'w-full space-y-2'}>
                 <div
                   className={
                     entry.role === 'user'
