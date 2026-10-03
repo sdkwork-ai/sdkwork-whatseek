@@ -97,5 +97,15 @@
     "games": "Games",
     "enterprise": "Enterprise",
     "agent": "AI Agent"
+  },
+  "kind": {
+    "web": "Web app",
+    "mini": "Mini app",
+    "ai": "AI app",
+    "agent": "Agent",
+    "skill": "Skill",
+    "external": "External",
+    "enterprise": "Enterprise",
+    "generated": "Generated"
   }
 }

@@ -74,7 +74,7 @@ export function AppDetailScreen() {
             </span>
           ) : null}
           <span className="rounded-full border border-border-subtle px-2 py-0.5 text-[0.625rem] text-muted">
-            {app.kind}
+            {t(`whatseek.apps.kind.${app.kind}`)}
           </span>
           {app.tags.map((tag) => (
             <span key={tag} className="rounded-full border border-border-subtle px-2 py-0.5 text-[0.625rem] text-muted">

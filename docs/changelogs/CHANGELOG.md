@@ -5,6 +5,22 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — Acceptance sweep of the tech-blue round: localized app-kind chips, desktop + dark-mode verification
+
+- Rendered sweep of the full-bleed restyle on PC 1440×900 (应用/消息/我的 —
+  the shared full-bleed Card sits correctly inside the desktop content
+  column) and H5 dark mode (消息/我的应用/应用详情/会话 — hairlines and brand
+  tokens hold; the muted send button is the disabled state, not a token
+  regression).
+- Fix found by the sweep: the app-detail tag row rendered the raw
+  `app.kind` enum (`ai`/`enterprise`) as a chip on H5/PC — now localized
+  through new `whatseek.apps.kind.*` keys (eight kinds, zh + en). No other
+  raw-enum renderings exist (audited H5/PC/mp/Flutter).
+- Desktop regression: `cargo build` green after the theme/Card changes;
+  REQ-2026-0005 acceptance counts refreshed (mp 25, Flutter 54).
+- Verification: `pnpm verify` EXIT=0, H5/PC prod builds PASS; rendered
+  probe confirms the detail chip now reads 企业应用.
+
 ### 2026-10-03 — Tech-blue theme + full-bleed mobile lists + no visible scrollbars
 
 - **科技蓝主题全端落地**: brand ramp moved from indigo-leaning blue-600 to the

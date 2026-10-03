@@ -97,5 +97,15 @@
     "games": "游戏",
     "enterprise": "企业",
     "agent": "AI Agent"
+  },
+  "kind": {
+    "web": "网页应用",
+    "mini": "小程序",
+    "ai": "AI 应用",
+    "agent": "智能体",
+    "skill": "技能",
+    "external": "外部应用",
+    "enterprise": "企业应用",
+    "generated": "生成应用"
   }
 }
