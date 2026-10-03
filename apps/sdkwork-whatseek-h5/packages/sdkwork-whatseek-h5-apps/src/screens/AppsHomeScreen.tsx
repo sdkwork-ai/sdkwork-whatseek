@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Sparkles, Star } from 'lucide-react';
 
+import { SdkworkArrowIcon } from '@sdkwork/shell-mobile-react';
 import { Avatar, Card, ListRow, ScreenState, SectionHeader, useAsyncData } from '@sdkwork/whatseek-h5-commons';
 import { getWhatseekClient } from '@sdkwork/whatseek-h5-core';
 
@@ -61,7 +62,7 @@ export function AppsHomeScreen() {
               {t('whatseek.apps.home.aiCreate.subtitle')}
             </span>
           </span>
-          <span aria-hidden="true" className="text-muted">›</span>
+          <SdkworkArrowIcon className="shrink-0 text-muted" direction="right" size="sm" />
         </Link>
       </div>
 

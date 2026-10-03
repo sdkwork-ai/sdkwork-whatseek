@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
+import { SdkworkArrowIcon } from '@sdkwork/shell-mobile-react';
 import { Avatar, ListRow, ScreenState, SectionHeader } from '@sdkwork/whatseek-h5-commons';
 import type { Contact, ContactKind } from '@sdkwork/whatseek-h5-core';
 
@@ -74,7 +75,7 @@ export function ContactsHomeScreen() {
                       leading={<Avatar glyph={contact.avatar} />}
                       title={contact.name}
                       description={contact.bio}
-                      trailing={<span className="text-xs text-muted">›</span>}
+                      trailing={<SdkworkArrowIcon className="text-muted" direction="right" size="sm" />}
                       onClick={() => {
                         navigate(`/contacts/${contact.id}`);
                       }}

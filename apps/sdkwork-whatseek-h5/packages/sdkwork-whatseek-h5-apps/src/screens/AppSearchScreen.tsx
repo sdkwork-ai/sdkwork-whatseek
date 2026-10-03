@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { Avatar, Card, ListRow, ScreenState } from '@sdkwork/whatseek-h5-commons';
+import { SdkworkMobileNavBar } from '@sdkwork/shell-mobile-react/navbar';
 import { getWhatseekClient } from '@sdkwork/whatseek-h5-core';
 
 import { useAsyncData } from '../hooks/useAppsData.js';
@@ -24,19 +25,16 @@ export function AppSearchScreen() {
 
   return (
     <div className="pb-6">
-      <header className="flex items-center gap-2 px-4 pt-4">
-        <button
-          type="button"
-          aria-label={t('whatseek.commons.action.back')}
-          onClick={() => {
-            navigate(-1);
-          }}
-          className="text-xl text-secondary"
-        >
-          ‹
-        </button>
+      <SdkworkMobileNavBar
+        backLabel={t('whatseek.commons.action.back')}
+        title={t('whatseek.apps.search.title')}
+        onBack={() => {
+          navigate(-1);
+        }}
+      />
+      <div className="px-4 pt-3">
         <form
-          className="flex flex-1 items-center gap-2 rounded-full border border-border-default bg-panel px-3 py-1.5"
+          className="flex items-center gap-2 rounded-full border border-border-default bg-panel px-3 py-1.5"
           onSubmit={(event) => {
             event.preventDefault();
             setSearchParams(draft.trim().length > 0 ? { q: draft.trim() } : {});
@@ -53,7 +51,7 @@ export function AppSearchScreen() {
             className="w-full bg-transparent text-sm text-primary outline-none placeholder:text-muted"
           />
         </form>
-      </header>
+      </div>
 
       <ScreenState
         state={results.state === 'loading' ? 'loading' : results.state === 'error' ? 'error' : results.data.length === 0 ? 'empty' : 'success'}

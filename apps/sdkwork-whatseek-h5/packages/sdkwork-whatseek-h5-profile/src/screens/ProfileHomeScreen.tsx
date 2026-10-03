@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
+import { SdkworkArrowIcon } from '@sdkwork/shell-mobile-react';
 import { Avatar, Card, ListRow, ScreenState } from '@sdkwork/whatseek-h5-commons';
 import { getWhatseekClient, useSessionStore } from '@sdkwork/whatseek-h5-core';
 
@@ -113,7 +114,7 @@ export function ProfileHomeScreen() {
           leading={<span aria-hidden="true" className="text-xl">🧩</span>}
           title={t('whatseek.profile.home.myApps')}
           description={t('whatseek.profile.home.myAppsHint')}
-          trailing={<span aria-hidden="true" className="text-muted">›</span>}
+          trailing={<SdkworkArrowIcon className="text-muted" direction="right" size="sm" />}
           onClick={() => {
             navigate('/apps/my');
           }}
@@ -121,7 +122,7 @@ export function ProfileHomeScreen() {
         <ListRow
           leading={<span aria-hidden="true" className="text-xl">⭐</span>}
           title={t('whatseek.profile.home.favorites')}
-          trailing={<span aria-hidden="true" className="text-muted">›</span>}
+          trailing={<SdkworkArrowIcon className="text-muted" direction="right" size="sm" />}
           onClick={() => {
             navigate('/apps/my?tab=favorites');
           }}
@@ -129,7 +130,7 @@ export function ProfileHomeScreen() {
         <ListRow
           leading={<span aria-hidden="true" className="text-xl">{colorMode === 'dark' ? '🌙' : '☀️'}</span>}
           title={t('whatseek.profile.home.settings')}
-          trailing={<span aria-hidden="true" className="text-muted">›</span>}
+          trailing={<SdkworkArrowIcon className="text-muted" direction="right" size="sm" />}
           onClick={() => {
             navigate('/settings');
           }}

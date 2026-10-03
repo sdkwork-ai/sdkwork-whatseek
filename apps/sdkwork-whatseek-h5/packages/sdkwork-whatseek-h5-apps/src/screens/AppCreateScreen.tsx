@@ -88,11 +88,11 @@ export function AppCreateScreen() {
     return (
       <div className="flex min-h-full flex-col pb-6">
         <SdkworkMobileNavBar
-        title={t('whatseek.apps.create.title')}
-        onBack={() => {
-          navigate(-1);
-        }}
-      />
+          title={t('whatseek.apps.create.title')}
+          onBack={() => {
+            navigate(-1);
+          }}
+        />
         <div className="px-4 pt-6">
           {basedOnName.length > 0 ? (
             <p className="pb-2 text-xs text-muted">{t('whatseek.apps.create.basedOn', { name: basedOnName })}</p>
@@ -126,21 +126,12 @@ export function AppCreateScreen() {
 
   return (
     <div className="flex min-h-full flex-col pb-6">
-      <header className="flex items-center gap-2 px-4 pt-4">
-        <button
-          type="button"
-          aria-label={t('whatseek.commons.action.back')}
-          onClick={() => {
-            navigate(-1);
-          }}
-          className="text-xl text-secondary"
-        >
-          ‹
-        </button>
-        <h1 className="text-base font-semibold text-primary">
-          {phase === 'plan' ? t('whatseek.apps.create.planTitle') : t('whatseek.apps.create.previewTitle')}
-        </h1>
-      </header>
+      <SdkworkMobileNavBar
+        title={phase === 'plan' ? t('whatseek.apps.create.planTitle') : t('whatseek.apps.create.previewTitle')}
+        onBack={() => {
+          navigate(-1);
+        }}
+      />
 
       {phase === 'plan' ? (
         <div className="px-4 pt-4">
