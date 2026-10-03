@@ -6,7 +6,15 @@
 
 export type {
   AppCategory,
+  AppChartId,
+  AppChartPreview,
+  AppCollection,
+  AppCollectionCard,
+  AppCollectionKind,
+  AppHeroSlide,
+  AppHomeFeed,
   AppRecommendation,
+  AppStoryCard,
   ChatCard,
   ChatMessage,
   CommerceResult,

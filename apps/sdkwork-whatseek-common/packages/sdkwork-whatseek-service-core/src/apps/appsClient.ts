@@ -5,10 +5,16 @@
  * generated appstore app SDK client — the port stays identical.
  */
 
-import type { AppRecommendation, CreatedApp, WhatseekApp } from '../types.js';
+import type { AppChartId, AppHomeFeed, AppCollection, AppRecommendation, CreatedApp, WhatseekApp } from '../types.js';
 import type { AppsPort } from '../ports.js';
 
 import { WHATSEEK_CATALOG, WHATSEEK_CATEGORIES, planModulesForRequirement } from './catalog.js';
+import {
+  buildWhatseekHomeFeed,
+  findWhatseekCollection,
+  listWhatseekChartApps,
+  listWhatseekCollectionApps,
+} from './homeFeed.js';
 import { extractSearchKeywords, scoreAppForKeywords } from './search.js';
 
 const CREATED_APPS_KEY = 'whatseek.created-apps';
@@ -99,6 +105,18 @@ export function createMockAppsClient(options: MockAppsClientOptions = {}): AppsP
       // Unmatched creation-capable demand falls through to AI creation at the
       // router level (Create as Default); search itself returns what exists.
       return recommendations;
+    },
+    async listHomeFeed(): Promise<AppHomeFeed> {
+      return buildWhatseekHomeFeed(WHATSEEK_CATALOG);
+    },
+    async getCollection(collectionId): Promise<AppCollection | null> {
+      return findWhatseekCollection(collectionId);
+    },
+    async listCollectionApps(collectionId) {
+      return listWhatseekCollectionApps(collectionId, WHATSEEK_CATALOG);
+    },
+    async listChart(chartId: AppChartId) {
+      return listWhatseekChartApps(chartId, WHATSEEK_CATALOG);
     },
     async listRecommended() {
       return [...WHATSEEK_CATALOG].filter((app) => app.aiCapability).slice(0, 6);

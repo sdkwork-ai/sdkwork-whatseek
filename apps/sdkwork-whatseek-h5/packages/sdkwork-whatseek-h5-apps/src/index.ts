@@ -9,6 +9,8 @@ export { extractSearchKeywords, scoreAppForKeywords } from './services/search.js
 export { AppsHomeScreen } from './screens/AppsHomeScreen.js';
 export { AppSearchScreen } from './screens/AppSearchScreen.js';
 export { AppDetailScreen } from './screens/AppDetailScreen.js';
+export { AppChartsScreen } from './screens/AppChartsScreen.js';
+export { AppCollectionScreen } from './screens/AppCollectionScreen.js';
 export { AppRunnerScreen } from './screens/AppRunnerScreen.js';
 export { AppCreateScreen } from './screens/AppCreateScreen.js';
 export { MyAppsScreen } from './screens/MyAppsScreen.js';

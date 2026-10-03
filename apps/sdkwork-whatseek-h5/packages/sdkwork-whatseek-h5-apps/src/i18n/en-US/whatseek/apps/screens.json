@@ -10,7 +10,23 @@
     "favorites": "Favorites",
     "recent": "Recently used",
     "recommended": "Recommended",
-    "hot": "Trending"
+    "stories": "Today",
+    "collections": "Collections",
+    "categories": "Categories",
+    "charts": "Charts",
+    "chartsMore": "See all"
+  },
+  "charts": {
+    "title": "Charts"
+  },
+  "chart": {
+    "hot": "Popular",
+    "free": "Top Free",
+    "new": "New Releases"
+  },
+  "collection": {
+    "title": "Collection",
+    "notFound": "Collection not found"
   },
   "search": {
     "title": "Search apps",

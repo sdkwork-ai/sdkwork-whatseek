@@ -30,6 +30,20 @@ export const appsRouteContributions = defineWhatseekRoutes([
     tab: null,
   },
   {
+    id: 'app.whatseek.apps.charts',
+    path: '/apps/charts',
+    titleKey: 'whatseek.apps.charts.title',
+    capability: 'apps',
+    tab: null,
+  },
+  {
+    id: 'app.whatseek.apps.collection',
+    path: '/apps/collection/:collectionId',
+    titleKey: 'whatseek.apps.collection.title',
+    capability: 'apps',
+    tab: null,
+  },
+  {
     id: 'app.whatseek.apps.runner',
     path: '/apps/runner/:appId',
     titleKey: 'whatseek.apps.runner.title',

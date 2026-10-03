@@ -48,7 +48,7 @@ MVP validation question: 用户是否愿意通过 Chat 表达需求，并让 AI 
 
 ### P0 (this repository's first milestone)
 
-用户体系 (basic user/session), Chat + AI 对话, 应用中心, 应用搜索, 应用详情, 应用调用, 我的应用, AI 创建 App (方案 → 生成 → 预览 → 修改 → 发布到我的应用), 通讯录, 消息, 我的, 基础权限, 基础任务状态 (Pending/Running/Waiting Confirmation/Completed; 异常 Failed/Cancelled/Expired).
+用户体系 (basic user/session), Chat + AI 对话, 应用中心, 应用市场首页编辑流 (Hero 轮播/编辑故事/精选合集/榜单速览, 集成 sdkwork-appstore 首页信息架构), 应用搜索, 应用详情, 应用调用, 我的应用, AI 创建 App (方案 → 生成 → 预览 → 修改 → 发布到我的应用), 通讯录, 消息, 我的, 基础权限, 基础任务状态 (Pending/Running/Waiting Confirmation/Completed; 异常 Failed/Cancelled/Expired).
 
 ### P1 (later)
 

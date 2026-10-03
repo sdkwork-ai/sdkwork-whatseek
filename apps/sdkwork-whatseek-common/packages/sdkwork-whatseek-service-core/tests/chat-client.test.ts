@@ -11,6 +11,10 @@ function fakeDeps(overrides: {
   const tasks = createMockTasksClient({ storage: null });
     const apps: AppsPort = {
       searchApps: overrides.searchApps ?? (async () => []),
+      listHomeFeed: async () => ({ heroes: [], stories: [], collections: [], charts: [] }),
+      getCollection: async () => null,
+      listCollectionApps: async () => [],
+      listChart: async () => [],
       listRecommended: async () => [],
       listHot: async () => [],
       listCategories: async () => [],

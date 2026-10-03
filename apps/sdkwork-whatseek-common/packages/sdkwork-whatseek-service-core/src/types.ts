@@ -62,6 +62,68 @@ export interface AppRecommendation {
   reason: string;
 }
 
+/**
+ * Appstore-style home feed blocks (sdkwork-appstore PRD §4.2.1 首页编辑流 /
+ * §5.1 首页), served by the 应用 tab root. Editorial content is Phase 1 mock
+ * data seeded alongside the catalog; Phase 2 swaps in the appstore catalog SDK.
+ */
+export type AppChartId = 'hot' | 'free' | 'new';
+
+export interface AppHeroSlide {
+  id: string;
+  /** Editorial campaign headline. */
+  title: string;
+  /** One-line tagline under the headline. */
+  tagline: string;
+  /** Small badge label, e.g. 编辑推荐. */
+  badge: string;
+  /** Featured app the slide opens. */
+  appId: string;
+  icon: string;
+}
+
+export interface AppStoryCard {
+  id: string;
+  title: string;
+  subtitle: string;
+  /** App the story links to. */
+  appId: string;
+  icon: string;
+}
+
+export type AppCollectionKind = 'editorial' | 'chart' | 'theme' | 'event';
+
+export interface AppCollection {
+  id: string;
+  title: string;
+  description: string;
+  kind: AppCollectionKind;
+  appIds: string[];
+}
+
+/** Home-feed collection card with cover apps already resolved. */
+export interface AppCollectionCard {
+  id: string;
+  title: string;
+  description: string;
+  kind: AppCollectionKind;
+  /** Cover apps for the card's mini icon grid (up to four). */
+  coverApps: WhatseekApp[];
+}
+
+/** One chart's quick view on the home feed (top entries only). */
+export interface AppChartPreview {
+  id: AppChartId;
+  apps: WhatseekApp[];
+}
+
+export interface AppHomeFeed {
+  heroes: AppHeroSlide[];
+  stories: AppStoryCard[];
+  collections: AppCollectionCard[];
+  charts: AppChartPreview[];
+}
+
 /** PRD §26 contact kinds unified in the address book. */
 export type ContactKind = 'person' | 'group' | 'org' | 'agent' | 'assistant';
 
