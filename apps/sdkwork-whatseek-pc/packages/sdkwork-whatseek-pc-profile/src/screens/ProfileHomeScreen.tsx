@@ -50,7 +50,7 @@ export function ProfileHomeScreen() {
         <h1 className="text-lg font-semibold text-primary">{t('whatseek.profile.home.title')}</h1>
       </header>
 
-      <div className="mx-4 mt-3 flex items-center gap-3 rounded-2xl border border-border-subtle bg-panel p-4">
+      <div className="mt-2 flex w-full items-center gap-3 border-y border-border-subtle bg-panel p-4">
         <Avatar glyph={user.avatar} size="lg" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold text-primary">
@@ -83,7 +83,7 @@ export function ProfileHomeScreen() {
         )}
       </div>
 
-      <Card className="mt-3">
+      <Card className="mt-2">
         <div className="grid grid-cols-4 divide-x divide-border-subtle">
           {(
             [
@@ -108,7 +108,7 @@ export function ProfileHomeScreen() {
         </div>
       </Card>
 
-      <Card className="mt-3">
+      <Card className="mt-2">
         <ListRow
           leading={<span aria-hidden="true" className="text-xl">🧩</span>}
           title={t('whatseek.profile.home.myApps')}

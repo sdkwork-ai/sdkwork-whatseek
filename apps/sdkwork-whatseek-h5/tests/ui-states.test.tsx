@@ -6,13 +6,14 @@
 
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import type { ReactElement } from 'react';
 
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { applyColorMode, getWhatseekClient, readAppliedColorMode, changeWhatseekLocale, resetWhatseekClients, useSessionStore } from '@sdkwork/whatseek-h5-core';
 import { useChatStore } from '@sdkwork/whatseek-h5-chat';
+import { AppRunnerScreen } from '@sdkwork/whatseek-h5-apps';
 import { ContactsHomeScreen } from '@sdkwork/whatseek-h5-contacts';
 import { ChatHomeScreen } from '@sdkwork/whatseek-h5-chat';
 import { ScreenState } from '@sdkwork/whatseek-h5-commons';
@@ -181,6 +182,51 @@ describe('ChatHomeScreen (chat-first entry)', () => {
       { timeout: 3000 },
     );
     expect(screen.getByText(/任务已完成/)).toBeTruthy();
+  });
+
+
+  it('sign_in_promotes_the_session_and_opens_the_enterprise_app_in_the_runner', async () => {
+    const user = userEvent.setup();
+    // Visitor is denied at the enterprise runner route.
+    render(
+      <MemoryRouter initialEntries={['/apps/runner/crm-manager']}>
+        <Routes>
+          <Route path="/apps/runner/:appId" element={<AppRunnerScreen />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    await waitFor(
+      () => {
+        expect(document.querySelector('[data-screen-state="permission-denied"]')).not.toBeNull();
+      },
+      { timeout: 3000 },
+    );
+    cleanup();
+
+    // Sign in from the profile tab (same session store the runner reads).
+    renderAt(<ProfileHomeScreen />, '/profile');
+    await user.click(await screen.findByText('登录'));
+    expect(await screen.findByText('问寻用户')).toBeTruthy();
+    cleanup();
+
+    // The same deep route now renders the sandbox preview.
+    render(
+      <MemoryRouter initialEntries={['/apps/runner/crm-manager']}>
+        <Routes>
+          <Route path="/apps/runner/:appId" element={<AppRunnerScreen />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    await waitFor(
+      () => {
+        expect(document.querySelector('[data-screen-state="permission-denied"]')).toBeNull();
+      },
+      { timeout: 3000 },
+    );
+    expect(screen.getAllByText(/客户管家 CRM/).length).toBeGreaterThan(0);
+    // Leave a visitor session for the other tests.
+    useSessionStore.getState().signOut();
+    useSessionStore.getState().ensureVisitor();
   });
 
   it('reconciles_restored_task_chips_from_the_task_store_on_mount', async () => {

@@ -22,12 +22,12 @@ export function ContactsHomeScreen() {
   const { segment, setSegment, query, setQuery, snapshot } = useContactsData();
 
   return (
-    <div className="pb-6">
-      <header className="px-4 pt-4">
+    <div className="pb-4">
+      <header className="px-4 pt-4 pb-2">
         <h1 className="text-lg font-semibold text-primary">{t('whatseek.contacts.home.title')}</h1>
       </header>
 
-      <div className="px-4 pt-3">
+      <div className="px-4 pb-2">
         <input
           value={query}
           onChange={(event) => {
@@ -39,7 +39,7 @@ export function ContactsHomeScreen() {
         />
       </div>
 
-      <div className="flex gap-1.5 overflow-x-auto px-4 pt-3 text-xs">
+      <div className="flex gap-1.5 overflow-x-auto px-4 pb-2 text-xs">
         {SEGMENTS.map((entry) => (
           <button
             key={entry.kind}
@@ -67,7 +67,7 @@ export function ContactsHomeScreen() {
           ) : (
             <>
               <SectionHeader title={t('whatseek.contacts.home.listTitle', { count: snapshot.data.length })} />
-              <div className="mx-4 overflow-hidden rounded-2xl border border-border-subtle bg-panel">
+              <div className="w-full overflow-hidden border-y border-border-subtle bg-panel">
                 {snapshot.data.map((contact: Contact) => (
                   <div key={contact.id} className="border-b border-border-subtle last:border-b-0">
                     <ListRow

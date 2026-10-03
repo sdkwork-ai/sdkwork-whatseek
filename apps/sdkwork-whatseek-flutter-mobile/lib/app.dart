@@ -28,8 +28,8 @@ class _WhatseekAppState extends State<WhatseekApp> {
 
   int _currentIndex = 0;
 
-  /// H5 brand palette seed (`--brand`: #2563eb).
-  static const Color _brand = Color(0xFF2563EB);
+  /// H5 brand palette seed (`--sdk-ref-brand-500`: #1677ff tech blue).
+  static const Color _brand = Color(0xFF1677FF);
 
   static const Map<TabId, IconData> _tabIcons = {
     TabId.chat: Icons.auto_awesome,

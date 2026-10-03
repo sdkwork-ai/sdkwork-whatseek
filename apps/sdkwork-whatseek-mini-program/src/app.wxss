@@ -7,8 +7,8 @@ page {
   --sdk-color-text-primary: #18181b;
   --sdk-color-text-secondary: #52525b;
   --sdk-color-text-muted: #a1a1aa;
-  --sdk-color-brand: #2563eb;
-  --sdk-color-brand-soft: #dbeafe;
+  --sdk-color-brand: #1677ff;
+  --sdk-color-brand-soft: #e6f4ff;
   --sdk-color-success: #16a34a;
   --sdk-color-danger: #dc2626;
   --sdk-color-border-subtle: #e4e4e7;
@@ -25,8 +25,8 @@ page {
     --sdk-color-text-primary: #f4f4f5;
     --sdk-color-text-secondary: #d4d4d8;
     --sdk-color-text-muted: #71717a;
-    --sdk-color-brand: #60a5fa;
-    --sdk-color-brand-soft: #1e3a8a;
+    --sdk-color-brand: #4096ff;
+    --sdk-color-brand-soft: #0958d9;
     --sdk-color-success: #4ade80;
     --sdk-color-danger: #f87171;
     --sdk-color-border-subtle: #3f3f46;
@@ -34,10 +34,11 @@ page {
 }
 
 .panel {
-  margin: 16rpx 24rpx;
-  border-radius: 24rpx;
+  margin: 16rpx 0;
+  border-radius: 0;
   background-color: var(--sdk-color-surface-panel);
-  border: 1rpx solid var(--sdk-color-border-subtle);
+  border-top: 1rpx solid var(--sdk-color-border-subtle);
+  border-bottom: 1rpx solid var(--sdk-color-border-subtle);
   overflow: hidden;
 }
 

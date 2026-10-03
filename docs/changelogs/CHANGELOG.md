@@ -5,6 +5,47 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — Tech-blue theme + full-bleed mobile lists + no visible scrollbars
+
+- **科技蓝主题全端落地**: brand ramp moved from indigo-leaning blue-600 to the
+  vivid tech-blue family (`#1677ff` primary / `#0958d9` hover, `#e6f4ff` soft)
+  across H5/PC CSS ramps, mini-program tokens (`app.wxss` + `theme.json`
+  tab/nav), and the Flutter `ColorScheme` seed. Dark-mode brand follows
+  (`#4096ff`).
+- **移动端滚动条隐藏** (H5): global `scrollbar-width: none` +
+  `::-webkit-scrollbar { display: none }` — content scrolls, bars never show.
+- **全出血列表改造** (消息/应用/通讯录/我的 + PC 同构): the shared `Card`
+  drops its `mx-4 rounded-2xl` floating-box look for edge-to-edge sections
+  with hairline top/bottom rules (native mobile list pattern); profile
+  session card goes full-bleed; contacts/apps/messages lists sit flush to the
+  screen edges. Mini-program `.panel` mirrors it (vertical margins only,
+  square corners); Flutter tab lists keep their native full-bleed ListTiles
+  with vertical-only root padding on profile.
+- Verification: `pnpm verify` EXIT=0, H5/PC prod builds PASS, mp 25 tests,
+  Flutter 54 tests, `flutter analyze` clean. Rendered acceptance screenshots
+  (H5 390×844: 消息/应用/通讯录/我的 full-bleed + tech blue; PC 1440×900
+  desktop shell on the new brand).
+
+### 2026-10-03 — Session loop closes the enterprise gate on all four surfaces (P0 用户体系/基础权限)
+
+- Mini-program gains the mock session model (mp-profile package:
+  `getSessionUser`/`signIn`/`signOut`; profile summary reads the real
+  session) plus 登录/退出登录 actions on the profile tab; the runner's
+  enterprise check is now session-aware (`enterprise && visitor → denied`),
+  so 管家 CRM denied → 登录 → open is a real loop (H5/PC authState parity).
+  Behavior suite 24 → 25 tests.
+- Flutter profile screen wires `WhatseekIamRuntime` (previously a dead
+  in-memory model with no UI entry): injected `readSession`/`onSignIn`/
+  `onSignOut` from the composition root, session card flips
+  访客↔问寻用户 with localized actions; widget tests pin the loop
+  (sign-in opens `crm-manager`, sign-out restores the gate). Tests 52 → 54;
+  also fixed a latent `late _assets` initialization hazard on the profile
+  screen.
+- H5/PC: the runner deep route is pinned end-to-end by a new ui-states test
+  (visitor denied → profile sign-in → same route renders the sandbox
+  preview); rendered acceptance confirmed the visitor denial screen and the
+  post-sign-in session card.
+
 ### 2026-10-03 — Task confirmation loop (PRD §41) + Flutter intent parity + mini-program reply localization fix
 
 - **Task states become user-reachable on all four surfaces** (PRD §41 P0

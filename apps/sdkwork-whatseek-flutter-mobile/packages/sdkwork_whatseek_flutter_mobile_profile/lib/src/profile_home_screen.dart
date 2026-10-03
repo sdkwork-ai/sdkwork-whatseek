@@ -39,10 +39,10 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
     super.initState();
     _user = widget.readSession?.call() ??
         const SessionUser(id: 'visitor', name: '访客', avatar: '🙂', isVisitor: true);
-    _loadAssets();
+    _assets = _loadAssets();
   }
 
-  Future<void> _loadAssets() async {
+  Future<(int, int, int, int)> _loadAssets() async {
     final runtime = WhatseekRuntime.instance;
     final conversations = await runtime.messages.listConversations();
     final myApps = await runtime.apps.listMyApps();
@@ -52,8 +52,7 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
             contact.kind == ContactKind.agent ||
             contact.kind == ContactKind.assistant)
         .length;
-    _assets =
-        Future.value((conversations.length, myApps.length, contacts.length, agents));
+    return (conversations.length, myApps.length, contacts.length, agents);
   }
 
   void _applyNext(SessionUser? next) {
@@ -69,9 +68,11 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(WhatseekProfileStrings.of(context, 'home.title'))),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(top: 8, bottom: 16),
         children: [
-          Row(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
             children: [
               Avatar(glyph: _user.avatar, size: 64),
               const SizedBox(width: 16),
@@ -103,6 +104,7 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
                       child: Text(WhatseekProfileStrings.of(context, 'home.signOut')),
                     ),
             ],
+          ),
           ),
           const SizedBox(height: 24),
           FutureBuilder<(int, int, int, int)>(

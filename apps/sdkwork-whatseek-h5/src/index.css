@@ -44,17 +44,17 @@
 /* ---- Layer 1: reference palette ramps (brand: tech-blue, neutral: zinc) ---- */
 :root,
 [data-sdk-color-mode="light"] {
-  --sdk-ref-brand-50: #eff6ff;
-  --sdk-ref-brand-100: #dbeafe;
-  --sdk-ref-brand-200: #bfdbfe;
-  --sdk-ref-brand-300: #93c5fd;
-  --sdk-ref-brand-400: #60a5fa;
-  --sdk-ref-brand-500: #3b82f6;
-  --sdk-ref-brand-600: #2563eb;
-  --sdk-ref-brand-700: #1d4ed8;
-  --sdk-ref-brand-800: #1e40af;
-  --sdk-ref-brand-900: #1e3a8a;
-  --sdk-ref-brand-950: #172554;
+  --sdk-ref-brand-50: #e6f4ff;
+  --sdk-ref-brand-100: #bae0ff;
+  --sdk-ref-brand-200: #91caff;
+  --sdk-ref-brand-300: #69b1ff;
+  --sdk-ref-brand-400: #4096ff;
+  --sdk-ref-brand-500: #1677ff;
+  --sdk-ref-brand-600: #0958d9;
+  --sdk-ref-brand-700: #0050b3;
+  --sdk-ref-brand-800: #003a8c;
+  --sdk-ref-brand-900: #002c8c;
+  --sdk-ref-brand-950: #001d66;
 
   --sdk-ref-neutral-50: #fafafa;
   --sdk-ref-neutral-100: #f4f4f5;
@@ -80,10 +80,10 @@
   --sdk-color-text-muted: var(--sdk-ref-neutral-400);
   --sdk-color-text-inverse: #ffffff;
 
-  --sdk-color-brand-primary: var(--sdk-ref-brand-600);
-  --sdk-color-brand-primary-hover: var(--sdk-ref-brand-700);
+  --sdk-color-brand-primary: var(--sdk-ref-brand-500);
+  --sdk-color-brand-primary-hover: var(--sdk-ref-brand-600);
   --sdk-color-brand-primary-soft: var(--sdk-ref-brand-50);
-  --sdk-color-brand-accent: var(--sdk-ref-brand-500);
+  --sdk-color-brand-accent: var(--sdk-ref-brand-400);
 
   --sdk-color-state-success: #16a34a;
   --sdk-color-state-warning: #d97706;
@@ -147,4 +147,16 @@ body {
 
 #root {
   min-height: 100dvh;
+}
+
+/* Mobile app surface: content scrolls, scrollbars never show. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }

@@ -60,8 +60,10 @@ export function SectionHeader({ title, action }: { title: ReactNode; action?: Re
 }
 
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
+  // Full-bleed section: edge-to-edge panel with hairline top/bottom rules —
+  // native mobile list styling, no page gutters.
   return (
-    <div className={cx('mx-4 overflow-hidden rounded-2xl border border-border-subtle bg-panel', className)}>
+    <div className={cx('w-full overflow-hidden border-y border-border-subtle bg-panel', className)}>
       {children}
     </div>
   );

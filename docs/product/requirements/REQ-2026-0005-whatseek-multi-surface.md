@@ -101,6 +101,20 @@ standalone.production bundles (H5 390×844; PC 1440×900):
 - PC: desktop nav-rail shell renders the same park → cancel → confirm flow
   with unread badge increments (4 → 5 → 6) and the wide-layout bubbles.
 
+## Rendered Acceptance of the Session-Loop and Tech-Blue Rounds (2026-10-03)
+
+- Session loop: the H5 visitor deep route `/apps/runner/crm-manager` renders
+  the genuine permission-denied state; after profile sign-in the session
+  card flips to 问寻用户 (已登录) with 退出登录, and the same loop is pinned
+  by unit tests on H5/PC (denied → sign-in → sandbox preview), the
+  mini-program behavior suite, and Flutter widget tests. Mock sessions are
+  in-memory by design (Phase 1 用户体系); a full page reload returns to the
+  visitor identity until IAM lands in Phase 2.
+- Tech blue + full-bleed lists: rebuilt production bundles screenshot-verified
+  on H5 390×844 (消息 / 应用 / 通讯录 / 我的 all edge-to-edge with hairline
+  rules, vivid #1677ff brand, no visible scrollbars) and PC 1440×900 (desktop
+  shell on the new brand, layout intact).
+
 ## Conformance Record (2026-10-03)
 
 - Spec conformance audit (route contract, five UI states, i18n, architecture

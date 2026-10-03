@@ -25,8 +25,8 @@ export function MessagesHomeScreen() {
   }, [conversations, setUnreadMessages]);
 
   return (
-    <div className="pb-6">
-      <header className="px-4 pt-4">
+    <div className="pb-4">
+      <header className="px-4 pt-4 pb-2">
         <h1 className="text-lg font-semibold text-primary">{t('whatseek.messages.home.title')}</h1>
         <p className="mt-0.5 text-xs text-muted">{t('whatseek.messages.home.subtitle')}</p>
       </header>
@@ -44,7 +44,7 @@ export function MessagesHomeScreen() {
         onRetry={conversations.state === 'error' ? conversations.retry : undefined}
       >
         {conversations.state === 'ready' ? (
-          <Card className="mt-3">
+          <Card>
             {conversations.data.map((conversation) => (
               <div key={conversation.id} className="border-b border-border-subtle last:border-b-0">
                 <ListRow
