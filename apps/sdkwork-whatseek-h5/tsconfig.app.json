@@ -12,7 +12,7 @@
     "noUnusedParameters": true,
     "noImplicitOverride": true,
     "useDefineForClassFields": true,
-    "allowImportingTsExtensions": false
+    "allowImportingTsExtensions": true
   },
   "include": ["src", "packages/*/src", "tests"],
   "exclude": ["node_modules", "dist"]
