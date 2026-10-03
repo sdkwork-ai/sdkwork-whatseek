@@ -5,6 +5,31 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-03 — Shared mobile navbar lands in sdkwork-appbase; app shells reuse it
+
+- **`@sdkwork/shell-mobile-react` gains `SdkworkMobileNavBar`** (subpath
+  `@sdkwork/shell-mobile-react/navbar`): the shared page navbar — back
+  control, title, right action slot, safe-area sticky header with theme
+  override vars (`--sdkwork-app-navbar-*`), zero app/router dependencies
+  (data in, events out; default back = `history.back()`).
+- **WhatSeek H5**: eight screens hand-rolled their own back-title headers
+  (app detail/runner/create, settings, contact detail, conversation); all
+  refactored to compose the shared navbar (the app-search top bar stays a
+  search control, not a navbar). Consumed through a `link:` dependency on
+  the appbase package with a `./navbar` subpath export that keeps the
+  consumer compile closure to the component only.
+- **sdkwork-mall H5**: `SdkworkMallH5NavBar` now composes the shared navbar
+  internally (its call sites unchanged); the local header markup and the
+  unused ChevronLeft import are gone.
+- **Spec**: `APP_MOBILE_REACT_UI_SPEC` §3 codifies the ownership rule —
+  shared shell chrome (navbar, tab bar) is defined once in the appbase shell
+  foundation package and reused; app capability packages must not hand-roll
+  headers; shared chrome stays app-agnostic.
+- Verification: whatseek `pnpm typecheck` 0 errors, H5 root suite 33 tests,
+  mall typecheck + build + 146 tests green; appbase navbar unit tests added
+  (title/back/right/className) to run under the appbase vitest workspace.
+
+### 2026-10-03 — Tab-bar icon states: filled selected / outline unselected, codified in sdkwork-specs
 ### 2026-10-03 — Tab-bar icon states: filled selected / outline unselected, codified in sdkwork-specs
 
 - **Norm first**: `APP_MOBILE_REACT_UI_SPEC` §5, `APP_MINI_PROGRAM_UI_SPEC` §7,

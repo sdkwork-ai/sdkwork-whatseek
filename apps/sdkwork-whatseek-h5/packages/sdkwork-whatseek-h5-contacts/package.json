@@ -18,15 +18,16 @@
     "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\""
   },
   "dependencies": {
+    "@sdkwork/shell-mobile-react": "link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react",
     "@sdkwork/whatseek-h5-commons": "workspace:*",
     "@sdkwork/whatseek-h5-core": "workspace:*",
+    "@sdkwork/whatseek-service-core": "workspace:*",
     "clsx": "catalog:",
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-i18next": "catalog:",
-    "react-router-dom": "catalog:",
-    "@sdkwork/whatseek-service-core": "workspace:*"
+    "react-router-dom": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:",

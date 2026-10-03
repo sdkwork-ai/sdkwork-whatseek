@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
       // resolve against the linked sources.
       server: {
         deps: {
-          inline: [/@sdkwork\/whatseek-h5-shell/u],
+          inline: [/@sdkwork\/(whatseek-h5-shell|shell-mobile-react)/u],
         },
       },
     },

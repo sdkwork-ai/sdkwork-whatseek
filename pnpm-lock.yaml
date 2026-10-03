@@ -359,6 +359,9 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-apps:
     dependencies:
+      '@sdkwork/shell-mobile-react':
+        specifier: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
+        version: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
       '@sdkwork/whatseek-h5-commons':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-commons
@@ -461,6 +464,9 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-contacts:
     dependencies:
+      '@sdkwork/shell-mobile-react':
+        specifier: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
+        version: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
       '@sdkwork/whatseek-h5-commons':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-commons
@@ -529,6 +535,9 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-messages:
     dependencies:
+      '@sdkwork/shell-mobile-react':
+        specifier: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
+        version: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
       '@sdkwork/whatseek-h5-commons':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-commons
@@ -569,6 +578,9 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-profile:
     dependencies:
+      '@sdkwork/shell-mobile-react':
+        specifier: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
+        version: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
       '@sdkwork/whatseek-h5-commons':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-h5-commons

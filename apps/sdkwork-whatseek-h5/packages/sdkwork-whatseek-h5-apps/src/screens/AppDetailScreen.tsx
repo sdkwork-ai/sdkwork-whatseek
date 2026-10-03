@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { SdkworkMobileNavBar } from '@sdkwork/shell-mobile-react/navbar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Star } from 'lucide-react';
 
@@ -33,19 +34,12 @@ export function AppDetailScreen() {
 
   return (
     <div className="pb-28">
-      <header className="flex items-center gap-2 px-4 pt-4">
-        <button
-          type="button"
-          aria-label={t('whatseek.commons.action.back')}
-          onClick={() => {
-            navigate(-1);
-          }}
-          className="text-xl text-secondary"
-        >
-          ‹
-        </button>
-        <h1 className="text-base font-semibold text-primary">{app.name}</h1>
-      </header>
+      <SdkworkMobileNavBar
+        title={app.name}
+        onBack={() => {
+          navigate(-1);
+        }}
+      />
 
       <div className="flex items-start gap-3 px-4 pt-4">
         <Avatar glyph={app.icon} size="lg" />

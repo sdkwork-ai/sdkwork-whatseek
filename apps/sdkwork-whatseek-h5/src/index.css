@@ -137,6 +137,15 @@
   color-scheme: dark;
 }
 
+/* Shared appbase chrome theming: the navbar component reads
+   --sdkwork-app-navbar-*; mapping it to the app tokens makes both color
+   modes follow the app theme automatically. */
+:root {
+  --sdkwork-app-navbar-background: var(--sdk-color-surface-panel);
+  --sdkwork-app-navbar-border: var(--sdk-color-border-subtle);
+  --sdkwork-app-navbar-foreground: var(--sdk-color-text-primary);
+}
+
 html,
 body {
   height: 100%;

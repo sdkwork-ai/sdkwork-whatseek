@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { SdkworkMobileNavBar } from '@sdkwork/shell-mobile-react/navbar';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { Avatar, Card, ScreenState, useAsyncData } from '@sdkwork/whatseek-h5-commons';
@@ -26,19 +27,12 @@ export function ContactDetailScreen() {
 
   return (
     <div className="pb-6">
-      <header className="flex items-center gap-2 px-4 pt-4">
-        <button
-          type="button"
-          aria-label={t('whatseek.commons.action.back')}
-          onClick={() => {
-            navigate(-1);
-          }}
-          className="text-xl text-secondary"
-        >
-          ‹
-        </button>
-        <h1 className="text-base font-semibold text-primary">{t('whatseek.contacts.detail.title')}</h1>
-      </header>
+      <SdkworkMobileNavBar
+        title={t('whatseek.contacts.detail.title')}
+        onBack={() => {
+          navigate(-1);
+        }}
+      />
 
       <div className="flex flex-col items-center gap-2 px-4 pt-6 text-center">
         <Avatar glyph={contact.avatar} size="lg" />

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { ScreenState } from '@sdkwork/whatseek-h5-commons';
+import { SdkworkMobileNavBar } from '@sdkwork/shell-mobile-react/navbar';
 import { getWhatseekClient } from '@sdkwork/whatseek-h5-core';
 import type { CreatedApp } from '@sdkwork/whatseek-h5-core';
 
@@ -86,19 +87,12 @@ export function AppCreateScreen() {
   if (phase === 'input') {
     return (
       <div className="flex min-h-full flex-col pb-6">
-        <header className="flex items-center gap-2 px-4 pt-4">
-          <button
-            type="button"
-            aria-label={t('whatseek.commons.action.back')}
-            onClick={() => {
-              navigate(-1);
-            }}
-            className="text-xl text-secondary"
-          >
-            ‹
-          </button>
-          <h1 className="text-base font-semibold text-primary">{t('whatseek.apps.create.title')}</h1>
-        </header>
+        <SdkworkMobileNavBar
+        title={t('whatseek.apps.create.title')}
+        onBack={() => {
+          navigate(-1);
+        }}
+      />
         <div className="px-4 pt-6">
           {basedOnName.length > 0 ? (
             <p className="pb-2 text-xs text-muted">{t('whatseek.apps.create.basedOn', { name: basedOnName })}</p>

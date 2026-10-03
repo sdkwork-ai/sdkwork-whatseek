@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { Avatar, ScreenState } from '@sdkwork/whatseek-h5-commons';
+import { SdkworkMobileNavBar } from '@sdkwork/shell-mobile-react/navbar';
 import { getWhatseekClient, useSessionStore } from '@sdkwork/whatseek-h5-core';
 
 import { useAsyncData } from '../hooks/useAppsData.js';
@@ -44,22 +45,17 @@ export function AppRunnerScreen() {
 
   return (
     <div className="flex min-h-full flex-col">
-      <header className="flex items-center gap-2 px-4 pt-4">
-        <button
-          type="button"
-          aria-label={t('whatseek.commons.action.back')}
-          onClick={() => {
-            navigate(-1);
-          }}
-          className="text-xl text-secondary"
-        >
-          ‹
-        </button>
-        <p className="flex-1 truncate text-sm font-medium text-primary">
-          {app.name} · {t('whatseek.apps.runner.running')}
-        </p>
-        <span aria-hidden="true" className="h-2 w-2 animate-pulse rounded-full bg-success" />
-      </header>
+      <SdkworkMobileNavBar
+        title={
+          <>
+            {app.name} · {t('whatseek.apps.runner.running')}
+          </>
+        }
+        onBack={() => {
+          navigate(-1);
+        }}
+        right={<span aria-hidden="true" className="h-2 w-2 animate-pulse rounded-full bg-success" />}
+      />
 
       <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 py-10 text-center">
         <Avatar glyph={app.icon} size="lg" />

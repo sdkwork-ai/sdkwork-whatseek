@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ScreenState } from '@sdkwork/whatseek-h5-commons';
+import { SdkworkMobileNavBar } from '@sdkwork/shell-mobile-react/navbar';
 import { getWhatseekClient, useTabBadgeStore } from '@sdkwork/whatseek-h5-core';
 import type { ChatMessage } from '@sdkwork/whatseek-h5-core';
 
@@ -86,21 +87,12 @@ export function ConversationScreen() {
 
   return (
     <div className="flex min-h-full flex-col">
-      <header className="flex items-center gap-2 border-b border-border-subtle px-4 py-3">
-        <button
-          type="button"
-          aria-label={t('whatseek.commons.action.back')}
-          onClick={() => {
-            navigate(-1);
-          }}
-          className="text-xl text-secondary"
-        >
-          ‹
-        </button>
-        <p className="flex-1 truncate text-sm font-semibold text-primary">
-          {header.title ?? t(header.titleKey ?? 'whatseek.messages.kind.system')}
-        </p>
-      </header>
+      <SdkworkMobileNavBar
+        title={header.title ?? t(header.titleKey ?? 'whatseek.messages.kind.system')}
+        onBack={() => {
+          navigate(-1);
+        }}
+      />
 
       <div className="flex-1 space-y-2.5 px-4 py-4">
         {allMessages.length === 0 ? (

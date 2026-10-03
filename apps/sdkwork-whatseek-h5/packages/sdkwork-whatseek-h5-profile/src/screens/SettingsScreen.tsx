@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { SdkworkMobileNavBar } from '@sdkwork/shell-mobile-react/navbar';
 import { useNavigate } from 'react-router-dom';
 
 import { Card, ListRow } from '@sdkwork/whatseek-h5-commons';
@@ -23,19 +24,12 @@ export function SettingsScreen() {
 
   return (
     <div className="pb-6">
-      <header className="flex items-center gap-2 px-4 pt-4">
-        <button
-          type="button"
-          aria-label={t('whatseek.commons.action.back')}
-          onClick={() => {
-            navigate(-1);
-          }}
-          className="text-xl text-secondary"
-        >
-          ‹
-        </button>
-        <h1 className="text-base font-semibold text-primary">{t('whatseek.profile.settings.title')}</h1>
-      </header>
+      <SdkworkMobileNavBar
+        title={t('whatseek.profile.settings.title')}
+        onBack={() => {
+          navigate(-1);
+        }}
+      />
 
       <Card className="mt-3">
         <div className="border-b border-border-subtle px-4 py-3">
