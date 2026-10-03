@@ -7,7 +7,7 @@
 .bubble { max-width: 80%; margin: 16rpx 24rpx; padding: 20rpx 28rpx; border-radius: 24rpx; font-size: 28rpx; }
 .bubble-user { margin-left: auto; background: var(--sdk-color-brand); color: #fff; }
 .bubble-ai { margin-right: auto; background: var(--sdk-color-surface-panel); border: 1rpx solid var(--sdk-color-border-subtle); }
-.card { margin: 16rpx 24rpx; padding: 20rpx 24rpx; }
+.card { margin: 16rpx 0; padding: 20rpx 24rpx; border-top: 1rpx solid var(--sdk-color-border-subtle); border-bottom: 1rpx solid var(--sdk-color-border-subtle); background: var(--sdk-color-surface-panel); }
 .plan-modules { display: flex; flex-wrap: wrap; gap: 12rpx; margin: 12rpx 0 20rpx; }
 .plan-module { font-size: 24rpx; color: var(--sdk-color-text-secondary); border: 1rpx solid var(--sdk-color-border-subtle); border-radius: 999rpx; padding: 4rpx 16rpx; }
 .draft { background: var(--sdk-color-surface-canvas); border-radius: 16rpx; padding: 16rpx 20rpx; font-size: 26rpx; margin: 12rpx 0 20rpx; }

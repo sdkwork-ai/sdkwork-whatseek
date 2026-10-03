@@ -4,5 +4,5 @@
 .cat { font-size: 22rpx; border: 1rpx solid var(--sdk-color-border-subtle); border-radius: 999rpx; padding: 8rpx 20rpx; color: var(--sdk-color-text-secondary); background: var(--sdk-color-surface-panel); }
 .app-main { flex: 1; min-width: 0; }
 .app-use { font-size: 24rpx; color: #fff; background: var(--sdk-color-brand); border-radius: 999rpx; padding: 8rpx 24rpx; }
-.apps-entries { margin: 0 24rpx 16rpx; border-radius: 24rpx; overflow: hidden; background: var(--sdk-color-surface-panel); border: 1rpx solid var(--sdk-color-border-subtle); }
+.apps-entries { margin: 0 0 16rpx; border-radius: 0; overflow: hidden; background: var(--sdk-color-surface-panel); border-top: 1rpx solid var(--sdk-color-border-subtle); border-bottom: 1rpx solid var(--sdk-color-border-subtle); }
 .apps-entry-main { flex: 1; min-width: 0; }
