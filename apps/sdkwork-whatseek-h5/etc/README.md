@@ -21,3 +21,9 @@ Standalone-only milestone: `standalone.development` (default), `standalone.test`
 - Concrete environment, runtime, and base-URL values belong here — never in `sdkwork.app.config.json` and never in component code.
 - No secrets: committed `etc/` files carry no tokens or credentials. Local-only overrides live in ignored `etc/**/*.local.*` files.
 - Standalone profiles serve from the same origin; every SDK base URL stays `/`.
+
+## sdkwork-im driver keys (messages capability)
+
+- `sdkworkImApiBaseUrl` — IM gateway base for the messages port (`@sdkwork/im-sdk`, `/im/v3/api`). Empty string (all four standalone profiles) keeps the mock messages client: the standalone milestone mounts no IM gateway. Set a same-origin path (for example `/im/v3/api`) when a gateway is mounted behind the same origin, or an absolute URL for an explicit topology override (cloud Phase 2).
+- `sdkworkImWebSocketBaseUrl` — explicit CCP websocket base (`wss://…`); leave empty to let `@sdkwork/im-sdk` derive it (same-origin standalone mounts should set it explicitly).
+- These keys are intentionally absent from `ENVIRONMENT_SPEC` standard `SDK_BASE_URL_KEYS` materialization: they configure a single optional dependency driver, not the application API surface.

@@ -7,9 +7,23 @@ packages:
   - apps/sdkwork-whatseek-pc/packages/*
   - apps/sdkwork-whatseek-mini-program
   - apps/sdkwork-whatseek-mini-program/packages/*
+  # Sibling SDKWork source dependencies (PNPM_WORKSPACE_DEPENDENCY_SPEC.md §2):
+  # declared exactly once here, consumed via `workspace:*`.
+  - ../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
+  - ../sdkwork-sdk-commons/sdkwork-sdk-common-typescript
+  - ../sdkwork-utils/packages/sdkwork-utils-typescript
 
 allowBuilds:
   esbuild: true
+
+# Sibling SDKWork foundation packages must always resolve to the local
+# workspace members (PNPM_WORKSPACE_DEPENDENCY_SPEC.md): dependency ranges
+# declared by linked SDK packages (e.g. @sdkwork/im-sdk → @sdkwork/sdk-common
+# ^1.0.2) would otherwise hit the npm registry and skew against the sibling
+# source the workspace is pinned to.
+overrides:
+  "@sdkwork/sdk-common": workspace:*
+  "@sdkwork/utils": workspace:*
 
 catalog:
   react: ^19.2.8

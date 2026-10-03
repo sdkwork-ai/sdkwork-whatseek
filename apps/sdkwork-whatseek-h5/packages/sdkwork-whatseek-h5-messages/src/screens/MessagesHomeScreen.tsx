@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,8 +15,19 @@ export function MessagesHomeScreen() {
   const navigate = useNavigate();
   const messages = getWhatseekClient('messages');
   const setUnreadMessages = useTabBadgeStore((state) => state.setUnreadMessages);
+  // Realtime-backed ports (sdkwork-im) push conversation activity; the tick
+  // re-runs the loader. The mock port has no `events` and stays pull-based.
+  const [conversationTick, setConversationTick] = useState(0);
 
-  const conversations = useAsyncData(() => messages.listConversations(), [messages]);
+  useEffect(
+    () =>
+      messages.events?.onConversationChanged(() => {
+        setConversationTick((tick) => tick + 1);
+      }),
+    [messages],
+  );
+
+  const conversations = useAsyncData(() => messages.listConversations(), [messages, conversationTick]);
 
   useEffect(() => {
     if (conversations.state === 'ready') {

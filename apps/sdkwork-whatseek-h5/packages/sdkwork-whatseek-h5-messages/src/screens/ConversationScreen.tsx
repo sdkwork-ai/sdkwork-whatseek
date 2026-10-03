@@ -20,13 +20,29 @@ export function ConversationScreen() {
   const [draft, setDraft] = useState('');
   const [extraMessages, setExtraMessages] = useState<readonly ChatMessage[]>([]);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  // Realtime-backed ports push conversation activity (new remote message,
+  // read-state change); the tick re-runs the loaders. Mock ports stay pull-based.
+  const [conversationTick, setConversationTick] = useState(0);
+
+  useEffect(
+    () =>
+      messages.events?.onConversationChanged((changedId) => {
+        if (changedId === conversationId) {
+          setConversationTick((tick) => tick + 1);
+        }
+      }),
+    [messages, conversationId],
+  );
 
   const conversation = useAsyncData(async () => {
     const all = await messages.listConversations();
     return all.find((entry) => entry.id === conversationId) ?? null;
-  }, [messages, conversationId]);
+  }, [messages, conversationId, conversationTick]);
 
-  const history = useAsyncData(() => messages.listMessages(conversationId), [messages, conversationId]);
+  const history = useAsyncData(
+    () => messages.listMessages(conversationId),
+    [messages, conversationId, conversationTick],
+  );
 
   useEffect(() => {
     void messages

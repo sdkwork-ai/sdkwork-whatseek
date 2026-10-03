@@ -78,7 +78,9 @@ Repository root layout and intentionally absent directories are listed in the ro
 
 ## 5. API, SDK, And Data Ownership
 
-Phase 1 owns no HTTP contracts. Domain data (app catalog, contacts, messages, generated apps, tasks, session) is owned by the `whatseek` context and served by mock clients persisted to localStorage behind interfaces in each capability package's `services/` (client injected from core). Future SDK families (`sdkwork-whatseek-app-sdk`, platform clients) will be declared in `contracts.sdkDependencies` and wired only through `src/bootstrap/sdkClients.ts`.
+Phase 1 owns no application HTTP contracts. Domain data (app catalog, contacts, generated apps, tasks, session) is owned by the `whatseek` context and served by mock clients persisted to localStorage behind interfaces in each capability package's `services/` (client injected from core). Future SDK families (`sdkwork-whatseek-app-sdk`, platform clients) will be declared in `contracts.sdkDependencies` and wired only through `src/bootstrap/sdkClients.ts`.
+
+The messages capability integrates the sdkwork-im dependency family since 2026-10-03 (first landed SDK family, APP_SDK_INTEGRATION_SPEC.md §1/§9): the H5 app shell bootstrap constructs one composed `@sdkwork/im-sdk` client (`/im/v3/api`, `protected-open-api-api-key-or-dual-token`) with one shared `TokenManager` when the runtime environment declares `sdkworkImApiBaseUrl` (`etc/browser/runtime-env.*.json`; empty in all standalone profiles), and injects it into the `createImMessagesClient` adapter in `sdkwork-whatseek-h5-messages`, which maps IM conversations/messages/read cursors onto the shared `MessagesPort` and forwards CCP realtime activity through the optional `MessagesPort.events` surface. Without the base URL the port stays on the mock client, so standalone delivery and the other four surfaces are unaffected. Sibling SDK packages (`sdkwork-im`, `sdkwork-sdk-commons`, `sdkwork-utils`) are workspace members consumed via `workspace:*` and declared as CI git-dependency checkouts in `sdkwork.workflow.json`.
 
 ## 6. Security, Privacy, And Observability
 

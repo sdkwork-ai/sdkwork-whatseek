@@ -25,6 +25,8 @@
     "build:prod": "node ../../../sdkwork-specs/tools/build-browser-client.mjs --app-root . --environment prod"
   },
   "dependencies": {
+    "@sdkwork/im-sdk": "workspace:*",
+    "@sdkwork/sdk-common": "workspace:*",
     "@sdkwork/whatseek-h5-apps": "workspace:*",
     "@sdkwork/whatseek-h5-chat": "workspace:*",
     "@sdkwork/whatseek-h5-commons": "workspace:*",

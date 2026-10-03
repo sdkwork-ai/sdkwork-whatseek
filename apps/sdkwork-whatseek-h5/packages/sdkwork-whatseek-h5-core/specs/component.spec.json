@@ -10,9 +10,13 @@
     "domain": "whatseek",
     "capability": "core",
     "surface": "app",
-    "languages": ["typescript"],
+    "languages": [
+      "typescript"
+    ],
     "generated": false,
-    "manifests": ["package.json"]
+    "manifests": [
+      "package.json"
+    ]
   },
   "canonicalSpecs": [
     {
@@ -43,23 +47,45 @@
   ],
   "contracts": {
     "layerRole": "frontend-core",
-    "publicExports": ["."],
+    "publicExports": [
+      "."
+    ],
     "providedPorts": [
-      { "name": "whatseekSdkInventory", "export": "." },
-      { "name": "whatseekRouteIdentity", "export": "." }
+      {
+        "name": "whatseekSdkInventory",
+        "export": "."
+      },
+      {
+        "name": "whatseekRouteIdentity",
+        "export": "."
+      }
     ],
     "requiredPorts": [],
-    "runtimeEntrypoints": ["package.json#scripts.typecheck", "package.json#scripts.test"],
+    "runtimeEntrypoints": [
+      "package.json#scripts.typecheck",
+      "package.json#scripts.test"
+    ],
     "routeManifest": null,
     "sdkClients": [],
-    "sdkDependencies": [],
+    "sdkDependencies": [
+      {
+        "workspace": "sdkwork-im-sdk",
+        "surface": "open-api",
+        "credentialMode": "protected-open-api-api-key-or-dual-token"
+      }
+    ],
     "permissionComposition": {},
     "dependencyApiExports": [],
     "dependencyApiSurfaces": [],
     "events": [],
-    "configKeys": ["package.json#sdkwork"]
+    "configKeys": [
+      "package.json#sdkwork"
+    ]
   },
   "verification": {
-    "commands": ["pnpm --filter @sdkwork/whatseek-h5-core typecheck", "pnpm --filter @sdkwork/whatseek-h5-core test"]
+    "commands": [
+      "pnpm --filter @sdkwork/whatseek-h5-core typecheck",
+      "pnpm --filter @sdkwork/whatseek-h5-core test"
+    ]
   }
 }

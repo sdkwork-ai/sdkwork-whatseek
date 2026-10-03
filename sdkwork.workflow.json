@@ -15,7 +15,32 @@
       "maxCommitSubjects": 50
     }
   },
-  "dependencies": [],
+  "dependencies": [
+    {
+      "id": "sdkwork-im",
+      "repository": "sdkwork-ai/sdkwork-im",
+      "refInput": "SDKWORK_IM_REF",
+      "tokenSecret": "SDKWORK_RELEASE_TOKEN"
+    },
+    {
+      "id": "sdkwork-sdk-commons",
+      "repository": "sdkwork-ai/sdkwork-sdk-commons",
+      "refInput": "SDKWORK_SDK_COMMONS_REF",
+      "tokenSecret": "SDKWORK_RELEASE_TOKEN"
+    },
+    {
+      "id": "sdkwork-utils",
+      "repository": "sdkwork-ai/sdkwork-utils",
+      "refInput": "SDKWORK_UTILS_REF",
+      "tokenSecret": "SDKWORK_RELEASE_TOKEN"
+    },
+    {
+      "id": "sdkwork-web-framework",
+      "repository": "sdkwork-ai/sdkwork-web-framework",
+      "refInput": "SDKWORK_WEB_FRAMEWORK_REF",
+      "tokenSecret": "SDKWORK_RELEASE_TOKEN"
+    }
+  ],
   "verificationDependencies": [],
   "targets": [
     {

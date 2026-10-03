@@ -7,7 +7,15 @@
 
 export type {
   AppCategory,
+  AppChartId,
+  AppChartPreview,
+  AppCollection,
+  AppCollectionCard,
+  AppCollectionKind,
+  AppHeroSlide,
+  AppHomeFeed,
   AppRecommendation,
+  AppStoryCard,
   ChatCard,
   ChatMessage,
   CommerceResult,
@@ -35,6 +43,7 @@ export type {
   ChatPort,
   ContactsPort,
   MessagesPort,
+  MessagesPortEvents,
   TasksPort,
   WhatseekPortMap,
   WhatseekPortName,
@@ -54,6 +63,15 @@ export {
   DEFAULT_CREATION_MODULES,
   planModulesForRequirement,
 } from './apps/catalog.js';
+export {
+  WHATSEEK_HOME_COLLECTIONS,
+  WHATSEEK_HOME_HEROES,
+  WHATSEEK_HOME_STORIES,
+  buildWhatseekHomeFeed,
+  findWhatseekCollection,
+  listWhatseekChartApps,
+  listWhatseekCollectionApps,
+} from './apps/homeFeed.js';
 
 export { createMockContactsClient, CONTACT_KIND_ORDER, type MockContactsClientOptions } from './contacts/contactsClient.js';
 

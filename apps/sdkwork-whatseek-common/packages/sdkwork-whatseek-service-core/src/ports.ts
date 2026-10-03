@@ -8,6 +8,9 @@
 
 import type {
   AppCategory,
+  AppChartId,
+  AppHomeFeed,
+  AppCollection,
   AppRecommendation,
   ChatMessage,
   ChatReply,
@@ -20,6 +23,11 @@ import type {
 
 export interface AppsPort {
   searchApps(query: string): Promise<AppRecommendation[]>;
+  /** Appstore-style home feed: heroes, stories, collections, chart previews. */
+  listHomeFeed(): Promise<AppHomeFeed>;
+  getCollection(collectionId: string): Promise<AppCollection | null>;
+  listCollectionApps(collectionId: string): Promise<WhatseekApp[]>;
+  listChart(chartId: AppChartId): Promise<WhatseekApp[]>;
   listRecommended(): Promise<WhatseekApp[]>;
   listHot(): Promise<WhatseekApp[]>;
   listCategories(): Promise<AppCategory[]>;
@@ -44,6 +52,19 @@ export interface ContactsPort {
   getContact(contactId: string): Promise<Contact | null>;
 }
 
+/**
+ * Optional realtime surface of a messages implementation. Pull-based clients
+ * (the Phase-1 mock) leave `events` undefined; realtime-backed clients (the
+ * sdkwork-im adapter) push conversation activity so screens refresh live.
+ */
+export interface MessagesPortEvents {
+  /**
+   * Subscribe to conversation activity (new message, read-state or unread
+   * change). Returns the unsubscribe function.
+   */
+  onConversationChanged(listener: (conversationId: string) => void): () => void;
+}
+
 export interface MessagesPort {
   listConversations(): Promise<Conversation[]>;
   listMessages(conversationId: string): Promise<ChatMessage[]>;
@@ -52,6 +73,8 @@ export interface MessagesPort {
   openDirectConversation(contactId: string): Promise<Conversation>;
   postTaskNotification(task: WhatseekTask): Promise<void>;
   getUnreadTotal(): Promise<number>;
+  /** Present on realtime-backed implementations; `undefined` means pull-based. */
+  readonly events?: MessagesPortEvents;
 }
 
 export interface TasksPort {
