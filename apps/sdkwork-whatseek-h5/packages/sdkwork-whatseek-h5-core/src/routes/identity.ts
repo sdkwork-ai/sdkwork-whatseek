@@ -9,6 +9,7 @@ export {
   composeWhatseekRouteTable,
   defineWhatseekRoutes,
   findTabRoute,
+  partitionWhatseekRouteTable,
   routeIdentitiesForTest,
   validateWhatseekRouteTable,
   type WhatseekRouteIdentity,

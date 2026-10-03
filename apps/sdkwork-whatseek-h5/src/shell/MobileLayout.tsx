@@ -4,4 +4,4 @@
  * `@sdkwork/whatseek-h5-shell`.
  */
 
-export { MobileLayout, TabBar } from '@sdkwork/whatseek-h5-shell';
+export { MobileLayout, MobileStackLayout, TabBar } from '@sdkwork/whatseek-h5-shell';

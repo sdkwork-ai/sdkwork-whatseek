@@ -3,5 +3,6 @@
  */
 
 export { MobileLayout } from './layout/MobileLayout.js';
+export { MobileStackLayout } from './layout/MobileStackLayout.js';
 export { TabBar } from './navigation/TabBar.js';
 export { shellI18nResources } from './i18n/index.js';

@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { listWhatseekRouteIdentities, whatseekRouteElements, whatseekRouteTable } from '../src/bootstrap/routes.js';
-import { validateWhatseekRouteTable, WHATSEEK_TABS } from '@sdkwork/whatseek-h5-core';
+import { partitionWhatseekRouteTable, validateWhatseekRouteTable, WHATSEEK_TABS } from '@sdkwork/whatseek-h5-core';
 
 describe('whatseek route table', () => {
   it('passes_the_canonical_route_composition_contract', () => {
@@ -26,6 +26,16 @@ describe('whatseek route table', () => {
     const tabRoots = whatseekRouteTable.filter((route) => route.tab !== null);
     expect(tabRoots.map((route) => route.tab)).toEqual(WHATSEEK_TABS.map((tab) => tab.id));
     expect(tabRoots.map((route) => route.path)).toEqual(WHATSEEK_TABS.map((tab) => tab.path));
+  });
+
+  it('partitions_the_table_so_only_tab_roots_present_with_the_tab_bar', () => {
+    const { tabRoutes, stackRoutes } = partitionWhatseekRouteTable(whatseekRouteTable);
+    expect(tabRoutes.map((route) => route.tab)).toEqual(WHATSEEK_TABS.map((tab) => tab.id));
+    expect(tabRoutes.map((route) => route.path)).toEqual(WHATSEEK_TABS.map((tab) => tab.path));
+    expect(tabRoutes.length + stackRoutes.length).toBe(whatseekRouteTable.length);
+    for (const route of stackRoutes) {
+      expect(route.tab, `stack route ${route.id} must declare tab: null`).toBeNull();
+    }
   });
 
   it('declares_chat_as_the_default_tab_root', () => {

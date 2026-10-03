@@ -98,6 +98,25 @@ export function findTabRoute(routes: readonly WhatseekRouteIdentity[], tab: TabI
   return routes.find((route) => route.tab === tab);
 }
 
+/**
+ * Split a composed route table by mobile presentation: `tabRoutes` render
+ * inside the bottom-tab shell (tab bar visible), `stackRoutes` are secondary
+ * screens presenting as a stack push without the tab bar. This partition is
+ * the single source of truth for tab-bar visibility — the shell layout is
+ * chosen from it at composition time, never per-screen.
+ */
+export function partitionWhatseekRouteTable(routes: readonly WhatseekRouteIdentity[]): {
+  tabRoutes: readonly WhatseekRouteIdentity[];
+  stackRoutes: readonly WhatseekRouteIdentity[];
+} {
+  const tabRoutes: WhatseekRouteIdentity[] = [];
+  const stackRoutes: WhatseekRouteIdentity[] = [];
+  for (const route of routes) {
+    (route.tab === null ? stackRoutes : tabRoutes).push(route);
+  }
+  return { tabRoutes, stackRoutes };
+}
+
 export function routeIdentitiesForTest(routes: readonly WhatseekRouteIdentity[]): string[] {
   return routes.map((route) => route.id);
 }

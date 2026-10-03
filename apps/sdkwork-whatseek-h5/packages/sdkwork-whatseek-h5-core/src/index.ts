@@ -47,6 +47,7 @@ export {
   composeWhatseekRouteTable,
   defineWhatseekRoutes,
   findTabRoute,
+  partitionWhatseekRouteTable,
   routeIdentitiesForTest,
   validateWhatseekRouteTable,
 } from './routes/identity.js';

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   composeWhatseekRouteTable,
   defineWhatseekRoutes,
+  partitionWhatseekRouteTable,
   validateWhatseekRouteTable,
 } from '../src/routes.js';
 import { WHATSEEK_TABS } from '../src/tabs.js';
@@ -63,5 +64,19 @@ describe('route identity contract', () => {
         ],
       ]),
     ).toThrowError(/invalid whatseek route table/u);
+  });
+
+  it('partitions_the_table_into_tab_roots_and_stack_screens', () => {
+    const routes = defineWhatseekRoutes([
+      { id: 'app.whatseek.chat.home', path: '/chat', titleKey: 'whatseek.chat.home.title', capability: 'chat', tab: 'chat' },
+      { id: 'app.whatseek.messages.conversation', path: '/messages/c/:conversationId', titleKey: 'whatseek.messages.conversation.title', capability: 'messages', tab: null },
+      { id: 'app.whatseek.profile.settings', path: '/profile/settings', titleKey: 'whatseek.profile.settings.title', capability: 'profile', tab: null },
+    ]);
+    const { tabRoutes, stackRoutes } = partitionWhatseekRouteTable(routes);
+    expect(tabRoutes.map((route) => route.id)).toEqual(['app.whatseek.chat.home']);
+    expect(stackRoutes.map((route) => route.id)).toEqual([
+      'app.whatseek.messages.conversation',
+      'app.whatseek.profile.settings',
+    ]);
   });
 });
