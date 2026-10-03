@@ -6,8 +6,25 @@ import "package:sdkwork_whatseek_flutter_mobile_commons/sdkwork_whatseek_flutter
 import 'i18n/profile_strings.dart';
 
 /// 我的 tab root: personal digital asset center + the settings entry.
+/// The session comes injected from the composition root (H5 authState /
+/// runner `isVisitor` parity): 登录 promotes the visitor to a named account
+/// so enterprise apps open; 退出登录 restores the gate.
 class ProfileHomeScreen extends StatefulWidget {
-  const ProfileHomeScreen({super.key});
+  const ProfileHomeScreen({
+    super.key,
+    this.readSession,
+    this.onSignIn,
+    this.onSignOut,
+  });
+
+  /// Reads the current (auto-created) session.
+  final SessionUser Function()? readSession;
+
+  /// Promotes the session to a named account; returns the new session.
+  final SessionUser Function()? onSignIn;
+
+  /// Drops back to the visitor session.
+  final SessionUser Function()? onSignOut;
 
   @override
   State<ProfileHomeScreen> createState() => _ProfileHomeScreenState();
@@ -15,10 +32,13 @@ class ProfileHomeScreen extends StatefulWidget {
 
 class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
   late Future<(int, int, int, int)> _assets;
+  late SessionUser _user;
 
   @override
   void initState() {
     super.initState();
+    _user = widget.readSession?.call() ??
+        const SessionUser(id: 'visitor', name: '访客', avatar: '🙂', isVisitor: true);
     _loadAssets();
   }
 
@@ -36,6 +56,14 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
         Future.value((conversations.length, myApps.length, contacts.length, agents));
   }
 
+  void _applyNext(SessionUser? next) {
+    if (next != null) {
+      setState(() {
+        _user = next;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,17 +73,35 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
         children: [
           Row(
             children: [
-              const Avatar(glyph: '🙂', size: 64),
+              Avatar(glyph: _user.avatar, size: 64),
               const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(WhatseekProfileStrings.of(context, 'home.visitor'),
-                      style: Theme.of(context).textTheme.titleLarge),
-                  Text(WhatseekProfileStrings.of(context, 'home.visitorHint'),
-                      style: Theme.of(context).textTheme.bodySmall),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        _user.isVisitor
+                            ? WhatseekProfileStrings.of(context, 'home.visitor')
+                            : _user.name,
+                        style: Theme.of(context).textTheme.titleLarge),
+                    Text(
+                        _user.isVisitor
+                            ? WhatseekProfileStrings.of(context, 'home.visitorHint')
+                            : WhatseekProfileStrings.of(context, 'home.signedIn'),
+                        style: Theme.of(context).textTheme.bodySmall),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
+              _user.isVisitor
+                  ? FilledButton(
+                      onPressed: () => _applyNext(widget.onSignIn?.call()),
+                      child: Text(WhatseekProfileStrings.of(context, 'home.signIn')),
+                    )
+                  : OutlinedButton(
+                      onPressed: () => _applyNext(widget.onSignOut?.call()),
+                      child: Text(WhatseekProfileStrings.of(context, 'home.signOut')),
+                    ),
             ],
           ),
           const SizedBox(height: 24),

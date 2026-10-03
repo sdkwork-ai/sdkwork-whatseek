@@ -25,9 +25,10 @@ Page({
         this.setData({ loading: false, error: '应用不存在或已下架。' });
         return;
       }
-      if (app.kind === 'enterprise') {
+      if (app.kind === 'enterprise' && appApi.profile.getSession().isVisitor) {
         // Visitor sessions cannot open enterprise apps (mock IAM, Phase 2
         // swaps in the generated IAM client — the port stays identical).
+        // Sign in from the profile tab, then reopen: the gate is a real loop.
         this.setData({ loading: false, denied: true, appName: app.name });
         return;
       }

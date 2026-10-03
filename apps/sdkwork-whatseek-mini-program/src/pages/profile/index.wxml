@@ -12,10 +12,12 @@
 <block wx:else>
   <view class="panel profile-card">
     <view class="avatar">{{summary.user.avatar}}</view>
-    <view>
+    <view class="profile-main">
       <view class="row-title">{{summary.user.name}}</view>
       <view class="row-desc">{{summary.user.isVisitor ? '登录后同步你的数字资产' : '欢迎回来'}}</view>
     </view>
+    <button wx:if="{{summary.user.isVisitor}}" class="session-pill session-pill-brand" size="mini" bindtap="onSignIn">登录</button>
+    <button wx:else class="session-pill" size="mini" bindtap="onSignOut">退出登录</button>
   </view>
 
   <view class="panel">

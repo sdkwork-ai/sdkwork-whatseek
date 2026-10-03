@@ -12,7 +12,10 @@
     "myApps": "我的应用",
     "favorites": "收藏",
     "settings": "设置",
-    "brand": "你负责问，AI 负责寻"
+    "brand": "你负责问，AI 负责寻",
+    "signedIn": "已登录",
+    "signIn": "登录",
+    "signOut": "退出登录"
   },
   "settings": {
     "title": "设置",

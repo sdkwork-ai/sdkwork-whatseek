@@ -70,6 +70,10 @@ export interface PageApi {
   };
   profile: {
     summary(): Promise<unknown>;
+    /** Current mock session (visitor auto-exists, H5/PC parity). */
+    getSession(): { id: string; name: string; avatar: string; isVisitor: boolean };
+    signIn(name?: string): { id: string; name: string; avatar: string; isVisitor: boolean };
+    signOut(): { id: string; name: string; avatar: string; isVisitor: boolean };
     getAppearance(): { colorMode: 'light' | 'dark'; locale: 'zh-CN' | 'en-US' };
     setAppearance(next: Partial<{ colorMode: 'light' | 'dark'; locale: 'zh-CN' | 'en-US' }>): {
       colorMode: 'light' | 'dark';
@@ -165,6 +169,9 @@ export function bootstrapRuntime(): PageApi {
     },
     profile: {
       summary: () => profile.loadProfileSummary(),
+      getSession: () => profile.getSessionUser(),
+      signIn: (name?: string) => profile.signIn(name),
+      signOut: () => profile.signOut(),
       getAppearance: () => profile.getAppearanceSettings(),
       setAppearance: (next) => profile.setAppearanceSettings(next),
       setLocale: (locale) => {

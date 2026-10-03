@@ -1961,9 +1961,29 @@ var init_src6 = __esm({
 var src_exports5 = {};
 __export(src_exports5, {
   getAppearanceSettings: () => getAppearanceSettings,
+  getSessionUser: () => getSessionUser,
   loadProfileSummary: () => loadProfileSummary,
-  setAppearanceSettings: () => setAppearanceSettings
+  setAppearanceSettings: () => setAppearanceSettings,
+  signIn: () => signIn,
+  signOut: () => signOut
 });
+function getSessionUser() {
+  return { ...sessionUser };
+}
+function signIn(name) {
+  const trimmed = (name ?? "").trim();
+  sessionUser = {
+    id: `user-${Date.now().toString(36)}`,
+    name: trimmed.length > 0 ? trimmed : "\u95EE\u5BFB\u7528\u6237",
+    avatar: "\u{1F642}",
+    isVisitor: false
+  };
+  return { ...sessionUser };
+}
+function signOut() {
+  sessionUser = { id: "visitor", name: "\u8BBF\u5BA2", avatar: "\u{1F642}", isVisitor: true };
+  return { ...sessionUser };
+}
 async function loadProfileSummary() {
   const [conversations, myApps, contacts] = await Promise.all([
     getWhatseekClient("messages").listConversations(),
@@ -1972,7 +1992,7 @@ async function loadProfileSummary() {
   ]);
   const agents = contacts.filter((contact) => contact.kind === "agent" || contact.kind === "assistant").length;
   return {
-    user: { id: "visitor", name: "\u8BBF\u5BA2", avatar: "\u{1F642}", isVisitor: true },
+    user: getSessionUser(),
     chats: conversations.length,
     apps: myApps.length,
     agents,
@@ -1986,12 +2006,13 @@ function setAppearanceSettings(next) {
   settings = { ...settings, ...next };
   return { ...settings };
 }
-var settings;
+var sessionUser, settings;
 var init_src7 = __esm({
   "packages/sdkwork-whatseek-mp-profile/src/index.ts"() {
     "use strict";
     init_define_SDKWORK_RUNTIME_ENV();
     init_src2();
+    sessionUser = { id: "visitor", name: "\u8BBF\u5BA2", avatar: "\u{1F642}", isVisitor: true };
     settings = { colorMode: "light", locale: "zh-CN" };
   }
 });
@@ -2175,6 +2196,9 @@ function bootstrapRuntime() {
     },
     profile: {
       summary: () => profile.loadProfileSummary(),
+      getSession: () => profile.getSessionUser(),
+      signIn: (name) => profile.signIn(name),
+      signOut: () => profile.signOut(),
       getAppearance: () => profile.getAppearanceSettings(),
       setAppearance: (next) => profile.setAppearanceSettings(next),
       setLocale: (locale2) => {

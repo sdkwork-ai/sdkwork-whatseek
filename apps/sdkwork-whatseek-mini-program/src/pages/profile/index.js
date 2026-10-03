@@ -34,4 +34,16 @@ Page({
   onSettings() {
     appApi.shell.navigate('/detail/settings/index');
   },
+
+  async onSignIn() {
+    appApi.profile.signIn();
+    appApi.shell.toast('已登录');
+    this.load();
+  },
+
+  async onSignOut() {
+    appApi.profile.signOut();
+    appApi.shell.toast('已退出登录');
+    this.load();
+  },
 });

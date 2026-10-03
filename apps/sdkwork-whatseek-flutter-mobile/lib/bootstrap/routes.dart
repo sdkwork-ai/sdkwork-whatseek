@@ -22,7 +22,14 @@ Map<String, WidgetBuilder> whatseekTabRoutes() {
     'app.whatseek.apps.home': (context) => const AppsHomeScreen(),
     'app.whatseek.contacts.home': (context) => const ContactsHomeScreen(),
     'app.whatseek.messages.home': (context) => const MessagesHomeScreen(),
-    'app.whatseek.profile.home': (context) => const ProfileHomeScreen(),
+    'app.whatseek.profile.home': (context) => ProfileHomeScreen(
+          readSession: () => WhatseekIamRuntime.instance.ensureSession(),
+          onSignIn: () => WhatseekIamRuntime.instance.signIn('问寻用户'),
+          onSignOut: () {
+            WhatseekIamRuntime.instance.signOut();
+            return WhatseekIamRuntime.instance.ensureSession();
+          },
+        ),
   };
 }
 

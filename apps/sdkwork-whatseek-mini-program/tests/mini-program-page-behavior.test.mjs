@@ -172,6 +172,34 @@ test('runner_opens_community_apps_and_denies_visitors_for_enterprise', async () 
   assert.equal(denied.data.app, null, 'denied runner must not render the preview');
 });
 
+test('profile_sign_in_opens_the_enterprise_app_and_sign_out_restores_the_gate', async () => {
+  // Visitor profile: the session card offers 登录.
+  const profile = loadPage('pages/profile');
+  await settle(profile.onShow());
+  assert.equal(profile.data.summary.user.isVisitor, true);
+  assert.equal(profile.data.summary.user.name, '访客');
+
+  // Sign in promotes the session to a named account (H5/PC parity).
+  await settle(profile.onSignIn());
+  assert.equal(profile.data.summary.user.isVisitor, false);
+  assert.equal(profile.data.summary.user.name, '问寻用户');
+
+  // The previously denied enterprise app now opens.
+  const runner = loadPage('detail/apps-runner');
+  await settle(runner.onLoad({ appId: 'crm-manager' }));
+  assert.equal(runner.data.denied, false, 'named session must open enterprise apps');
+  assert.equal(runner.data.app.id, 'crm-manager');
+
+  // Sign out restores the visitor gate.
+  const profileAgain = loadPage('pages/profile');
+  await settle(profileAgain.onShow());
+  await settle(profileAgain.onSignOut());
+  assert.equal(profileAgain.data.summary.user.isVisitor, true);
+  const gate = loadPage('detail/apps-runner');
+  await settle(gate.onLoad({ appId: 'crm-manager' }));
+  assert.equal(gate.data.denied, true, 'sign-out must restore the permission gate');
+});
+
 test('detail_toggles_favorite_for_real_and_routes_to_runner', async () => {
   const page = loadPage('detail/apps-detail');
   await settle(page.onLoad({ appId: 'clip-master' }));

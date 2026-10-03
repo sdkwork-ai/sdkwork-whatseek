@@ -12,7 +12,10 @@
     "myApps": "My apps",
     "favorites": "Favorites",
     "settings": "Settings",
-    "brand": "You ask, AI seeks"
+    "brand": "You ask, AI seeks",
+    "signedIn": "Signed in",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
   },
   "settings": {
     "title": "Settings",

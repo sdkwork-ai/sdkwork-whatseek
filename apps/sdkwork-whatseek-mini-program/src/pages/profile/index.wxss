@@ -3,3 +3,6 @@
 .stat { font-size: 40rpx; font-weight: 600; }
 .stat-label { font-size: 22rpx; color: var(--sdk-color-text-muted); margin-left: 12rpx; }
 .profile-row-main { flex: 1; min-width: 0; }
+.profile-main { flex: 1; min-width: 0; }
+.session-pill { font-size: 22rpx; border-radius: 999rpx; padding: 0 24rpx; line-height: 2.2; background: var(--sdk-color-surface-panel); color: var(--sdk-color-text-secondary); border: 1rpx solid var(--sdk-color-border-default); }
+.session-pill-brand { background: var(--sdk-color-brand); color: #fff; border: none; }

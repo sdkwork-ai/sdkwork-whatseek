@@ -33,6 +33,9 @@ coverage/
 **/.sdkwork/manual-backups/
 **/.sdkwork/sdkwork-generator-*.json
 
+# Local scratch scripts in the agent workspace (never committed)
+.sdkwork/tmp-*
+
 # Runtime-generated env config (materialized locally)
 **/public/runtime-env.json
 
