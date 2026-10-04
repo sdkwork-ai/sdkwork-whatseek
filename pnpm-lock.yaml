@@ -520,6 +520,9 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-contacts:
     dependencies:
+      '@sdkwork/im-sdk':
+        specifier: workspace:*
+        version: link:../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
       '@sdkwork/shell-mobile-react':
         specifier: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
         version: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react

@@ -5,7 +5,11 @@ import {
   type WhatseekRuntimeEnvironment,
 } from '@sdkwork/whatseek-h5-core';
 
-import { createMessagesClient } from '../src/bootstrap/sdkClients.js';
+import {
+  createContactsClient,
+  createImSdkClient,
+  createMessagesClient,
+} from '../src/bootstrap/sdkClients.js';
 
 const imEnv: WhatseekRuntimeEnvironment = {
   ...FALLBACK_RUNTIME_ENVIRONMENT,
@@ -13,17 +17,10 @@ const imEnv: WhatseekRuntimeEnvironment = {
   sdkworkImWebSocketBaseUrl: 'wss://im.example.com',
 };
 
-describe('messages driver selection (bootstrap composition root)', () => {
-  it('keeps_the_pull_based_mock_client_without_an_im_base_url', () => {
-    const client = createMessagesClient(FALLBACK_RUNTIME_ENVIRONMENT);
-    // The mock port has no `events` surface; the IM adapter always provides it.
-    expect(client.events).toBeUndefined();
-  });
-
-  it('backs_the_port_with_the_realtime_im_adapter_when_a_base_url_is_declared', () => {
-    const client = createMessagesClient(imEnv);
-    expect(client.events).toBeDefined();
-    expect(typeof client.listConversations).toBe('function');
+describe('im sdk client construction (bootstrap composition root)', () => {
+  it('constructs_no_im_client_without_a_base_url', () => {
+    expect(createImSdkClient(FALLBACK_RUNTIME_ENVIRONMENT)).toBeNull();
+    expect(createImSdkClient({ ...imEnv, sdkworkImApiBaseUrl: '' })).toBeNull();
   });
 
   it('constructs_the_im_client_once_with_token_manager_and_resolved_base_urls', async () => {
@@ -36,12 +33,14 @@ describe('messages driver selection (bootstrap composition root)', () => {
 
         conversations = {};
 
+        social = {};
+
         connect = vi.fn();
       },
     }));
     vi.resetModules();
     try {
-      const { createMessagesClient: fresh } = await import('../src/bootstrap/sdkClients.js');
+      const { createImSdkClient: fresh } = await import('../src/bootstrap/sdkClients.js');
       fresh(imEnv);
       expect(constructorSpy).toHaveBeenCalledTimes(1);
       expect(constructorSpy).toHaveBeenCalledWith(
@@ -69,12 +68,14 @@ describe('messages driver selection (bootstrap composition root)', () => {
 
         conversations = {};
 
+        social = {};
+
         connect = vi.fn();
       },
     }));
     vi.resetModules();
     try {
-      const { createMessagesClient: fresh } = await import('../src/bootstrap/sdkClients.js');
+      const { createImSdkClient: fresh } = await import('../src/bootstrap/sdkClients.js');
       fresh({ ...FALLBACK_RUNTIME_ENVIRONMENT, sdkworkImApiBaseUrl: '/im/v3/api' });
       expect(constructorSpy).toHaveBeenCalledWith(
         expect.not.objectContaining({ websocketBaseUrl: expect.anything() }),
@@ -83,5 +84,27 @@ describe('messages driver selection (bootstrap composition root)', () => {
       vi.doUnmock('@sdkwork/im-sdk');
       vi.resetModules();
     }
+  });
+});
+
+describe('port driver selection (bootstrap composition root)', () => {
+  it('keeps_both_ports_on_the_mock_clients_without_an_im_base_url', () => {
+    const im = createImSdkClient(FALLBACK_RUNTIME_ENVIRONMENT);
+    const messages = createMessagesClient(im);
+    const contacts = createContactsClient(im);
+    // The mock ports have no `events` surface; the IM adapters provide it.
+    expect(messages.events).toBeUndefined();
+    expect(contacts.listContacts).toBeTypeOf('function');
+  });
+
+  it('backs_both_ports_with_the_realtime_im_adapters_when_a_base_url_is_declared', () => {
+    const im = createImSdkClient(imEnv);
+    const messages = createMessagesClient(im);
+    const contacts = createContactsClient(im);
+    expect(messages.events).toBeDefined();
+    expect(typeof messages.listConversations).toBe('function');
+    expect(typeof contacts.listContacts).toBe('function');
+    expect(typeof contacts.searchContacts).toBe('function');
+    expect(typeof contacts.getContact).toBe('function');
   });
 });
