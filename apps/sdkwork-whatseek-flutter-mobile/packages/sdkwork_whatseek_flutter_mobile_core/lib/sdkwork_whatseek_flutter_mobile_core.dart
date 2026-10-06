@@ -9,6 +9,7 @@ export 'src/intent.dart';
 export 'src/mock/apps_client.dart';
 export 'src/mock/clients.dart';
 export 'src/models.dart';
+export 'src/ports.dart';
 export 'src/route_table.dart';
 export 'src/runtime.dart';
 export 'src/settings/settings.dart';

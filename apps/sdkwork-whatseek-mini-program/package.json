@@ -15,10 +15,12 @@
     "build:mini-program:prod": "node scripts/build-runtime.mjs --deployment-profile standalone --environment production",
     "preview:mini-program": "echo \"Open the WeChat DevTools with miniprogramRoot=src/ (see project.config.json); the runtime bundle must be built first: pnpm build\"",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --test tests/mini-program-surface-contract.test.mjs tests/mini-program-page-behavior.test.mjs",
+    "test": "node scripts/build-runtime.mjs --deployment-profile standalone --environment development && node --test tests/mini-program-surface-contract.test.mjs tests/mini-program-page-behavior.test.mjs tests/mini-program-im-transport.test.mjs",
     "clean": "node -e \"import('node:fs').then(fs => { for (const p of ['src/runtime/app.js','src/runtime/runtime-env.js']) fs.rmSync(p, { force: true }); })\""
   },
   "dependencies": {
+    "@sdkwork/im-sdk": "workspace:*",
+    "@sdkwork/sdk-common": "workspace:*",
     "@sdkwork/whatseek-intent-core": "workspace:*",
     "@sdkwork/whatseek-mp-apps": "workspace:*",
     "@sdkwork/whatseek-mp-chat": "workspace:*",

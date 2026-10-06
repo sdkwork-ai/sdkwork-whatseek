@@ -34,6 +34,22 @@ on:
         description: Package format filter.
         required: true
         default: all
+      sdkwork_im_ref:
+        description: sdkwork-im commit/ref.
+        required: false
+        default: main
+      sdkwork_sdk_commons_ref:
+        description: sdkwork-sdk-commons commit/ref.
+        required: false
+        default: main
+      sdkwork_utils_ref:
+        description: sdkwork-utils commit/ref.
+        required: false
+        default: main
+      sdkwork_web_framework_ref:
+        description: sdkwork-web-framework commit/ref.
+        required: false
+        default: main
 
 permissions:
   contents: read
@@ -50,4 +66,11 @@ jobs:
       architecture: ${{ inputs.architecture }}
       profile: ${{ inputs.profile }}
       format: ${{ inputs.format }}
+      dependency_refs_json: >-
+        {
+          "SDKWORK_IM_REF": "${{ github.event.inputs.sdkwork_im_ref || vars.SDKWORK_IM_REF }}",
+          "SDKWORK_SDK_COMMONS_REF": "${{ github.event.inputs.sdkwork_sdk_commons_ref || vars.SDKWORK_SDK_COMMONS_REF }}",
+          "SDKWORK_UTILS_REF": "${{ github.event.inputs.sdkwork_utils_ref || vars.SDKWORK_UTILS_REF }}",
+          "SDKWORK_WEB_FRAMEWORK_REF": "${{ github.event.inputs.sdkwork_web_framework_ref || vars.SDKWORK_WEB_FRAMEWORK_REF }}"
+        }
     secrets: inherit

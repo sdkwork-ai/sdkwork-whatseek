@@ -66,7 +66,9 @@
       "app.whatseek.contacts.home",
       "app.whatseek.contacts.detail"
     ],
-    "sdkClients": [],
+    "sdkClients": [
+      "@sdkwork/im-sdk"
+    ],
     "sdkDependencies": [],
     "permissionComposition": {},
     "dependencyApiExports": [],

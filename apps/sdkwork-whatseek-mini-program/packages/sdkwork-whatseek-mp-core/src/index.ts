@@ -1,9 +1,10 @@
 /**
  * Public export boundary of `@sdkwork/whatseek-mp-core` — mini-program
  * bootstrap: SDK client registration (shared mock clients from the common
- * service family) and the typed host-adapter port the bootstrap layer binds
- * to `wx.*` (MINI_PROGRAM_APP_ARCHITECTURE_SPEC.md §Host adapters: capability
- * packages never call `wx.*` directly).
+ * service family, with optional IM-driver port overrides) and the typed
+ * host-adapter ports the bootstrap layer binds to `wx.*`
+ * (MINI_PROGRAM_APP_ARCHITECTURE_SPEC.md §Host adapters: capability packages
+ * never call `wx.*` directly).
  */
 
 import {
@@ -14,7 +15,19 @@ import {
   createMockTasksClient,
   registerWhatseekClient,
   resetWhatseekClients,
+  type ContactsPort,
+  type MessagesPort,
 } from '@sdkwork/whatseek-service-core';
+
+export {
+  createMiniProgramFetch,
+  createMiniProgramWebSocketFactory,
+  installMiniProgramFetchPolyfill,
+  type MiniProgramRequestPort,
+  type MiniProgramRequestTaskPort,
+  type MiniProgramSocketTaskPort,
+  type MiniProgramWebSocketPort,
+} from './transport/miniProgramTransports.js';
 
 /** Navigation + storage surface the pages need, bound to `wx.*` at bootstrap. */
 export interface MiniProgramHostPort {
@@ -41,6 +54,15 @@ export interface MiniProgramRuntimeConfig {
   environment: string;
   deploymentProfile: string;
   appApiBaseUrl: string;
+  /**
+   * sdkwork-im driver (messages + contacts capabilities): same-origin
+   * `/im/v3/api` path when an IM gateway is mounted, absolute URL for explicit
+   * topology overrides. Empty/absent keeps the mock clients (standalone
+   * milestone default).
+   */
+  sdkworkImApiBaseUrl?: string;
+  /** Explicit CCP websocket base URL; derived by the SDK when absent. */
+  sdkworkImWebSocketBaseUrl?: string;
 }
 
 let runtimeConfig: MiniProgramRuntimeConfig | null = null;
@@ -57,15 +79,18 @@ export function getRuntimeConfig(): MiniProgramRuntimeConfig {
 }
 
 /**
- * Register the standalone mock clients once per runtime bundle. Phase 2 swaps
- * these registrations for generated app-SDK clients bound to the WeChat
- * request host adapter — the ports stay identical.
+ * Register the standalone client family once per runtime bundle. Without
+ * overrides every port stays on the shared mock clients; the composition root
+ * (`src/bootstrap/runtime.ts`) passes IM-backed ports when the runtime config
+ * declares an sdkwork-im gateway — the ports stay identical.
  */
-export function bootstrapMiniProgramClients(): void {
+export function bootstrapMiniProgramClients(
+  overrides: { contacts?: ContactsPort; messages?: MessagesPort } = {},
+): void {
   resetWhatseekClients();
   const apps = createMockAppsClient();
-  const contacts = createMockContactsClient();
-  const messages = createMockMessagesClient();
+  const contacts = overrides.contacts ?? createMockContactsClient();
+  const messages = overrides.messages ?? createMockMessagesClient();
   const tasks = createMockTasksClient();
   const chat = createMockChatClient({ apps, contacts, messages, tasks });
   registerWhatseekClient('apps', apps);

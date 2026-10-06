@@ -2,14 +2,28 @@
  * Runtime bootstrap — the esbuild entry bundled into `src/runtime/app.js`
  * (scripts/build-runtime.mjs). Native pages consume the exported `appApi`
  * through CommonJS `require`; no page imports TypeScript sources directly.
+ *
+ * sdkwork-im driver (messages + contacts capabilities): when the runtime
+ * config declares an IM API base URL (`sdkworkImApiBaseUrl` from
+ * config/mini-program runtime-env sources), the wx.request-backed fetch
+ * polyfill and wx.connectSocket-backed realtime factory are installed here and
+ * one composed `@sdkwork/im-sdk` client is constructed with one session
+ * TokenManager; the IM-backed ports then override the mock registrations.
+ * Empty (standalone milestone default) keeps every port on the mock clients.
  */
 
+import { createTokenManager } from '@sdkwork/sdk-common';
+import { ImSdkClient, type ImSdkClientOptions } from '@sdkwork/im-sdk';
 import {
   bindMiniProgramHost,
   bindRuntimeConfig,
   bootstrapMiniProgramClients,
+  createMiniProgramWebSocketFactory,
   getMiniProgramHost,
+  installMiniProgramFetchPolyfill,
+  type MiniProgramRequestPort,
   type MiniProgramRuntimeConfig,
+  type MiniProgramWebSocketPort,
 } from '@sdkwork/whatseek-mp-core';
 import { PAGE_TITLES, TAB_LABELS, TAB_PAGE_PATHS } from '@sdkwork/whatseek-mp-shell';
 
@@ -95,7 +109,8 @@ export interface PageApi {
 /**
  * Bind the typed host adapter around the WeChat globals. This is the only
  * module in the surface that touches `wx.*` (MINI_PROGRAM_APP_ARCHITECTURE_SPEC
- * §Host adapters).
+ * §Host adapters). The typed request port additionally feeds the sdkwork-im
+ * fetch polyfill, which must be installed before any IM request runs.
  */
 function bindWxHost(): void {
   bindMiniProgramHost({
@@ -109,14 +124,39 @@ function bindWxHost(): void {
       wx.showToast({ title, icon: 'none' });
     },
   });
+  installMiniProgramFetchPolyfill(wx as unknown as MiniProgramRequestPort);
+}
+
+/**
+ * Construct the composed IM client for the resolved runtime config, or `null`
+ * when no IM gateway is declared (mock-driver standalone milestone).
+ */
+function createMiniProgramImSdkClient(env: MiniProgramRuntimeConfig): ImSdkClient | null {
+  const apiBaseUrl = env.sdkworkImApiBaseUrl?.trim() ?? '';
+  if (apiBaseUrl.length === 0) {
+    return null;
+  }
+  // TokenManager closure rule (APP_SDK_INTEGRATION_SPEC.md: one manager per
+  // authenticated session context). Tokens are fed by the Phase-2 IAM runtime;
+  // the standalone milestone starts empty and the driver only activates when
+  // a gateway is actually mounted.
+  const tokenManager = createTokenManager();
+  const websocketBaseUrl = env.sdkworkImWebSocketBaseUrl?.trim() ?? '';
+  const options: ImSdkClientOptions = {
+    apiBaseUrl,
+    ...(websocketBaseUrl.length > 0 ? { websocketBaseUrl } : {}),
+    platform: 'mini-program',
+    tokenManager,
+    webSocketFactory: createMiniProgramWebSocketFactory(wx as unknown as MiniProgramWebSocketPort),
+  };
+  return new ImSdkClient(options);
 }
 
 export function bootstrapRuntime(): PageApi {
   bindRuntimeConfig(__SDKWORK_RUNTIME_ENV__);
   bindWxHost();
-  bootstrapMiniProgramClients();
-  // Lazy requires keep page bundles decoupled from the chat capability until
-  // first use; esbuild inlines them into the single CJS runtime bundle.
+  // Capability modules first: the IM port overrides below come from the
+  // messages/contacts packages and the session id from the profile package.
   /* eslint-disable @typescript-eslint/no-require-imports */
   const chat = require('@sdkwork/whatseek-mp-chat') as typeof import('@sdkwork/whatseek-mp-chat');
   const apps = require('@sdkwork/whatseek-mp-apps') as typeof import('@sdkwork/whatseek-mp-apps');
@@ -125,6 +165,24 @@ export function bootstrapRuntime(): PageApi {
   const profile = require('@sdkwork/whatseek-mp-profile') as typeof import('@sdkwork/whatseek-mp-profile');
   const commons = require('@sdkwork/whatseek-mp-commons') as typeof import('@sdkwork/whatseek-mp-commons');
   /* eslint-enable @typescript-eslint/no-require-imports */
+
+  const im = createMiniProgramImSdkClient(__SDKWORK_RUNTIME_ENV__);
+  bootstrapMiniProgramClients(
+    im === null
+      ? {}
+      : {
+          contacts: contacts.createImContactsClient({
+            gateway: { contacts: im.social.contacts },
+          }),
+          messages: messages.createImMessagesClient({
+            gateway: {
+              conversations: im.conversations,
+              connect: (options) => im.connect(options),
+            },
+            currentUserId: () => profile.getSessionUser().id,
+          }),
+        },
+  );
 
   return {
     chat: {

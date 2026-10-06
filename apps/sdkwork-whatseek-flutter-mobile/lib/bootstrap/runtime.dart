@@ -37,9 +37,13 @@ class WhatseekBootstrap {
     final iam = WhatseekIamRuntime.instance..ensureSession();
     final settings = WhatseekAppSettings.instance;
     unawaited(settings.restore()); // persisted preferences apply when ready
+    final environment = WhatseekRuntimeEnvironment.fromDefines();
     _instance = WhatseekBootstrap(
-      environment: WhatseekRuntimeEnvironment.fromDefines(),
-      clients: WhatseekSdkClients.mock(WhatseekRuntime.instance),
+      environment: environment,
+      // resolve() mounts the sdkwork-im drivers when the environment declares
+      // an IM gateway and binds them onto the runtime; otherwise every port
+      // stays on the Phase-1 mock clients.
+      clients: WhatseekSdkClients.resolve(environment),
       iam: iam,
       settings: settings,
     );

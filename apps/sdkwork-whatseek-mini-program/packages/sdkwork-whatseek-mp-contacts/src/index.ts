@@ -35,3 +35,9 @@ const KIND_LABELS: Record<string, string> = {
 export function kindLabel(kind: string): string {
   return KIND_LABELS[kind] ?? kind;
 }
+
+export {
+  createImContactsClient,
+  type ImContactsClientOptions,
+  type ImContactsGateway,
+} from './services/imContactsClient.js';

@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  im_sdk_composed:
+    path: ../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-flutter/composed/im_sdk_composed
   shared_preferences: ^2.5.5
   sdkwork_whatseek_flutter_mobile_apps:
     path: packages/sdkwork_whatseek_flutter_mobile_apps
@@ -33,6 +35,19 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
+
+# Sibling source SDK family (sdkwork-im), pinned to the local workspace the
+# same way pnpm-workspace.yaml pins the TypeScript sibling packages. The
+# composed consumer package is the only import seam; the overrides keep the
+# transitive generated transport and the shared common package on the sibling
+# sources instead of a registry that does not host them.
+dependency_overrides:
+  im_sdk_composed:
+    path: ../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-flutter/composed/im_sdk_composed
+  im_sdk_generated:
+    path: ../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-flutter/generated/server-openapi
+  sdkwork_common_flutter:
+    path: ../../../sdkwork-sdk-commons/sdkwork-sdk-common-flutter
 
 flutter:
   uses-material-design: true

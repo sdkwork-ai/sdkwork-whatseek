@@ -60,6 +60,10 @@ async function main() {
       __SDKWORK_RUNTIME_ENV__: JSON.stringify(runtimeEnv),
       'process.env.NODE_ENV': '"production"',
     },
+    // The im-sdk tcp/udp transports dynamically import Node builtins; they are
+    // unreachable in the mini-program runtime (the transport selector never
+    // marks them available) but must stay external for bundling.
+    external: ['node:net', 'node:dgram'],
     logLevel: 'info',
   };
 

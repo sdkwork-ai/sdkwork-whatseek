@@ -10,6 +10,15 @@ export interface WhatseekRuntimeEnvironment {
   profileId: string;
   runtimeTarget: 'browser';
   browserOriginMode: 'same-origin' | 'cross-origin';
+  /**
+   * sdkwork-im driver (messages + contacts capabilities): same-origin
+   * `/im/v3/api` path when an IM gateway is mounted, absolute URL for explicit
+   * topology overrides. Empty/absent keeps the mock clients (standalone
+   * milestone default).
+   */
+  sdkworkImApiBaseUrl?: string;
+  /** Explicit CCP websocket base URL; derived by the SDK when absent. */
+  sdkworkImWebSocketBaseUrl?: string;
 }
 
 export const FALLBACK_RUNTIME_ENVIRONMENT: WhatseekRuntimeEnvironment = {
@@ -19,6 +28,10 @@ export const FALLBACK_RUNTIME_ENVIRONMENT: WhatseekRuntimeEnvironment = {
   runtimeTarget: 'browser',
   browserOriginMode: 'same-origin',
 };
+
+function isOptionalString(value: unknown): boolean {
+  return typeof value === 'undefined' || typeof value === 'string';
+}
 
 function isRuntimeEnvironment(value: unknown): value is WhatseekRuntimeEnvironment {
   if (typeof value !== 'object' || value === null) {
@@ -30,7 +43,9 @@ function isRuntimeEnvironment(value: unknown): value is WhatseekRuntimeEnvironme
     typeof candidate.deploymentProfile === 'string' &&
     typeof candidate.profileId === 'string' &&
     candidate.runtimeTarget === 'browser' &&
-    (candidate.browserOriginMode === 'same-origin' || candidate.browserOriginMode === 'cross-origin')
+    (candidate.browserOriginMode === 'same-origin' || candidate.browserOriginMode === 'cross-origin') &&
+    isOptionalString(candidate.sdkworkImApiBaseUrl) &&
+    isOptionalString(candidate.sdkworkImWebSocketBaseUrl)
   );
 }
 

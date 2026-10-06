@@ -1,0 +1,5 @@
+# Generated runtime bundle (scripts/build-runtime.mjs) — build products stay
+# out of the source scan (APP_SDK_INTEGRATION_SPEC §9 consumer-import gate).
+# `pnpm build` regenerates both files; `pnpm test` builds before testing.
+src/runtime/app.js
+src/runtime/runtime-env.js

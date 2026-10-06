@@ -4,5 +4,7 @@
   "profileId": "standalone.development",
   "runtimeTarget": "mini-program",
   "appApiBaseUrl": "/",
-  "sdkBaseUrl": "/"
+  "sdkBaseUrl": "/",
+  "sdkworkImApiBaseUrl": "",
+  "sdkworkImWebSocketBaseUrl": ""
 }

@@ -64,3 +64,9 @@ export async function unreadTotal(): Promise<number> {
 export async function openDirectConversation(contactId: string): Promise<Conversation> {
   return messagesPort().openDirectConversation(contactId);
 }
+
+export {
+  createImMessagesClient,
+  type ImMessagesClientOptions,
+  type ImMessagesGateway,
+} from './services/imMessagesClient.js';

@@ -57,7 +57,9 @@
       "package.json#main"
     ],
     "routeManifest": null,
-    "sdkClients": [],
+    "sdkClients": [
+      "@sdkwork/im-sdk"
+    ],
     "sdkDependencies": [],
     "permissionComposition": {},
     "dependencyApiExports": [],

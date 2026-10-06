@@ -1,0 +1,11 @@
+# Sibling source SDK family (sdkwork-im), pinned to the local workspace the
+# same way the app root pins it (see the app pubspec.yaml dependency_overrides
+# note). Required for standalone `flutter pub get` / `flutter test` in this
+# package; the registry does not host these packages.
+dependency_overrides:
+  im_sdk_composed:
+    path: ../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-flutter/composed/im_sdk_composed
+  im_sdk_generated:
+    path: ../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-flutter/generated/server-openapi
+  sdkwork_common_flutter:
+    path: ../../../../../sdkwork-sdk-commons/sdkwork-sdk-common-flutter

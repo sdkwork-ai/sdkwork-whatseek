@@ -5,5 +5,7 @@
   "runtimeTarget": "browser",
   "browserOriginMode": "same-origin",
   "appApiBaseUrl": "/",
-  "sdkBaseUrl": "/"
+  "sdkBaseUrl": "/",
+  "sdkworkImApiBaseUrl": "",
+  "sdkworkImWebSocketBaseUrl": ""
 }

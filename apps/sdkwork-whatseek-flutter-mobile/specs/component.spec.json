@@ -10,9 +10,15 @@
     "domain": "whatseek",
     "capability": "super-app",
     "surface": "app",
-    "languages": ["dart"],
+    "languages": [
+      "dart"
+    ],
     "status": "DRAFT",
-    "manifests": ["pubspec.yaml", "sdkwork.app.config.json", "specs/component.spec.json"]
+    "manifests": [
+      "pubspec.yaml",
+      "sdkwork.app.config.json",
+      "specs/component.spec.json"
+    ]
   },
   "canonicalSpecs": [
     {
@@ -73,13 +79,25 @@
   ],
   "contracts": {
     "layerRole": "frontend-shell",
-    "publicExports": ["lib/main.dart"],
+    "publicExports": [
+      "lib/main.dart"
+    ],
     "providedPorts": [],
     "requiredPorts": [],
-    "runtimeEntrypoints": ["lib/main.dart", "pubspec.yaml#environment.sdk"],
+    "runtimeEntrypoints": [
+      "lib/main.dart",
+      "pubspec.yaml#environment.sdk"
+    ],
     "routeManifest": null,
     "sdkClients": [],
-    "sdkDependencies": [],
+    "sdkDependencies": [
+      {
+        "workspace": "sdkwork-im-sdk",
+        "surface": "open-api",
+        "credentialMode": "protected-open-api-api-key-or-dual-token",
+        "sdkLanguage": "dart-flutter"
+      }
+    ],
     "permissionComposition": {},
     "dependencyApiExports": [],
     "dependencyApiSurfaces": [],

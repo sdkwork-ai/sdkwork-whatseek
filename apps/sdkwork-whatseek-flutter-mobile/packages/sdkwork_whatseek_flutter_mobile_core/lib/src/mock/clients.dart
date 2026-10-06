@@ -1,18 +1,21 @@
 /// Mock contacts/messages/tasks/chat clients (Dart port of the shared TS
-/// service family; in-memory, Phase 2 swaps for generated SDK clients).
+/// service family; in-memory; the sdkwork-im adapters swap in behind the shared port interfaces when an IM gateway is mounted.
 library;
 
 import '../intent.dart';
 import '../models.dart';
+import '../ports.dart';
 import 'apps_client.dart';
 
-class MockContactsClient {
+class MockContactsClient implements ContactsClient {
   MockContactsClient({List<Contact>? seed}) : _contacts = seed ?? kDefaultContacts;
 
   final List<Contact> _contacts;
 
+  @override
   Future<List<Contact>> listContacts() async => List.unmodifiable(_contacts);
 
+  @override
   Future<List<Contact>> searchContacts(String query) async {
     final trimmed = query.trim().toLowerCase();
     if (trimmed.isEmpty) {
@@ -26,6 +29,7 @@ class MockContactsClient {
         .toList();
   }
 
+  @override
   Future<Contact?> getContact(String contactId) async {
     for (final contact in _contacts) {
       if (contact.id == contactId) {
@@ -90,7 +94,7 @@ const List<Contact> kDefaultContacts = [
   ),
 ];
 
-class MockMessagesClient {
+class MockMessagesClient implements MessagesClient {
   MockMessagesClient() {
     final now = DateTime.now();
     _conversations.addAll([
@@ -142,15 +146,18 @@ class MockMessagesClient {
   final List<Conversation> _conversations = [];
   final Map<String, List<ChatMessage>> _messages = {};
 
+  @override
   Future<List<Conversation>> listConversations() async {
     final sorted = [..._conversations]
       ..sort((a, b) => (b.updatedAt ?? DateTime(0)).compareTo(a.updatedAt ?? DateTime(0)));
     return List.unmodifiable(sorted);
   }
 
+  @override
   Future<List<ChatMessage>> listMessages(String conversationId) async =>
       List.unmodifiable(_messages[conversationId] ?? const []);
 
+  @override
   Future<ChatMessage> sendMessage(String conversationId, String content) async {
     final now = DateTime.now();
     final message = ChatMessage(
@@ -165,6 +172,7 @@ class MockMessagesClient {
     return message;
   }
 
+  @override
   Future<void> markRead(String conversationId) async {
     for (var index = 0; index < _conversations.length; index++) {
       final conversation = _conversations[index];
@@ -184,6 +192,7 @@ class MockMessagesClient {
     }
   }
 
+  @override
   Future<Conversation> openDirectConversation(String contactId) async {
     for (final conversation in _conversations) {
       if (conversation.kind == ConversationKind.direct && conversation.contactId == contactId) {
@@ -203,6 +212,7 @@ class MockMessagesClient {
     return created;
   }
 
+  @override
   Future<void> postTaskNotification(WhatseekTask task) async {
     final conversationId = 'conv-task-${task.id}';
     final now = DateTime.now();
@@ -253,6 +263,7 @@ class MockMessagesClient {
     _messages[conversationId] = [message];
   }
 
+  @override
   Future<int> unreadTotal() async {
     var total = 0;
     for (final conversation in _conversations) {
@@ -329,8 +340,8 @@ class MockChatClient {
   static const String _replyPrefix = 'whatseek.chat.reply.';
 
   final MockAppsClient apps;
-  final MockContactsClient contacts;
-  final MockMessagesClient messages;
+  final ContactsClient contacts;
+  final MessagesClient messages;
   final MockTasksClient tasks;
 
   Future<ChatReply> handleSend(String text) async {
