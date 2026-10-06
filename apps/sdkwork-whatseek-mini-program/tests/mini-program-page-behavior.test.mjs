@@ -395,3 +395,86 @@ test('settings_reflects_appearance_and_switches_locale_both_ways', async () => {
   page.onLocale({ currentTarget: { dataset: { locale: 'zh-CN' } } });
   assert.equal(page.data.locale, 'zh-CN');
 });
+test('create_plan_step_surfaces_page_and_data_model_artifacts', async () => {
+  // PRD §3 plan chain: the 方案 step must list 功能拆解 + 页面规划 + 数据模型规划.
+  const page = loadPage('detail/apps-create');
+  await settle(page.onShow());
+  page.setData({ requirement: '帮我做一个库存管理系统' });
+  await settle(page.onDraftPlan());
+  assert.equal(page.data.step, 'plan');
+  assert.ok(page.data.plan.modules.length >= 1, 'module plan must exist');
+  assert.deepEqual(page.data.plan.pages, ['入库工作台', '库存看板', '盘点流程页']);
+  assert.deepEqual(page.data.plan.dataModel, ['商品 SKU', '入库单', '出库单', '盘点记录']);
+
+  // Generate the app so the modify/share scenarios below have work to act on.
+  await settle(page.onCreate());
+  assert.equal(page.data.step, 'created');
+  assert.equal(page.data.app.lifecycle, 'preview');
+});
+
+test('my_apps_modify_bumps_the_app_and_share_copies_the_card', async () => {
+  const page = loadPage('detail/apps-my');
+  await settle(page.onShow());
+  assert.equal(page.data.tab, 'created');
+  const created = page.data.apps.find((app) => app.lifecycle === 'preview');
+  assert.ok(created, 'the preview app from the create scenario must be listed');
+  const versionBefore = created.versionLabel;
+
+  // PRD §21 AI 修改: the editable modal collects the instruction.
+  const previousModal = globalThis.wx.showModal;
+  globalThis.wx.showModal = (options) => {
+    hostCalls.modals.push({ title: options.title, content: options.placeholderText });
+    options.success({ confirm: true, content: '增加订单管理' });
+  };
+  try {
+    await settle(page.onModify({ currentTarget: { dataset: { id: created.id } } }));
+  } finally {
+    globalThis.wx.showModal = previousModal;
+  }
+  assert.equal(hostCalls.toasts.at(-1), '已更新');
+  const updated = page.data.apps.find((app) => app.id === created.id);
+  assert.match(updated.versionLabel, /v0\.1\.[1-9]/u, 'modifyApp must bump the patch version');
+  assert.ok(versionBefore !== updated.versionLabel, 'version must change');
+
+  // PRD §21 share: copy the app card through the clipboard host.
+  const clipboard = [];
+  const previousClipboard = globalThis.wx.setClipboardData;
+  globalThis.wx.setClipboardData = (options) => {
+    clipboard.push(options.data);
+    options.success?.();
+  };
+  try {
+    await settle(page.onShare({ currentTarget: { dataset: { id: updated.id, name: updated.name } } }));
+  } finally {
+    globalThis.wx.setClipboardData = previousClipboard;
+  }
+  assert.deepEqual(clipboard, [`${updated.name} · WhatSeek 问寻`]);
+  assert.equal(hostCalls.toasts.at(-1), '已复制到剪贴板');
+});
+
+test('contacts_segments_filter_the_directory_by_kind', async () => {
+  // REQ-0004 six-segment kind filter (keys mirror whatseek.contacts.segment.*).
+  const page = loadPage('pages/contacts');
+  await settle(page.onShow());
+  await settle(page.load());
+  assert.equal(page.data.segments.length, 6);
+  assert.equal(page.data.segment, 'all');
+  const all = page.data.contacts.length;
+
+  await settle(page.onSegmentTap({ currentTarget: { dataset: { id: 'agent' } } }));
+  assert.equal(page.data.segment, 'agent');
+  assert.ok(page.data.contacts.length > 0, 'the roster has agents');
+  assert.ok(
+    page.data.contacts.every((contact) => contact.kind === 'agent'),
+    'the agent segment must keep only agent-kind contacts',
+  );
+
+  await settle(page.onSegmentTap({ currentTarget: { dataset: { id: 'all' } } }));
+  assert.equal(page.data.contacts.length, all, 'switching back restores the full roster');
+
+  // Combined query + kind filtering.
+  page.setData({ query: '张' });
+  await settle(page.onSearch());
+  assert.ok(page.data.contacts.every((contact) => contact.name.includes('张')));
+});
+

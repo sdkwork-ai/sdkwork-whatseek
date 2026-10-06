@@ -5,6 +5,19 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-07 — Regression hardening: mini-program scenario coverage + desktop exe re-verified
+
+- **Mini-program page-behavior suite 31 → 34**: three scenarios pin the new
+  capabilities — the creation plan step surfaces 页面规划/数据模型规划
+  artifacts end-to-end through the runtime facade; 我的应用 AI 修改 drives
+  the editable modal, bumps the patch version, and share copies the app card
+  through the clipboard host; the contacts six-segment filter (kind filter,
+  restore, combined query+kind).
+- **Desktop shell re-verified end-to-end**: `build:prod` + `cargo build
+  --release` produce the self-contained `sdkwork-whatseek-pc-tauri.exe`
+  (5.2 MB), launched and terminated cleanly against the production dist.
+- Verification: `pnpm verify` green; Flutter analyze clean + 54 tests.
+
 ### 2026-10-07 — Conformance backlog emptied: plan artifacts + 我的应用 edit/share
 
 - **Generation plan artifacts (PRD §3)**: `draftCreationPlan` returns
