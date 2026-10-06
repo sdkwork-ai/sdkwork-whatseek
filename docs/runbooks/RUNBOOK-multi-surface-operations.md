@@ -101,6 +101,35 @@ not just the TS surfaces.
 - A red `pnpm check` validator: fix the named standard violation before any
   other work — the validators are the repo's definition of done.
 
+## 9. Activating the sdkwork-im driver (messages + contacts go live)
+
+The messages and contacts ports on every surface are gateway-ready: each
+surface constructs one composed sdkwork-im client when its runtime config
+declares an IM API base URL, and keeps the mock clients otherwise. To take a
+surface live:
+
+1. Mount the sdkwork-im gateway (`sdkwork-api-im-standalone-gateway` crate,
+   PostgreSQL authority) behind the deployment topology.
+2. Declare the base URL in the surface's runtime source, then rebuild:
+
+| Surface | Source file | Key | Notes |
+| --- | --- | --- | --- |
+| H5 | `apps/sdkwork-whatseek-h5/etc/browser/runtime-env.<profile>.json` | `sdkworkImApiBaseUrl` (+ `sdkworkImWebSocketBaseUrl`) | same-origin `/im/v3/api` path or absolute URL |
+| PC | `apps/sdkwork-whatseek-pc/etc/browser/runtime-env.<profile>.json` | `sdkworkImApiBaseUrl` (+ websocket key) | identical mechanism to H5 |
+| Mini-program | `apps/sdkwork-whatseek-mini-program/config/mini-program/runtime-env.<profile>.json` | `sdkworkImApiBaseUrl` (+ websocket key) | absolute URL only (no same-origin concept); rebuild with `pnpm build` |
+| Flutter | `apps/sdkwork-whatseek-flutter-mobile/env/sdkwork.<profile>.json` | `SDKWORK_IM_API_BASE_URL` (+ `SDKWORK_IM_WEB_SOCKET_BASE_URL`) | dart-define sources; rebuild the app |
+
+3. Verify activation per surface: H5/PC `pnpm build:<arch>:dev` then the
+   driver tests (`bootstrap-sdk-driver.test.ts`) plus a rendered pass —
+   with a gateway mounted the messages/contacts lists come from IM
+   conversations and the social address book; the mini-program bundle stamps
+   the profile (`pnpm test` builds first); Flutter `flutter test` covers the
+   adapter mapping.
+4. Session tokens: the composed client shares one TokenManager per surface;
+   tokens are fed by the IAM login runtime (APP_SDK_INTEGRATION_SPEC.md §4).
+   Until that lands, the gateway rejects unauthenticated calls — mount the
+   gateway and the IAM runtime together.
+
 ## 8. Escalation
 
 Verification evidence and acceptance criteria live in
