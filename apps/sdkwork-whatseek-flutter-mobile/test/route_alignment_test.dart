@@ -1,6 +1,6 @@
 // Route alignment guard: the Flutter route table must match the cross-surface
 // contract (H5/PC/mini-program) exactly — route ids are the alignment key —
-// and every one of the 13 identities must resolve to a builder/screen.
+// and every one of the 15 identities must resolve to a builder/screen.
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:sdkwork_whatseek_flutter_mobile/bootstrap/routes.dart';
@@ -40,6 +40,6 @@ void main() {
           reason: 'secondary route without builder: ${route.id}');
     }
     expect(wired, equals(kCrossSurfaceRouteIds.toSet()),
-        reason: 'route builders must cover the 13 contract ids with no extras');
+        reason: 'route builders must cover the 15 contract ids with no extras');
   });
 }

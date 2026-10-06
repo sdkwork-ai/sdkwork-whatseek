@@ -9,6 +9,8 @@ const CROSS_SURFACE_ROUTE_IDS = [
   'app.whatseek.apps.home',
   'app.whatseek.apps.search',
   'app.whatseek.apps.detail',
+  'app.whatseek.apps.charts',
+  'app.whatseek.apps.collection',
   'app.whatseek.apps.runner',
   'app.whatseek.apps.create',
   'app.whatseek.apps.my',

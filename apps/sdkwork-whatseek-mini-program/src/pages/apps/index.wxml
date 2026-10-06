@@ -32,6 +32,41 @@
     </view>
   </view>
 
+  <block wx:if="{{feed}}">
+    <swiper wx:if="{{feed.heroes.length > 0}}" class="feed-heroes" indicator-dots autoplay circular interval="5000">
+      <swiper-item wx:for="{{feed.heroes}}" wx:key="id" data-appid="{{item.appId}}" bindtap="onHeroTap">
+        <view class="feed-hero">
+          <view class="feed-hero-badge">{{item.badge}}</view>
+          <view class="feed-hero-icon">{{item.icon}}</view>
+          <view class="feed-hero-main">
+            <view class="feed-hero-title">{{item.title}}</view>
+            <view class="feed-hero-tagline">{{item.tagline}}</view>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+
+    <view wx:if="{{feed.stories.length > 0}}" class="page-sub">今日精选</view>
+    <scroll-view wx:if="{{feed.stories.length > 0}}" scroll-x class="feed-strip">
+      <view wx:for="{{feed.stories}}" wx:key="id" class="feed-story" data-appid="{{item.appId}}" bindtap="onStoryTap">
+        <view class="feed-story-icon">{{item.icon}}</view>
+        <view class="feed-story-title">{{item.title}}</view>
+        <view class="feed-story-sub">{{item.subtitle}}</view>
+      </view>
+    </scroll-view>
+
+    <view wx:if="{{feed.collections.length > 0}}" class="page-sub">编辑精选</view>
+    <scroll-view wx:if="{{feed.collections.length > 0}}" scroll-x class="feed-strip">
+      <view wx:for="{{feed.collections}}" wx:key="id" class="feed-collection" data-id="{{item.id}}" bindtap="onCollectionTap">
+        <view class="feed-collection-title">{{item.title}}</view>
+        <view class="feed-collection-desc">{{item.description}}</view>
+        <view class="feed-collection-icons">
+          <text wx:for="{{item.coverApps}}" wx:for-item="cover" wx:key="id">{{cover.icon}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </block>
+
   <view class="page-sub">推荐应用 · 共 {{recommended.length}} 个</view>
   <view class="panel">
     <view wx:for="{{recommended}}" wx:key="id" class="row">
@@ -55,6 +90,24 @@
       <navigator class="app-use" url="/detail/apps-detail/index?appId={{item.id}}">详情</navigator>
     </view>
   </view>
+
+  <block wx:if="{{feed && feed.charts.length > 0}}">
+    <view class="page-sub">榜单速览</view>
+    <view wx:for="{{feed.charts}}" wx:key="id" class="panel feed-chart">
+      <view class="feed-chart-head">
+        <view class="feed-chart-title">{{item.id === 'hot' ? '热门榜' : item.id === 'free' ? '免费榜' : '新品榜'}}</view>
+        <view class="feed-chart-more" bindtap="onCharts">查看完整榜单 ›</view>
+      </view>
+      <view wx:for="{{item.apps}}" wx:for-item="app" wx:key="id" class="row">
+        <view class="row-glyph">{{app.icon}}</view>
+        <view class="app-main">
+          <view class="row-title">{{app.name}}</view>
+          <view class="row-desc">{{app.usersLabel}} 在用 · {{app.priceLabel}}</view>
+        </view>
+        <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">详情</navigator>
+      </view>
+    </view>
+  </block>
 
   <view wx:if="{{recents.length > 0}}" class="page-sub">最近使用</view>
   <view wx:if="{{recents.length > 0}}" class="panel">

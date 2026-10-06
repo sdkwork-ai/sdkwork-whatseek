@@ -29,6 +29,8 @@ test('app.json projects_exactly_the_five_tab_pages_and_the_detail_subpackage', (
     'apps-runner/index',
     'apps-create/index',
     'apps-my/index',
+    'apps-charts/index',
+    'apps-collection/index',
     'contact-detail/index',
     'conversation/index',
     'settings/index',

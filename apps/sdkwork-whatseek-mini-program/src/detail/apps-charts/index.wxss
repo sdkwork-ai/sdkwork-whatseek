@@ -1,0 +1,2 @@
+.chart-panel { margin: 16rpx 24rpx; }
+.chart-title { font-size: 28rpx; font-weight: 600; padding: 20rpx 24rpx 4rpx; color: var(--sdk-color-text-primary); }

@@ -81,6 +81,20 @@ const List<WhatseekRouteIdentity> kSecondaryRoutes = [
     tab: null,
   ),
   WhatseekRouteIdentity(
+    id: 'app.whatseek.apps.charts',
+    path: '/apps/charts',
+    titleKey: 'whatseek.apps.charts.title',
+    capability: 'apps',
+    tab: null,
+  ),
+  WhatseekRouteIdentity(
+    id: 'app.whatseek.apps.collection',
+    path: '/apps/collection',
+    titleKey: 'whatseek.apps.collection.title',
+    capability: 'apps',
+    tab: null,
+  ),
+  WhatseekRouteIdentity(
     id: 'app.whatseek.apps.runner',
     path: '/apps/runner',
     titleKey: 'whatseek.apps.runner.title',
@@ -124,7 +138,7 @@ const List<WhatseekRouteIdentity> kSecondaryRoutes = [
   ),
 ];
 
-/// The composed cross-surface route table (13 identities).
+/// The composed cross-surface route table (15 identities).
 const List<WhatseekRouteIdentity> kWhatseekRouteTable = [
   ...kTabRootRoutes,
   ...kSecondaryRoutes,
@@ -140,6 +154,8 @@ const List<String> kCrossSurfaceRouteIds = [
   'app.whatseek.apps.home',
   'app.whatseek.apps.search',
   'app.whatseek.apps.detail',
+  'app.whatseek.apps.charts',
+  'app.whatseek.apps.collection',
   'app.whatseek.apps.runner',
   'app.whatseek.apps.create',
   'app.whatseek.apps.my',

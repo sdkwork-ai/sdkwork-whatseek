@@ -148,13 +148,19 @@ Full PRD.md re-scan against the implementation (post sdkwork-im landing):
   task states); the contact-detail page no longer carries its own drifted
   label map; `contacts.setContactsLocale` joins the settings locale switch.
 
+Closed 2026-10-07 (later the same day): the appstore home feed (PRD §4
+hero/stories/collections/charts) now ships on every surface — PC (five feed
+components + charts/collection screens, route table 13→15 matching H5),
+mini-program (feed sections on the apps page + apps-charts/apps-collection
+detail pages consuming the runtime facade), and Flutter (Dart homeFeed port
+incl. the 19-app shared catalog, charts/collection screens, route table
+13→15; route-table change flagged for human review per the Flutter AGENTS
+rule). Verification: PC 36 tests, mini-program 31 tests, Flutter analyze
+clean + 67 tests (54 root + 13 apps package).
+
 Remaining conformance backlog (open, ordered):
 
-1. [P1] Appstore home feed (PRD §4 hero/stories/collections/charts) ships on
-   H5 only; PC renders no feed sections, the mini-program runtime exposes
-   `listHomeFeed`/`getCollection`/`listChart` with no page consuming them,
-   and the Flutter mock client lacks the feed API entirely.
-2. [P1] Mini-program static UI chrome stays zh regardless of locale
+1. [P1] Mini-program static UI chrome stays zh regardless of locale
    (page wxml strings); PRD §7 Phase 1 names zh-CN/en-US across surfaces.
    Native tabBar labels are a platform boundary until a custom tab bar lands.
 3. [P2] 我的应用 lacks edit/continue-AI-modification on every surface
@@ -176,9 +182,10 @@ Remaining conformance backlog (open, ordered):
 
 Verification this round: `pnpm verify` EXIT=0 (check + typecheck + tests +
 H5 prod build); mini-program typecheck + 31 tests + dev/staging/prod builds;
-Flutter analyze clean + 63 tests (54 root + 9 messages package); PC prod
-build PASS; packaging preflight `flutter build apk --debug` blocked by the
-environment (no Android SDK) — recorded as the release-milestone boundary.
+Flutter analyze clean + 67 tests (54 root + 9 messages + 13 apps packages);
+PC prod build PASS (36 tests) + Tauri `cargo check` green; packaging
+preflight `flutter build apk --debug` blocked by the environment (no Android
+SDK) — recorded as the release-milestone boundary.
 
 ## Verification
 

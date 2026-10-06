@@ -6,3 +6,95 @@
 .app-use { font-size: 24rpx; color: #fff; background: var(--sdk-color-brand); border-radius: 999rpx; padding: 8rpx 24rpx; }
 .apps-entries { margin: 0 0 16rpx; border-radius: 0; overflow: hidden; background: var(--sdk-color-surface-panel); border-top: 1rpx solid var(--sdk-color-border-subtle); border-bottom: 1rpx solid var(--sdk-color-border-subtle); }
 .apps-entry-main { flex: 1; min-width: 0; }
+
+/* 首页编辑流 (PRD §4.2.1) — hero 轮播 / 今日精选 / 编辑精选 / 榜单速览 */
+.feed-heroes {
+  height: 220rpx;
+  margin: 16rpx 24rpx 0;
+}
+
+.feed-hero {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  height: 200rpx;
+  padding: 0 32rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #1677ff 0%, #0958d9 100%);
+  color: #ffffff;
+  position: relative;
+}
+
+.feed-hero-badge {
+  position: absolute;
+  top: 16rpx;
+  right: 24rpx;
+  font-size: 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999rpx;
+  padding: 4rpx 16rpx;
+}
+
+.feed-hero-icon {
+  font-size: 72rpx;
+}
+
+.feed-hero-title {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.feed-hero-tagline {
+  font-size: 24rpx;
+  opacity: 0.85;
+  margin-top: 8rpx;
+}
+
+.feed-strip {
+  white-space: nowrap;
+  padding: 0 24rpx 8rpx;
+}
+
+.feed-story {
+  display: inline-block;
+  vertical-align: top;
+  width: 280rpx;
+  margin-right: 16rpx;
+  padding: 20rpx 24rpx;
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  background: var(--sdk-color-surface-canvas);
+  border-radius: 20rpx;
+  white-space: normal;
+}
+
+.feed-story-icon { font-size: 48rpx; }
+.feed-story-title { font-size: 28rpx; font-weight: 600; margin-top: 8rpx; color: var(--sdk-color-text-primary); }
+.feed-story-sub { font-size: 22rpx; color: var(--sdk-color-text-muted); margin-top: 4rpx; }
+
+.feed-collection {
+  display: inline-block;
+  vertical-align: top;
+  width: 320rpx;
+  margin-right: 16rpx;
+  padding: 20rpx 24rpx;
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  background: var(--sdk-color-surface-canvas);
+  border-radius: 20rpx;
+  white-space: normal;
+}
+
+.feed-collection-title { font-size: 28rpx; font-weight: 600; color: var(--sdk-color-text-primary); }
+.feed-collection-desc { font-size: 22rpx; color: var(--sdk-color-text-secondary); margin-top: 6rpx; }
+.feed-collection-icons { font-size: 32rpx; margin-top: 12rpx; letter-spacing: 8rpx; }
+
+.feed-chart { margin: 0 24rpx 16rpx; }
+
+.feed-chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 24rpx 4rpx;
+}
+
+.feed-chart-title { font-size: 28rpx; font-weight: 600; color: var(--sdk-color-text-primary); }
+.feed-chart-more { font-size: 22rpx; color: var(--sdk-color-text-muted); }

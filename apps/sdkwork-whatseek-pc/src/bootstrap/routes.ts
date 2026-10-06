@@ -41,6 +41,12 @@ export const whatseekPcRouteElements: Record<string, React.LazyExoticComponent<R
   'app.whatseek.apps.detail': lazy(() =>
     import('@sdkwork/whatseek-pc-apps').then((module) => ({ default: module.AppDetailScreen })),
   ),
+  'app.whatseek.apps.charts': lazy(() =>
+    import('@sdkwork/whatseek-pc-apps').then((module) => ({ default: module.AppChartsScreen })),
+  ),
+  'app.whatseek.apps.collection': lazy(() =>
+    import('@sdkwork/whatseek-pc-apps').then((module) => ({ default: module.AppCollectionScreen })),
+  ),
   'app.whatseek.apps.runner': lazy(() =>
     import('@sdkwork/whatseek-pc-apps').then((module) => ({ default: module.AppRunnerScreen })),
   ),

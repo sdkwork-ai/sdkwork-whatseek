@@ -1,0 +1,21 @@
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state">
+  <view class="state-title">加载失败</view>
+  <view class="state-desc">{{error}}</view>
+  <button class="retry-btn" bindtap="onRetry">重试</button>
+</view>
+
+<block wx:else>
+  <view wx:for="{{charts}}" wx:key="id" class="panel chart-panel">
+    <view class="chart-title">{{item.title}}</view>
+    <view wx:for="{{item.apps}}" wx:for-item="app" wx:key="id" class="row">
+      <view class="row-glyph">{{app.icon}}</view>
+      <view class="app-main">
+        <view class="row-title">{{app.name}}</view>
+        <view class="row-desc">{{app.usersLabel}} 在用 · {{app.priceLabel}}</view>
+      </view>
+      <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">详情</navigator>
+    </view>
+  </view>
+</block>

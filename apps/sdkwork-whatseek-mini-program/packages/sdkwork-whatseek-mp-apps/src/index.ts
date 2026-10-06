@@ -3,10 +3,27 @@
  * models for the native pages (list, detail, 我的应用, creation flow).
  */
 
-import type { AppsPort, AppRecommendation, CreatedApp, WhatseekApp, AppCategory } from '@sdkwork/whatseek-service-core';
+import type { AppsPort, AppRecommendation, CreatedApp, WhatseekApp, AppCategory, AppHomeFeed, AppChartId, AppCollection } from '@sdkwork/whatseek-service-core';
 import { getWhatseekClient } from '@sdkwork/whatseek-service-core';
 
-export type { AppRecommendation, CreatedApp, WhatseekApp, AppCategory };
+export type { AppRecommendation, CreatedApp, WhatseekApp, AppCategory, AppHomeFeed, AppCollection };
+
+/** Home feed for the 编辑流 (PRD §4.2.1): heroes → stories → collections → charts. */
+export async function listHomeFeed(): Promise<AppHomeFeed> {
+  return appsPort().listHomeFeed();
+}
+
+export async function getCollection(collectionId: string): Promise<AppCollection | null> {
+  return appsPort().getCollection(collectionId);
+}
+
+export async function listChart(chartId: AppChartId): Promise<WhatseekApp[]> {
+  return appsPort().listChart(chartId);
+}
+
+export async function listCollectionApps(collectionId: string): Promise<WhatseekApp[]> {
+  return appsPort().listCollectionApps(collectionId);
+}
 
 export function appsPort(): AppsPort {
   return getWhatseekClient('apps');

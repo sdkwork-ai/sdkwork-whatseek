@@ -5,6 +5,27 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-07 — Appstore home feed lands on PC, mini-program, and Flutter (PRD §4/§5.1)
+
+The 编辑流 home feed (hero carousel → 今日精选 → 编辑精选 → 为你推荐 →
+榜单速览 → categories → recents) is no longer H5-only:
+
+- **PC**: six feed components (desktop-tailored grids), AppChartsScreen +
+  AppCollectionScreen, routes `app.whatseek.apps.charts` /
+  `app.whatseek.apps.collection` (route table 13→15 matching H5), i18n keys
+  byte-aligned with the H5 fragments. 36 tests green.
+- **Mini-program**: the runtime facade already exposed
+  `listHomeFeed`/`getCollection`/`listChart` with no consumer — the apps page
+  now renders the feed sections and two new detail pages
+  (`apps-charts`/`apps-collection`) consume them through the facade; page
+  list registered in `app.json`. 31 tests green.
+- **Flutter**: the Dart mock client ports the shared homeFeed module
+  (editorial seeds + 19-app shared catalog), charts/collection screens, route
+  table 13→15 (route-table change flagged for human review per the Flutter
+  AGENTS rule), i18n mirror parity maintained. analyze clean + 67 tests.
+- Verification: `pnpm verify` green; all six SDK/architecture standards gates
+  pass; `pnpm check` green.
+
 ### 2026-10-07 — PRD re-scan: task deep link on four surfaces, mini-program favorites + i18n drift fixes
 
 - **Task-notification → chat deep link (PRD §5.5, all four surfaces)**: task

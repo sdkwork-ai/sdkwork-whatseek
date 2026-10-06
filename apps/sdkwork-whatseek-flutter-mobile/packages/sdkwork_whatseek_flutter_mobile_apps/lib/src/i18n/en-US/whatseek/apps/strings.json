@@ -8,7 +8,29 @@
     "aiCreate": {
       "title": "AI app creation",
       "subtitle": "Say what you need and get a working app"
-    }
+    },
+    "myApps": "My apps",
+    "favorites": "Favorites",
+    "stories": "Today",
+    "collections": "Collections",
+    "categories": "Categories",
+    "charts": "Charts",
+    "chartsMore": "See all"
+  },
+  "charts": {
+    "title": "Charts"
+  },
+  "chart": {
+    "hot": "Popular",
+    "free": "Top Free",
+    "new": "New Releases"
+  },
+  "collection": {
+    "title": "Collection",
+    "notFound": "Collection not found"
+  },
+  "tile": {
+    "users": "{{users}} users"
   },
   "search": {
     "title": "Search apps",

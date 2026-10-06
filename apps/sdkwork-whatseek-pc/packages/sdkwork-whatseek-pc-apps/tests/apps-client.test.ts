@@ -115,3 +115,57 @@ describe('mock apps client', () => {
     expect(await client.listFavorites()).toEqual([]);
   });
 });
+
+describe('appstore home feed', () => {
+  it('serves_heroes_stories_collections_and_chart_previews', async () => {
+    const client = createMockAppsClient({ storage: memoryStorage() });
+    const feed = await client.listHomeFeed();
+    expect(feed.heroes.length).toBeGreaterThanOrEqual(2);
+    expect(feed.stories.length).toBeGreaterThanOrEqual(2);
+    expect(feed.collections.length).toBeGreaterThanOrEqual(2);
+    expect(feed.collections[0]?.coverApps.length).toBeGreaterThan(0);
+    expect(feed.charts.map((chart) => chart.id)).toEqual(['hot', 'free', 'new']);
+    for (const chart of feed.charts) {
+      expect(chart.apps.length).toBeGreaterThan(0);
+      expect(chart.apps.length).toBeLessThanOrEqual(3);
+    }
+  });
+
+  it('ranks_hot_by_users_free_by_rating_and_new_by_recency', async () => {
+    const client = createMockAppsClient({ storage: memoryStorage() });
+
+    const hot = await client.listChart('hot');
+    expect(hot[0]?.id).toBe('game-center');
+
+    const free = await client.listChart('free');
+    expect(free.length).toBeGreaterThan(0);
+    for (const app of free) {
+      expect(app.priceLabel).toBe('免费');
+    }
+    expect(free[0]?.rating).toBe(Math.max(...free.map((app) => app.rating)));
+
+    const newest = await client.listChart('new');
+    expect(newest[0]?.id).toBe('code-mate');
+    const timestamps = newest.map((app) => app.updatedAt);
+    expect(timestamps).toEqual([...timestamps].sort((left, right) => right.localeCompare(left)));
+  });
+
+  it('resolves_a_collection_with_its_curated_apps', async () => {
+    const client = createMockAppsClient({ storage: memoryStorage() });
+    const collection = await client.getCollection('col-efficiency-picks');
+    expect(collection?.title).toBe('提升效率的 6 款工具');
+
+    const apps = await client.listCollectionApps('col-efficiency-picks');
+    expect(apps.map((app) => app.id)).toEqual([
+      'schedule-pro',
+      'meeting-notes',
+      'audio-scribe',
+      'study-notes',
+      'code-mate',
+      'data-board',
+    ]);
+
+    expect(await client.getCollection('missing-collection')).toBeNull();
+    expect(await client.listCollectionApps('missing-collection')).toEqual([]);
+  });
+});

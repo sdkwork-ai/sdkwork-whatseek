@@ -45,6 +45,12 @@ Map<String, WidgetBuilder> whatseekDetailRoutes() {
       final appId = ModalRoute.of(context)?.settings.arguments as String? ?? '';
       return AppDetailScreen(appId: appId);
     },
+    'app.whatseek.apps.charts': (context) => const AppChartsScreen(),
+    'app.whatseek.apps.collection': (context) {
+      final collectionId =
+          ModalRoute.of(context)?.settings.arguments as String? ?? '';
+      return AppCollectionScreen(collectionId: collectionId);
+    },
     'app.whatseek.apps.runner': (context) {
       final appId = ModalRoute.of(context)?.settings.arguments as String? ?? '';
       return AppRunnerScreen(

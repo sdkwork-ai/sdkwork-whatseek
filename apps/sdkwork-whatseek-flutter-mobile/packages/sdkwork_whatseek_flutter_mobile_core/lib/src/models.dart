@@ -124,6 +124,135 @@ class AppRecommendation {
   final String reason;
 }
 
+/// Appstore-style chart identities (sdkwork-appstore PRD §5.1). `new` is the
+/// cross-surface wire value but a Dart keyword, so the member is [newest] and
+/// [id] carries the TS wire value.
+enum AppChartId {
+  hot,
+  free,
+  newest;
+
+  /// Cross-surface chart id exactly as the TS surfaces declare it
+  /// (`hot` / `free` / `new`) — also the i18n key suffix
+  /// (`whatseek.apps.chart.*`).
+  String get id => switch (this) {
+        AppChartId.hot => 'hot',
+        AppChartId.free => 'free',
+        AppChartId.newest => 'new',
+      };
+}
+
+/// Appstore-style home feed hero slide (PRD §5.1): one editorial campaign
+/// banner opening its featured app.
+class AppHeroSlide {
+  const AppHeroSlide({
+    required this.id,
+    required this.title,
+    required this.tagline,
+    required this.badge,
+    required this.appId,
+    required this.icon,
+  });
+
+  final String id;
+
+  /// Editorial campaign headline.
+  final String title;
+
+  /// One-line tagline under the headline.
+  final String tagline;
+
+  /// Small badge label, e.g. 编辑推荐.
+  final String badge;
+
+  /// Featured app the slide opens.
+  final String appId;
+  final String icon;
+}
+
+/// Editorial story card (appstore Today 故事卡) — links to its featured app.
+class AppStoryCard {
+  const AppStoryCard({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.appId,
+    required this.icon,
+  });
+
+  final String id;
+  final String title;
+  final String subtitle;
+
+  /// App the story links to.
+  final String appId;
+  final String icon;
+}
+
+/// PRD appstore collection kinds (编辑精选合集).
+enum AppCollectionKind { editorial, chart, theme, event }
+
+/// Curated appstore collection: editorial metadata plus the curated app ids.
+class AppCollection {
+  const AppCollection({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.kind,
+    required this.appIds,
+  });
+
+  final String id;
+  final String title;
+  final String description;
+  final AppCollectionKind kind;
+  final List<String> appIds;
+}
+
+/// Home-feed collection card with cover apps already resolved.
+class AppCollectionCard {
+  const AppCollectionCard({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.kind,
+    required this.coverApps,
+  });
+
+  final String id;
+  final String title;
+  final String description;
+  final AppCollectionKind kind;
+
+  /// Cover apps for the card's mini icon grid (up to four).
+  final List<WhatseekApp> coverApps;
+}
+
+/// One chart's quick view on the home feed (top entries only).
+class AppChartPreview {
+  const AppChartPreview({required this.id, required this.apps});
+
+  final AppChartId id;
+  final List<WhatseekApp> apps;
+}
+
+/// Appstore-style home feed blocks (sdkwork-appstore PRD §4.2.1 首页编辑流 /
+/// §5.1 首页), served by the 应用 tab root. Editorial content is Phase 1 mock
+/// data seeded alongside the catalog; Phase 2 swaps in the appstore catalog SDK.
+class AppHomeFeed {
+  const AppHomeFeed({
+    required this.heroes,
+    required this.stories,
+    required this.collections,
+    required this.charts,
+  });
+
+  final List<AppHeroSlide> heroes;
+  final List<AppStoryCard> stories;
+  final List<AppCollectionCard> collections;
+  final List<AppChartPreview> charts;
+}
+
 class Contact {
   const Contact({
     required this.id,

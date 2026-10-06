@@ -10,7 +10,23 @@
     "favorites": "收藏",
     "recent": "最近使用",
     "recommended": "为你推荐",
-    "hot": "热门应用"
+    "stories": "今日精选",
+    "collections": "编辑精选",
+    "categories": "分类",
+    "charts": "榜单速览",
+    "chartsMore": "查看完整榜单"
+  },
+  "charts": {
+    "title": "排行榜"
+  },
+  "chart": {
+    "hot": "热门榜",
+    "free": "免费榜",
+    "new": "新品榜"
+  },
+  "collection": {
+    "title": "合集",
+    "notFound": "合集不存在"
   },
   "search": {
     "title": "搜索应用",

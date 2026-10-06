@@ -5,6 +5,7 @@ const { appApi } = require('../../runtime/app.js');
 
 Page({
   data: {
+    feed: null,
     recommended: [],
     categories: [],
     hot: [],
@@ -22,13 +23,14 @@ Page({
     const silent = options.silent === true;
     this.setData(silent ? { error: '' } : { loading: true, error: '' });
     try {
-      const [recommended, categories, hot, recents] = await Promise.all([
+      const [feed, recommended, categories, hot, recents] = await Promise.all([
+        appApi.apps.homeFeed(),
         appApi.apps.recommended(),
         appApi.apps.categories(),
         appApi.apps.hot(),
         appApi.apps.recents(),
       ]);
-      this.setData({ recommended, categories, hot, recents, loading: false });
+      this.setData({ feed, recommended, categories, hot, recents, loading: false });
     } catch (error) {
       this.setData({ loading: false, error: '加载失败，请稍后重试。' });
     }
@@ -64,5 +66,24 @@ Page({
 
   onMyApps() {
     appApi.shell.navigate('/detail/apps-my/index');
+  },
+
+  onHeroTap(event) {
+    const appId = event.currentTarget.dataset.appid;
+    appApi.shell.navigate(`/detail/apps-detail/index?appId=${appId}`);
+  },
+
+  onStoryTap(event) {
+    const appId = event.currentTarget.dataset.appid;
+    appApi.shell.navigate(`/detail/apps-detail/index?appId=${appId}`);
+  },
+
+  onCollectionTap(event) {
+    const collectionId = event.currentTarget.dataset.id;
+    appApi.shell.navigate(`/detail/apps-collection/index?collectionId=${collectionId}`);
+  },
+
+  onCharts() {
+    appApi.shell.navigate('/detail/apps-charts/index');
   },
 });
