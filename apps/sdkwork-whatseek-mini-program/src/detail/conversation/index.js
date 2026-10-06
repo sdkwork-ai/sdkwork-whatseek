@@ -6,6 +6,8 @@ Page({
   data: {
     messages: [],
     conversationId: '',
+    isTaskConversation: false,
+    taskLink: '',
     input: '',
     loading: true,
     error: '',
@@ -22,11 +24,32 @@ Page({
     this.setData({ loading: true, error: '' });
     try {
       await appApi.messages.markRead(conversationId);
-      const messages = await appApi.messages.thread(conversationId);
-      this.setData({ messages, loading: false });
+      const [conversation, messages] = await Promise.all([
+        appApi.messages.detail(conversationId),
+        appApi.messages.thread(conversationId),
+      ]);
+      this.setData({
+        messages,
+        isTaskConversation: conversation !== null && conversation.kind === 'task',
+        taskLink:
+          conversation && typeof conversation.taskId === 'string' && conversation.taskId.length > 0
+            ? conversation.taskId
+            : conversationId.startsWith('whatseek-task-')
+              ? conversationId.slice('whatseek-task-'.length)
+              : '',
+        loading: false,
+      });
     } catch (error) {
       this.setData({ loading: false, error: '加载失败，请稍后重试。' });
     }
+  },
+
+  // PRD §5.5: task notifications link back to the task result in chat.
+  // switchTab cannot carry query params, so the task id rides globalData.
+  onViewTask() {
+    if (!this.data.taskLink) return;
+    getApp().globalData.pendingTaskId = this.data.taskLink;
+    wx.switchTab({ url: '/pages/chat/index' });
   },
 
   onRetry() {

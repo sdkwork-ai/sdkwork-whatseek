@@ -58,6 +58,19 @@ export function setChatLocale(locale: 'zh-CN' | 'en-US'): void {
   chatLocale = locale;
 }
 
+const TASK_STATE_LABELS: Record<'zh-CN' | 'en-US', Record<string, string>> = {
+  'zh-CN': zhReplies.task,
+  'en-US': enReplies.task,
+};
+
+/**
+ * Localized task-chip label for all seven PRD §41 states
+ * (`whatseek.chat.task.*`, key-aligned with the H5/PC chat fragments).
+ */
+export function taskStateLabel(state: string): string {
+  return TASK_STATE_LABELS[chatLocale][state] ?? state;
+}
+
 /** `searchApp.found` → `searchAppFound`: dotted router keys meet flat fragments. */
 function flattenReplyKey(key: string): string {
   if (!key.includes('.')) {

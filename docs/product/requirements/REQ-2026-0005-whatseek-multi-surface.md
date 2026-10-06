@@ -127,6 +127,59 @@ standalone.production bundles (H5 390×844; PC 1440×900):
   framework ref is pinned to a commit SHA (no framework release tags exist
   yet). No change required.
 
+## PRD Re-Scan and P1 Closures (2026-10-07)
+
+Full PRD.md re-scan against the implementation (post sdkwork-im landing):
+**0 P0, 4 P1, 7 P2**. Closed in this round:
+
+- **Task-notification → chat deep link (PRD §5.5)** on all four surfaces: task
+  conversations render a "view task result" affordance in the conversation
+  view; following it opens the chat tab and restores the task as an entry with
+  its state chip (H5/PC `?taskId=` route param consumed once by
+  ChatHomeScreen; mini-program globalData `pendingTaskId` consumed in
+  `onShow`; Flutter `WhatseekRuntime.pendingTaskLink` ValueNotifier + tab
+  request consumed by the app scaffold).
+- **Mini-program favorites unreachable (REQ-0003)**: 我的应用 gained the
+  created/favorites dual tab (favorite toggle action, empty states) plus the
+  missing version display — matching H5/PC/Flutter.
+- **Mini-program i18n drift fixes**: contact-kind labels and task-chip labels
+  are now fragment-driven and locale-aware with H5-aligned keys
+  (`whatseek.contacts.segment.*`, `whatseek.chat.task.*`, all seven PRD §41
+  task states); the contact-detail page no longer carries its own drifted
+  label map; `contacts.setContactsLocale` joins the settings locale switch.
+
+Remaining conformance backlog (open, ordered):
+
+1. [P1] Appstore home feed (PRD §4 hero/stories/collections/charts) ships on
+   H5 only; PC renders no feed sections, the mini-program runtime exposes
+   `listHomeFeed`/`getCollection`/`listChart` with no page consuming them,
+   and the Flutter mock client lacks the feed API entirely.
+2. [P1] Mini-program static UI chrome stays zh regardless of locale
+   (page wxml strings); PRD §7 Phase 1 names zh-CN/en-US across surfaces.
+   Native tabBar labels are a platform boundary until a custom tab bar lands.
+3. [P2] 我的应用 lacks edit/continue-AI-modification on every surface
+   (modify is reachable only inside the creation preview); share/version
+   missing on MP/Flutter respectively.
+4. [P2] Recommendation cards show reason + price only (PRD §5.1 asks AI
+   capability/功能差异/自定义 fields — absent from the data model).
+5. [P2] App detail field coverage degrades off H5 (no category/screenshots on
+   H5/PC; Flutter adds rating/updated/permissions gaps; MP lacks
+   users/updated/permissions/AI badge).
+6. [P2] Search result rows show a subset of REQ-0002 fields (category/users/
+   AI capability missing everywhere).
+7. [P2] App-generation plan stage produces module lists only (PRD §3 asks
+   page-planning and data-model artifacts).
+8. [P2] Profile asset summary renders 4 columns; REQ-0004 names 消息 as a
+   fifth asset.
+9. [P2] Mini-program contacts page has no kind segments (H5/PC/Flutter have
+   the six-segment filter).
+
+Verification this round: `pnpm verify` EXIT=0 (check + typecheck + tests +
+H5 prod build); mini-program typecheck + 31 tests + dev/staging/prod builds;
+Flutter analyze clean + 63 tests (54 root + 9 messages package); PC prod
+build PASS; packaging preflight `flutter build apk --debug` blocked by the
+environment (no Android SDK) — recorded as the release-milestone boundary.
+
 ## Verification
 
 ```bash

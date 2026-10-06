@@ -14,6 +14,7 @@
     "emptyTitle": "还没有消息",
     "inputPlaceholder": "输入消息……",
     "inputLabel": "消息输入框",
-    "send": "发送"
+    "send": "发送",
+    "viewTask": "查看任务结果"
   }
 }

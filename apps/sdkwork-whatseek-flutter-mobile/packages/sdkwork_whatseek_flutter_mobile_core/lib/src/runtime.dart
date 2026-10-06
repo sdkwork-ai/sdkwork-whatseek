@@ -6,6 +6,8 @@
 /// SDK family lands and is recomposed over the effective ports on rebind.
 library;
 
+import 'package:flutter/foundation.dart';
+
 import 'mock/apps_client.dart';
 import 'mock/clients.dart';
 import 'ports.dart';
@@ -35,6 +37,14 @@ class WhatseekRuntime {
     this.messages = messages;
     chat = _composeChat();
   }
+
+  /// PRD §5.5 deep link: task notifications park the task id here; the chat
+  /// screen consumes it (entry + state chip) and clears the link.
+  final ValueNotifier<String?> pendingTaskLink = ValueNotifier<String?>(null);
+
+  /// Tab switch requests from pushed routes (0 = chat tab); the app scaffold
+  /// consumes and clears the request.
+  final ValueNotifier<int?> tabRequest = ValueNotifier<int?>(null);
 
   static final WhatseekRuntime instance = WhatseekRuntime();
 }

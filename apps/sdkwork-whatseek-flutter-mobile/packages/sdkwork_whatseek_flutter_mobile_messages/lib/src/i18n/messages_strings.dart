@@ -18,6 +18,7 @@ const Map<String, Map<String, String>> whatseekMessagesStrings = {
     'conversation.emptyTitle': '还没有消息',
     'conversation.inputPlaceholder': '输入消息……',
     'conversation.send': '发送',
+    'conversation.viewTask': '查看任务结果',
   },
   'en-US': {
     'kind.system': 'Notifications',
@@ -29,6 +30,7 @@ const Map<String, Map<String, String>> whatseekMessagesStrings = {
     'conversation.emptyTitle': 'No messages yet',
     'conversation.inputPlaceholder': 'Type a message…',
     'conversation.send': 'Send',
+    'conversation.viewTask': 'View task result',
   },
 };
 

@@ -108,6 +108,18 @@ class _WhatseekAppState extends State<WhatseekApp> {
             WhatseekI18n(locale: _settings.locale, child: child!),
         home: Builder(
           builder: (context) {
+            // Deep links from pushed routes (PRD §5.5) request the chat tab.
+            final tabRequest = WhatseekRuntime.instance.tabRequest;
+            if (tabRequest.value != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (tabRequest.value != null) {
+                  setState(() {
+                    _currentIndex = tabRequest.value!;
+                    tabRequest.value = null;
+                  });
+                }
+              });
+            }
             final tabRoutes = whatseekTabRoutes();
             return WhatseekShell(
               destinations: [

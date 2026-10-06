@@ -18,6 +18,7 @@ class ConversationScreen extends StatefulWidget {
 class _ConversationScreenState extends State<ConversationScreen> {
   List<ChatMessage> _messages = const <ChatMessage>[];
   bool _loading = true;
+  String? _linkedTaskId;
   final TextEditingController _input = TextEditingController();
 
   @override
@@ -28,12 +29,36 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Future<void> _load() async {
     await WhatseekRuntime.instance.messages.markRead(widget.conversationId);
+    final conversations =
+        await WhatseekRuntime.instance.messages.listConversations();
     final messages =
         await WhatseekRuntime.instance.messages.listMessages(widget.conversationId);
+    final conversation = conversations
+        .where((entry) => entry.id == widget.conversationId)
+        .toList(growable: false);
+    final isTask = conversation.isNotEmpty && conversation.first.kind == ConversationKind.task;
     setState(() {
       _messages = messages;
+      _linkedTaskId = isTask
+          ? conversation.first.taskId ??
+              (widget.conversationId.startsWith('whatseek-task-')
+                  ? widget.conversationId.substring('whatseek-task-'.length)
+                  : null)
+          : null;
       _loading = false;
     });
+  }
+
+  /// PRD §5.5: task notifications link back to the task result in chat —
+  /// park the task id on the runtime, request the chat tab, and pop back.
+  void _openTaskInChat() {
+    final taskId = _linkedTaskId;
+    if (taskId == null || taskId.isEmpty) {
+      return;
+    }
+    WhatseekRuntime.instance.pendingTaskLink.value = taskId;
+    WhatseekRuntime.instance.tabRequest.value = 0;
+    Navigator.of(context).pop();
   }
 
   Future<void> _send() async {
@@ -55,6 +80,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
       appBar: AppBar(title: Text(WhatseekMessagesStrings.of(context, 'conversation.title'))),
       body: Column(
         children: [
+          if (_linkedTaskId != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: _openTaskInChat,
+                  icon: const Icon(Icons.task_alt),
+                  label: Text(WhatseekMessagesStrings.of(context, 'conversation.viewTask')),
+                ),
+              ),
+            ),
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator())

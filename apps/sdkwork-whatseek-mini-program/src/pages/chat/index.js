@@ -12,6 +12,42 @@ Page({
     suggestionKeys: ['帮我找一个视频剪辑工具', '帮我做一个库存管理系统', '给张三发消息，告诉他下午三点开会', '找一个支持定制的手机壳供应商'],
   },
 
+  onShow() {
+    // PRD §5.5 deep link: a task notification in Messages parks the task id
+    // in globalData (switchTab cannot carry params) — restore it as a chat
+    // entry with its state chip.
+    const pendingTaskId = getApp().globalData.pendingTaskId;
+    if (typeof pendingTaskId !== 'string' || pendingTaskId.length === 0) {
+      return;
+    }
+    getApp().globalData.pendingTaskId = '';
+    if (this.data.entries.some((entry) => entry.taskId === pendingTaskId)) {
+      return;
+    }
+    void (async () => {
+      try {
+        const task = await appApi.chat.taskStatus(pendingTaskId);
+        if (task === null || this.data.entries.some((entry) => entry.taskId === pendingTaskId)) {
+          return;
+        }
+        const label = appApi.shell.taskStateLabel(task.state);
+        this.setData({
+          entries: [
+            ...this.data.entries,
+            {
+              role: 'assistant',
+              text: task.resultSummary ?? task.title,
+              taskId: task.id,
+              taskState: task.resultSummary ? `${label} · ${task.resultSummary}` : label,
+            },
+          ],
+        });
+      } catch (error) {
+        appApi.shell.toast('任务加载失败，请重试');
+      }
+    })();
+  },
+
   onInput(event) {
     this.setData({ input: event.detail.value });
   },

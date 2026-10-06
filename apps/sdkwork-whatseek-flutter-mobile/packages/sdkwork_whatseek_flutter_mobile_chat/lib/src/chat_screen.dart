@@ -39,6 +39,47 @@ class _ChatScreenState extends State<ChatScreen> {
   final Map<String, TaskState> _taskStates = {};
   bool _sending = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // PRD §5.5 deep link: a task notification in Messages parks the task id
+    // on the runtime — restore it as a chat entry with its state chip.
+    WhatseekRuntime.instance.pendingTaskLink.addListener(_consumePendingTaskLink);
+  }
+
+  @override
+  void dispose() {
+    WhatseekRuntime.instance.pendingTaskLink.removeListener(_consumePendingTaskLink);
+    super.dispose();
+  }
+
+  Future<void> _consumePendingTaskLink() async {
+    final taskId = WhatseekRuntime.instance.pendingTaskLink.value;
+    if (taskId == null || taskId.isEmpty) {
+      return;
+    }
+    WhatseekRuntime.instance.pendingTaskLink.value = null;
+    if (_taskStates.containsKey(taskId) || _entries.any((entry) => entry.taskId == taskId)) {
+      return;
+    }
+    try {
+      final task = await WhatseekRuntime.instance.tasks.getTask(taskId);
+      if (task == null || !mounted) {
+        return;
+      }
+      setState(() {
+        _entries.add(ChatEntry(role: 'assistant', text: task.resultSummary ?? task.title, taskId: task.id));
+        _taskStates[task.id] = task.state;
+      });
+    } on Exception {
+      if (mounted) {
+        setState(() {
+          _entries.add(ChatEntry(role: 'assistant', text: 'reply.error'));
+        });
+      }
+    }
+  }
+
   static const List<String> _suggestionKeys = [
     'suggest.searchApp',
     'suggest.createApp',

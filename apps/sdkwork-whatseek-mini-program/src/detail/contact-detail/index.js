@@ -2,14 +2,6 @@
 // card and opens the direct conversation (shared MessagesPort).
 const { appApi } = require('../../runtime/app.js');
 
-const KIND_LABELS = {
-  person: '联系人',
-  group: '群聊',
-  org: '企业/组织',
-  agent: 'Agent',
-  assistant: 'AI 助手',
-};
-
 Page({
   data: {
     contact: null,
@@ -32,7 +24,7 @@ Page({
         this.setData({ loading: false, error: '联系人不存在或已删除。' });
         return;
       }
-      this.setData({ contact, kindLabel: KIND_LABELS[contact.kind] ?? contact.kind, loading: false });
+      this.setData({ contact, kindLabel: appApi.contacts.kindLabel(contact.kind), loading: false });
     } catch (error) {
       this.setData({ loading: false, error: '加载失败，请稍后重试。' });
     }

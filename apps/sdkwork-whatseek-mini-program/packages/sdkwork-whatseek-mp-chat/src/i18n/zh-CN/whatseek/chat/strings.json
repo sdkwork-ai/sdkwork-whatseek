@@ -31,5 +31,14 @@
     "actionTaskCancelled": "任务已取消。",
     "actionTaskInactive": "该任务已不在待确认状态。",
     "actionNavigated": "好的。"
+  },
+  "task": {
+    "pending": "排队中",
+    "running": "执行中",
+    "waiting_confirmation": "待确认",
+    "completed": "已完成",
+    "failed": "失败",
+    "cancelled": "已取消",
+    "expired": "已过期"
   }
 }

@@ -5,6 +5,29 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-07 — PRD re-scan: task deep link on four surfaces, mini-program favorites + i18n drift fixes
+
+- **Task-notification → chat deep link (PRD §5.5, all four surfaces)**: task
+  conversations show a "view task result" affordance in the conversation
+  view; following it opens the chat tab and restores the task as an entry
+  with its live state chip (H5/PC `?taskId=` param consumed once by
+  ChatHomeScreen, mini-program globalData hand-off through `switchTab`,
+  Flutter `pendingTaskLink`/`tabRequest` ValueNotifiers on the runtime).
+- **Mini-program favorites** (REQ-0003): 我的应用 gains the created/favorites
+  dual tab with cancel-favorite actions and empty states, plus the missing
+  version label — matching H5/PC/Flutter.
+- **Mini-program i18n drift**: contact-kind labels (segment keys aligned with
+  H5) and task-chip labels (all seven PRD §41 states, `whatseek.chat.task.*`
+  aligned) are fragment-driven and locale-aware; the contact-detail page
+  drops its own drifted label map; `setContactsLocale` joins the settings
+  switch; the unused hardcoded commons task map is removed.
+- Conformance record: REQ-2026-0005 carries the full PRD re-scan result
+  (0 P0 / 4→2 P1 / 7 P2) with the ordered open backlog.
+- Verification: `pnpm verify` green; mini-program 31 tests + three profile
+  builds; Flutter analyze clean + 63 tests; PC prod build + Tauri
+  `cargo check` green; `flutter build apk --debug` preflight blocked by the
+  missing Android SDK (environment boundary, release milestone).
+
 ### 2026-10-07 — sdkwork-im family lands on PC, mini-program, and Flutter
 
 - **PC** (`apps/sdkwork-whatseek-pc`): the bootstrap composition root

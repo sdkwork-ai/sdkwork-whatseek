@@ -45,6 +45,12 @@ export async function listConversations(): Promise<Conversation[]> {
   return conversations.map(withResolvedTitle);
 }
 
+/** Resolve one conversation (kind/taskId for the conversation deep link). */
+export async function conversationDetail(conversationId: string): Promise<Conversation | null> {
+  const conversations = await messagesPort().listConversations();
+  return conversations.find((entry) => entry.id === conversationId) ?? null;
+}
+
 export async function listMessages(conversationId: string): Promise<ChatMessage[]> {
   return messagesPort().listMessages(conversationId);
 }

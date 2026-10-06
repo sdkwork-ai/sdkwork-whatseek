@@ -13,6 +13,7 @@
 
 <block wx:else>
   <scroll-view scroll-y class="thread" scroll-into-view="msg-{{messages.length - 1}}">
+    <view wx:if="{{isTaskConversation && taskLink}}" class="task-link" bindtap="onViewTask">查看任务结果 →</view>
     <view wx:for="{{messages}}" wx:key="id" id="msg-{{index}}" class="bubble {{item.senderId === 'me' ? 'bubble-user' : 'bubble-ai'}}">{{item.content}}</view>
   </scroll-view>
 </block>

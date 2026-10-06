@@ -111,6 +111,26 @@ export function ConversationScreen() {
       />
 
       <div className="flex-1 space-y-2.5 px-4 py-4">
+        {header.kind === 'task' ? (
+          <button
+            type="button"
+            data-testid="view-task-result"
+            onClick={() => {
+              // PRD §5.5: task notifications link back to the task result in
+              // chat. IM task channels derive the id from the channel name;
+              // mock task conversations carry it on the model.
+              const linkedTaskId =
+                header.taskId ??
+                (header.id.startsWith('whatseek-task-') ? header.id.slice('whatseek-task-'.length) : undefined);
+              if (linkedTaskId !== undefined) {
+                navigate(`/chat?taskId=${encodeURIComponent(linkedTaskId)}`);
+              }
+            }}
+            className="w-full rounded-2xl border border-border-subtle bg-panel px-3.5 py-2.5 text-sm text-brand"
+          >
+            {t('whatseek.messages.conversation.viewTask')}
+          </button>
+        ) : null}
         {allMessages.length === 0 ? (
           <ScreenState state="empty" titleKey="whatseek.messages.conversation.emptyTitle" />
         ) : (

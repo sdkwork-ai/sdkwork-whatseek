@@ -12,6 +12,7 @@
     "title": "Conversation",
     "emptyTitle": "No messages yet",
     "inputPlaceholder": "Type a message…",
-    "send": "Send"
+    "send": "Send",
+    "viewTask": "View task result"
   }
 }

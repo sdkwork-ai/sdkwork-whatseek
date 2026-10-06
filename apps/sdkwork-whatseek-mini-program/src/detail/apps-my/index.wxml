@@ -3,6 +3,11 @@
   <button class="my-create" size="mini" bindtap="onCreate">+ 创建</button>
 </view>
 
+<view class="my-tabs" role="tablist">
+  <view class="my-tab {{tab === 'created' ? 'my-tab-active' : ''}}" data-tab="created" bindtap="onTabSwitch">我的</view>
+  <view class="my-tab {{tab === 'favorites' ? 'my-tab-active' : ''}}" data-tab="favorites" bindtap="onTabSwitch">收藏</view>
+</view>
+
 <view wx:if="{{loading}}" class="state">加载中…</view>
 
 <view wx:elif="{{error}}" class="state">
@@ -11,26 +16,32 @@
   <button class="retry-btn" bindtap="onRetry">重试</button>
 </view>
 
-<view wx:elif="{{apps.length === 0}}" class="state">
+<view wx:elif="{{tab === 'created' && apps.length === 0}}" class="state">
   <view class="state-title">还没有创建过应用</view>
   <view class="state-desc">去对话页描述需求，或直接创建一个</view>
   <button class="retry-btn" bindtap="onCreate">创建应用</button>
 </view>
 
+<view wx:elif="{{tab === 'favorites' && favorites.length === 0}}" class="state">
+  <view class="state-title">还没有收藏的应用</view>
+  <view class="state-desc">在应用详情页点「收藏」，会出现在这里</view>
+</view>
+
 <block wx:else>
-  <view wx:for="{{apps}}" wx:key="id" class="panel my-item">
+  <view wx:for="{{tab === 'created' ? apps : favorites}}" wx:key="id" class="panel my-item">
     <view class="row">
       <view class="row-glyph">{{item.icon}}</view>
       <view class="my-main">
-        <view class="row-title">{{item.name}}</view>
+        <view class="row-title">{{item.name}}<text wx:if="{{item.versionLabel}}" class="my-version">{{item.versionLabel}}</text></view>
         <view class="row-desc">{{item.requirement}}</view>
       </view>
-      <view class="badge {{item.lifecycle === 'published' ? 'badge-published' : ''}}">{{item.lifecycleLabel}}</view>
+      <view wx:if="{{tab === 'created'}}" class="badge {{item.lifecycle === 'published' ? 'badge-published' : ''}}">{{item.lifecycleLabel}}</view>
     </view>
     <view class="my-actions">
       <button class="my-action my-action-brand" size="mini" data-id="{{item.id}}" bindtap="onRun">运行</button>
-      <button wx:if="{{item.lifecycle !== 'published'}}" class="my-action" size="mini" data-id="{{item.id}}" bindtap="onPublish">发布</button>
-      <button class="my-action my-action-danger" size="mini" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onDelete">删除</button>
+      <button wx:if="{{tab === 'created' && item.lifecycle !== 'published'}}" class="my-action" size="mini" data-id="{{item.id}}" bindtap="onPublish">发布</button>
+      <button wx:if="{{tab === 'favorites'}}" class="my-action" size="mini" data-id="{{item.id}}" bindtap="onToggleFavorite">取消收藏</button>
+      <button wx:if="{{tab === 'created'}}" class="my-action my-action-danger" size="mini" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onDelete">删除</button>
     </view>
   </view>
 </block>

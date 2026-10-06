@@ -4,5 +4,13 @@
   },
   "detail": {
     "sendMessage": "Message"
+  },
+  "segment": {
+    "all": "All",
+    "person": "Contacts",
+    "group": "Groups",
+    "org": "Business",
+    "agent": "Agent",
+    "assistant": "AI assistant"
   }
 }

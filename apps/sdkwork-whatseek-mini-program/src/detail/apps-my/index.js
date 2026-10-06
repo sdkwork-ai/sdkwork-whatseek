@@ -13,7 +13,9 @@ const LIFECYCLE_LABELS = {
 
 Page({
   data: {
+    tab: 'created',
     apps: [],
+    favorites: [],
     loading: true,
     error: '',
   },
@@ -22,18 +24,32 @@ Page({
     this.load();
   },
 
+  onTabSwitch(event) {
+    this.setData({ tab: event.currentTarget.dataset.tab });
+  },
+
   async load(options = {}) {
     const silent = options.silent === true;
     this.setData(silent ? { error: '' } : { loading: true, error: '' });
     try {
-      const apps = await appApi.apps.myApps();
+      const [apps, favorites] = await Promise.all([appApi.apps.myApps(), appApi.apps.favorites()]);
       this.setData({
-        apps: apps.map((app) => ({ ...app, lifecycleLabel: LIFECYCLE_LABELS[app.lifecycle] ?? app.lifecycle })),
+        apps: apps.map((app) => this.decorate(app)),
+        favorites: favorites.map((app) => this.decorate(app)),
         loading: false,
       });
     } catch (error) {
       this.setData({ loading: false, error: '加载失败，请稍后重试。' });
     }
+  },
+
+  decorate(app) {
+    const versions = Array.isArray(app.versions) ? app.versions : [];
+    return {
+      ...app,
+      lifecycleLabel: LIFECYCLE_LABELS[app.lifecycle] ?? app.lifecycle,
+      versionLabel: versions.length > 0 ? `v${versions[versions.length - 1]}` : '',
+    };
   },
 
   async onPullDownRefresh() {
@@ -47,6 +63,17 @@ Page({
 
   onCreate() {
     appApi.shell.navigate('/detail/apps-create/index');
+  },
+
+  async onToggleFavorite(event) {
+    const appId = event.currentTarget.dataset.id;
+    try {
+      const favorited = await appApi.apps.toggleFavorite(appId);
+      appApi.shell.toast(favorited ? '已收藏' : '已取消收藏');
+      await this.load({ silent: true });
+    } catch (error) {
+      appApi.shell.toast('操作失败，请重试');
+    }
   },
 
   onRun(event) {

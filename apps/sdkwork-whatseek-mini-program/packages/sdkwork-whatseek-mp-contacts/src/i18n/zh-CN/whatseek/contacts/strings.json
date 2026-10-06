@@ -4,5 +4,13 @@
   },
   "detail": {
     "sendMessage": "发消息"
+  },
+  "segment": {
+    "all": "全部",
+    "person": "联系人",
+    "group": "群组",
+    "org": "企业与商家",
+    "agent": "Agent",
+    "assistant": "AI 助手"
   }
 }

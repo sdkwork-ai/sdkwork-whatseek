@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 
 import { ScreenState } from '@sdkwork/whatseek-h5-commons';
 import { getWhatseekClient, useTabBadgeStore } from '@sdkwork/whatseek-h5-core';
@@ -30,6 +31,7 @@ export function ChatHomeScreen() {
   const setUnreadMessages = useTabBadgeStore((state) => state.setUnreadMessages);
   const { sending, submit } = useChatTurn();
   const [retryToken, setRetryToken] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const activeThread = threads.find((thread) => thread.id === activeThreadId) ?? null;
   const entries: ChatEntry[] = activeThread?.entries ?? [];
@@ -40,6 +42,34 @@ export function ChatHomeScreen() {
       bottomRef.current.scrollIntoView({ block: 'end' });
     }
   }, [entries.length, sending]);
+
+  useEffect(() => {
+    // PRD §5.5 deep link: a task notification in Messages navigates here with
+    // ?taskId=… — surface the task as a chat entry (result + state chip) once.
+    const linkedTaskId = searchParams.get('taskId');
+    if (linkedTaskId === null || linkedTaskId.length === 0) {
+      return;
+    }
+    setSearchParams({}, { replace: true });
+    if (activeTaskStates[linkedTaskId] !== undefined) {
+      return;
+    }
+    void getWhatseekClient('tasks')
+      .getTask(linkedTaskId)
+      .then((task) => {
+        if (task === null) {
+          return;
+        }
+        useChatStore.getState().setTaskState(task.id, task.state);
+        useChatStore.getState().addAssistantEntry({
+          text: task.resultSummary ?? task.title,
+          taskId: task.id,
+        });
+      })
+      .catch(() => undefined);
+    // Run once per mounted taskId — searchParams/setSearchParams are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     // Reconcile chip states after a reload: activeTaskStates is runtime-only,

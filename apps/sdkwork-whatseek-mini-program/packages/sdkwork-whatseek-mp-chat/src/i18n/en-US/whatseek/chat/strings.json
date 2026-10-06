@@ -31,5 +31,14 @@
     "actionTaskCancelled": "Task cancelled.",
     "actionTaskInactive": "This task is no longer awaiting confirmation.",
     "actionNavigated": "Done."
+  },
+  "task": {
+    "pending": "Pending",
+    "running": "Running",
+    "waiting_confirmation": "Needs confirmation",
+    "completed": "Completed",
+    "failed": "Failed",
+    "cancelled": "Cancelled",
+    "expired": "Expired"
   }
 }
