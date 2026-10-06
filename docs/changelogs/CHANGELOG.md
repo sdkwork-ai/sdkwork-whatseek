@@ -5,6 +5,54 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-07 — sdkwork-im family lands on PC, mini-program, and Flutter
+
+- **PC** (`apps/sdkwork-whatseek-pc`): the bootstrap composition root
+  (`src/bootstrap/sdkClients.ts`) constructs one composed `@sdkwork/im-sdk`
+  client (platform `pc`, one session TokenManager) when
+  `sdkworkImApiBaseUrl` is declared in `etc/browser/runtime-env.*.json`, and
+  injects it into `createImMessagesClient` / `createImContactsClient`
+  adapters in the messages and contacts capability packages — the same
+  narrow-gateway-slice pattern as H5. Component specs declare the family
+  (`sdkDependencies` at core, `sdkClients` at the feature packages); new
+  bootstrap driver test + 14 mirrored adapter tests.
+- **Mini-program** (`apps/sdkwork-whatseek-mini-program`): the WeChat runtime
+  has no fetch/WebSocket, so `sdkwork-whatseek-mp-core` grows typed
+  transport ports (`transport/miniProgramTransports.ts`): a `wx.request`
+  -backed fetch polyfill (Response surface + AbortController shim) and a
+  `wx.connectSocket`-backed realtime factory mapped onto the SDK's
+  addEventListener surface. Only `src/bootstrap/runtime.ts` touches `wx.*`;
+  the composed client activates from the runtime-env
+  `sdkworkImApiBaseUrl` key. The runtime bundle (`src/runtime/app.js`) is
+  now a git-ignored build product — `pnpm test` builds before testing —
+  keeping the consumer-import gate scanning authored source only. 31 tests
+  green (6 new transport-adapter tests).
+- **Flutter** (`apps/sdkwork-whatseek-flutter-mobile`): consumes the
+  generated Dart family through the composed `im_sdk_composed` facade
+  (sibling path pins in the app-root `dependency_overrides` plus capability
+  `pubspec_overrides.yaml`). Core grows `ContactsClient`/`MessagesClient`
+  port interfaces (`src/ports.dart`) implemented by both the mock clients
+  and the new IM adapters; `WhatseekRuntime.bindPorts` swaps drivers and
+  recomposes chat; env keys `SDKWORK_IM_API_BASE_URL` /
+  `SDKWORK_IM_WEB_SOCKET_BASE_URL` join all four dart-define profiles.
+  `flutter analyze` clean; 67 tests green (54 root + 13 adapter).
+- **Governance**: AGENTS.md SDK routing sections refreshed on all surfaces;
+  the copied HTTP-envelope normative bodies are replaced with router
+  references (agent/workflow standard green); the packaging workflow exposes
+  the four sibling dependency ref inputs with `dependency_refs_json`;
+  `im_sdk_composed` now re-exports the generated family (sdkwork-im
+  c15dde80).
+- Verification: `pnpm verify` green (check + typecheck + tests + H5 prod
+  build); `pnpm build:pc:dev` PASS; mini-program dev/staging/prod builds +
+  31 tests green; Flutter analyze + tests green; `check-sdk-standard`,
+  `check-app-sdk-consumer-imports`, `check-frontend-composition`,
+  `check-component-port-bindings`, API envelope + operation pattern checks,
+  `pnpm check` all pass; rendered visual regression of H5 (390×844:
+  chat/messages/contacts/profile) and PC (1440×900:
+  chat/messages/contacts) shows zero UI change (mock driver standalone
+  default). IAM login runtime remains the documented Phase-2 boundary
+  (credential seam ready, no gateway mounted in standalone profiles).
+
 ### 2026-10-03 — Shared mobile navbar lands in sdkwork-appbase; app shells reuse it
 
 - **`@sdkwork/shell-mobile-react` gains `SdkworkMobileNavBar`** (subpath
