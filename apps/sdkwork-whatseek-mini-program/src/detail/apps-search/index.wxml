@@ -1,20 +1,20 @@
 <view class="search-bar">
-  <input class="search-input" placeholder="搜索应用，或者直接告诉我你要做什么" value="{{query}}" bindinput="onQueryInput" confirm-type="search" bindconfirm="onSearch" focus />
-  <button class="search-btn" size="mini" bindtap="onSearch">搜索</button>
+  <input class="search-input" placeholder="{{t.home.searchPlaceholder}}" value="{{query}}" bindinput="onQueryInput" confirm-type="search" bindconfirm="onSearch" focus />
+  <button class="search-btn" size="mini" bindtap="onSearch">{{t.home.search}}</button>
 </view>
 
-<view wx:if="{{loading}}" class="state">搜索中…</view>
+<view wx:if="{{loading}}" class="state">{{t.search.searching}}</view>
 
 <view wx:elif="{{error}}" class="state">
-  <view class="state-title">搜索失败</view>
+  <view class="state-title">{{t.search.failed}}</view>
   <view class="state-desc">{{error}}</view>
-  <button class="retry-btn" bindtap="onRetry">重试</button>
+  <button class="retry-btn" bindtap="onRetry">{{c.state.retry}}</button>
 </view>
 
 <block wx:elif="{{searched && results.length === 0}}">
   <view class="state">
-    <view class="state-title">未找到相关应用</view>
-    <view class="state-desc">换个关键词试试，或者去对话页直接描述你的需求</view>
+    <view class="state-title">{{t.search.emptyTitle}}</view>
+    <view class="state-desc">{{t.search.emptyDesc}}</view>
   </view>
 </block>
 
@@ -24,7 +24,8 @@
     <view class="result-main">
       <view class="row-title">{{item.app.name}}</view>
       <view class="row-desc">{{item.app.summary}}</view>
-      <view class="row-reason">匹配：{{item.reason}}</view>
+      <view class="row-meta">{{item.app.category}} · ⭐ {{item.app.rating}} · {{item.app.usersLabel}} · {{item.app.priceLabel}}{{item.app.aiCapability ? ' · AI' : ''}}</view>
+      <view class="row-reason">{{t.search.matchedPrefix}}{{item.reason}}</view>
     </view>
     <view class="row-arrow">›</view>
   </view>

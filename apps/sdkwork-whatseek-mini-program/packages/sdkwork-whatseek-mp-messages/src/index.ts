@@ -27,6 +27,16 @@ export function setMessagesLocale(next: Locale): void {
   locale = next;
 }
 
+/** Widen JSON-import literal types to plain strings, keeping the key structure. */
+type WidenStrings<T> = T extends string ? string : { -readonly [K in keyof T]: WidenStrings<T[K]> };
+
+export type MessagesStrings = WidenStrings<typeof zhStrings>;
+
+/** Localized messages chrome strings for the current locale; pages bind this into `data`. */
+export function strings(): MessagesStrings {
+  return locale === 'en-US' ? enStrings : zhStrings;
+}
+
 function withResolvedTitle(conversation: Conversation): Conversation {
   const titleKey = conversation.titleKey;
   if (conversation.title !== undefined || titleKey === undefined) {

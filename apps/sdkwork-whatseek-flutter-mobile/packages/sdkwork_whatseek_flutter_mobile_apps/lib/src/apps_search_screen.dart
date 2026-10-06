@@ -139,6 +139,18 @@ class _AppsSearchScreenState extends State<AppsSearchScreen> {
               children: [
                 Text(recommendation.app.summary,
                     maxLines: 2, overflow: TextOverflow.ellipsis),
+                // REQ-0002 row coverage: category · users · AI marker.
+                Text(
+                  [
+                    recommendation.app.category,
+                    recommendation.app.usersLabel,
+                    if (recommendation.app.aiCapability)
+                      WhatseekAppsStrings.of(context, 'search.aiCapability'),
+                  ].where((part) => part.isNotEmpty).join(' · '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
                 const SizedBox(height: 2),
                 Text(
                   WhatseekAppsStrings.of(

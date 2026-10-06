@@ -1,15 +1,8 @@
 // 我的应用 — route id `app.whatseek.apps.my`. Lists created apps with
 // lifecycle badges and publish / run / delete actions (delete confirms first).
+// Lifecycle labels resolve through the localized `whatseek.apps.lifecycle.*`
+// fragments (key-aligned with the H5 apps fragments).
 const { appApi } = require('../../runtime/app.js');
-
-const LIFECYCLE_LABELS = {
-  draft: '草稿',
-  generating: '生成中',
-  preview: '预览',
-  published: '已发布',
-  updated: '已更新',
-  archived: '已归档',
-};
 
 Page({
   data: {
@@ -18,10 +11,17 @@ Page({
     favorites: [],
     loading: true,
     error: '',
+    t: {},
+    c: {},
   },
 
   onShow() {
+    this.applyStrings();
     this.load();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.apps.strings(), c: appApi.commons.strings() });
   },
 
   onTabSwitch(event) {
@@ -39,15 +39,16 @@ Page({
         loading: false,
       });
     } catch (error) {
-      this.setData({ loading: false, error: '加载失败，请稍后重试。' });
+      this.setData({ loading: false, error: appApi.commons.strings().state.loadFailedDesc });
     }
   },
 
   decorate(app) {
+    const lifecycle = appApi.apps.strings().lifecycle;
     const versions = Array.isArray(app.versions) ? app.versions : [];
     return {
       ...app,
-      lifecycleLabel: LIFECYCLE_LABELS[app.lifecycle] ?? app.lifecycle,
+      lifecycleLabel: lifecycle[app.lifecycle] ?? app.lifecycle,
       versionLabel: versions.length > 0 ? `v${versions[versions.length - 1]}` : '',
     };
   },
@@ -69,10 +70,10 @@ Page({
     const appId = event.currentTarget.dataset.id;
     try {
       const favorited = await appApi.apps.toggleFavorite(appId);
-      appApi.shell.toast(favorited ? '已收藏' : '已取消收藏');
+      appApi.shell.toast(favorited ? appApi.apps.strings().detail.addedToast : appApi.apps.strings().detail.removedToast);
       await this.load({ silent: true });
     } catch (error) {
-      appApi.shell.toast('操作失败，请重试');
+      appApi.shell.toast(appApi.commons.strings().action.failed);
     }
   },
 
@@ -85,28 +86,29 @@ Page({
     const appId = event.currentTarget.dataset.id;
     try {
       await appApi.apps.publish(appId);
-      appApi.shell.toast('已发布到应用市场');
+      appApi.shell.toast(appApi.apps.strings().my.publishedToast);
       this.load();
     } catch (error) {
-      appApi.shell.toast('发布失败，请重试');
+      appApi.shell.toast(appApi.apps.strings().my.publishFailedToast);
     }
   },
 
   onDelete(event) {
     const { id, name } = event.currentTarget.dataset;
+    const strings = appApi.apps.strings().my;
     wx.showModal({
-      title: '删除应用',
-      content: `确定删除「${name}」吗？删除后不可恢复。`,
-      confirmText: '删除',
+      title: strings.deleteTitle,
+      content: strings.deleteConfirm.replace('{name}', name),
+      confirmText: strings.delete,
       confirmColor: '#dc2626',
       success: async (res) => {
         if (!res.confirm) return;
         try {
           await appApi.apps.deleteMyApp(id);
-          appApi.shell.toast('已删除');
+          appApi.shell.toast(strings.deletedToast);
           this.load();
         } catch (error) {
-          appApi.shell.toast('删除失败，请重试');
+          appApi.shell.toast(strings.deleteFailedToast);
         }
       },
     });

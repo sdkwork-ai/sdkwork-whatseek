@@ -31,7 +31,7 @@ class ProfileHomeScreen extends StatefulWidget {
 }
 
 class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
-  late Future<(int, int, int, int)> _assets;
+  late Future<(int, int, int, int, int)> _assets;
   late SessionUser _user;
 
   @override
@@ -42,7 +42,7 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
     _assets = _loadAssets();
   }
 
-  Future<(int, int, int, int)> _loadAssets() async {
+  Future<(int, int, int, int, int)> _loadAssets() async {
     final runtime = WhatseekRuntime.instance;
     final conversations = await runtime.messages.listConversations();
     final myApps = await runtime.apps.listMyApps();
@@ -52,7 +52,15 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
             contact.kind == ContactKind.agent ||
             contact.kind == ContactKind.assistant)
         .length;
-    return (conversations.length, myApps.length, contacts.length, agents);
+    // REQ-0004 fifth asset (消息): total messages across the inbox; a
+    // server-side aggregate should replace the N+1 listing when app-api
+    // provides one.
+    var messages = 0;
+    for (final conversation in conversations) {
+      final thread = await runtime.messages.listMessages(conversation.id);
+      messages += thread.length;
+    }
+    return (conversations.length, myApps.length, contacts.length, agents, messages);
   }
 
   void _applyNext(SessionUser? next) {
@@ -107,10 +115,10 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
           ),
           ),
           const SizedBox(height: 24),
-          FutureBuilder<(int, int, int, int)>(
+          FutureBuilder<(int, int, int, int, int)>(
             future: _assets,
             builder: (context, snapshot) {
-              final assets = snapshot.data ?? (0, 0, 0, 0);
+              final assets = snapshot.data ?? (0, 0, 0, 0, 0);
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -126,6 +134,9 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
                   _AssetStat(
                       count: assets.$4,
                       label: WhatseekProfileStrings.of(context, 'home.asset.agents')),
+                  _AssetStat(
+                      count: assets.$5,
+                      label: WhatseekProfileStrings.of(context, 'home.asset.messages')),
                 ],
               );
             },

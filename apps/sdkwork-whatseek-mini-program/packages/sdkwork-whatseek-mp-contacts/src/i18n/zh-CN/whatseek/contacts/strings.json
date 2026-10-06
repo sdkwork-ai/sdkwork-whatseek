@@ -1,9 +1,21 @@
 {
   "home": {
-    "title": "通讯录"
+    "title": "通讯录",
+    "subtitle": "人、群、企业、供应商、Agent 与 AI 助手",
+    "searchPlaceholder": "搜索联系人、群聊或企业",
+    "search": "搜索",
+    "emptyTitle": "没有找到匹配的联系人",
+    "emptyDesc": "换个关键词试试"
   },
   "detail": {
-    "sendMessage": "发消息"
+    "sendMessage": "发消息",
+    "opening": "打开会话…",
+    "openFailedTitle": "无法打开联系人",
+    "openFailedToast": "会话打开失败，请重试",
+    "notFound": "联系人不存在或已删除。",
+    "bio": "简介",
+    "company": "公司",
+    "tags": "标签"
   },
   "segment": {
     "all": "全部",

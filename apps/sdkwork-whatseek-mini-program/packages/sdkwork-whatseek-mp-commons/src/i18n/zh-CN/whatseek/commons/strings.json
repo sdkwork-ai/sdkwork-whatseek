@@ -1,1 +1,11 @@
-{}
+{
+  "state": {
+    "loading": "加载中…",
+    "loadError": "加载失败",
+    "retry": "重试",
+    "loadFailedDesc": "加载失败，请稍后重试。"
+  },
+  "action": {
+    "failed": "操作失败，请重试"
+  }
+}

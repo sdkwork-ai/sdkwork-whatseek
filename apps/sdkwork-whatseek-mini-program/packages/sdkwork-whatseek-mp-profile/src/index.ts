@@ -1,10 +1,39 @@
 /**
  * Public export boundary of `@sdkwork/whatseek-mp-profile` — profile and
- * settings view models (asset summary, appearance, language).
+ * settings view models (asset summary, appearance, language). Static page
+ * chrome resolves through the package i18n fragments
+ * (`src/i18n/<locale>/whatseek/profile/strings.json`), zh-CN by default with
+ * en-US selected via `setProfileLocale`.
  */
 
 import type { SessionUser } from '@sdkwork/whatseek-service-core';
 import { getWhatseekClient } from '@sdkwork/whatseek-service-core';
+
+import enStrings from './i18n/en-US/whatseek/profile/strings.json';
+import zhStrings from './i18n/zh-CN/whatseek/profile/strings.json';
+
+/** Widen JSON-import literal types to plain strings, keeping the key structure. */
+type WidenStrings<T> = T extends string ? string : { -readonly [K in keyof T]: WidenStrings<T[K]> };
+
+export type ProfileStrings = WidenStrings<typeof zhStrings>;
+
+type Locale = 'zh-CN' | 'en-US';
+
+let stringsLocale: Locale = 'zh-CN';
+
+/**
+ * Switch the profile/settings chrome string locale (wired from
+ * `profile.setLocale` in the bootstrap composition root; keys mirror the H5
+ * `whatseek.profile.*` fragments where the same UI string exists).
+ */
+export function setProfileLocale(next: Locale): void {
+  stringsLocale = next;
+}
+
+/** Localized profile chrome strings for the current locale; pages bind this into `data`. */
+export function strings(): ProfileStrings {
+  return stringsLocale === 'en-US' ? enStrings : zhStrings;
+}
 
 export interface ProfileSummary {
   user: SessionUser | null;

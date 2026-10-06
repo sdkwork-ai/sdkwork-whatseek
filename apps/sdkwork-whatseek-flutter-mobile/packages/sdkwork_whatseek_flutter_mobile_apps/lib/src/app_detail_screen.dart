@@ -69,11 +69,12 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(app.name, style: Theme.of(context).textTheme.titleLarge),
-                        Text('${app.developer} · ${app.priceLabel}',
+                        Text('${app.developer} · ${app.category} · ${app.priceLabel}',
                             style: Theme.of(context).textTheme.bodySmall),
                         Text(
-                          WhatseekAppsStrings.of(
-                              context, 'detail.users', {'users': app.usersLabel}),
+                          '⭐ ${app.rating.toStringAsFixed(1)} · '
+                          '${WhatseekAppsStrings.of(context, 'detail.users', {'users': app.usersLabel})}'
+                          ' · ${app.updatedAt}',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -93,6 +94,38 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                   for (final tag in app.tags) Chip(label: Text(tag)),
                 ],
               ),
+              const SizedBox(height: 16),
+              // PRD §16 screenshots field — Phase-1 placeholder strip.
+              Text(WhatseekAppsStrings.of(context, 'detail.screenshots'),
+                  style: Theme.of(context).textTheme.titleSmall),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 112,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 3,
+                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  itemBuilder: (context, index) => Container(
+                    width: 80,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // PRD §16 permissions field.
+              Text(WhatseekAppsStrings.of(context, 'detail.permissions'),
+                  style: Theme.of(context).textTheme.titleSmall),
+              const SizedBox(height: 4),
+              if (app.permissions.isEmpty)
+                Text(WhatseekAppsStrings.of(context, 'detail.noPermissions'),
+                    style: Theme.of(context).textTheme.bodySmall)
+              else
+                for (final permission in app.permissions)
+                  Text('· $permission',
+                      style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => Navigator.of(context).pushNamed(

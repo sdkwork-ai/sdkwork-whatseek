@@ -26,6 +26,12 @@ import {
   type MiniProgramWebSocketPort,
 } from '@sdkwork/whatseek-mp-core';
 import { PAGE_TITLES, TAB_LABELS, TAB_PAGE_PATHS } from '@sdkwork/whatseek-mp-shell';
+import type { ChatStrings } from '@sdkwork/whatseek-mp-chat';
+import type { AppsStrings } from '@sdkwork/whatseek-mp-apps';
+import type { CommonsStrings } from '@sdkwork/whatseek-mp-commons';
+import type { ContactsStrings } from '@sdkwork/whatseek-mp-contacts';
+import type { MessagesStrings } from '@sdkwork/whatseek-mp-messages';
+import type { ProfileStrings } from '@sdkwork/whatseek-mp-profile';
 
 declare const __SDKWORK_RUNTIME_ENV__: MiniProgramRuntimeConfig;
 
@@ -50,6 +56,8 @@ export interface PageApi {
     send(text: string): Promise<{ replyText: string; cards: unknown; taskId?: string }>;
     runAction(action: unknown): Promise<string>;
     taskStatus(taskId: string): Promise<TaskView | null>;
+    /** Localized chat page chrome strings (`whatseek.chat.*` fragments). */
+    strings(): ChatStrings;
   };
   apps: {
     search(query: string): Promise<unknown[]>;
@@ -74,12 +82,16 @@ export interface PageApi {
     recents(): Promise<unknown[]>;
     hot(): Promise<unknown[]>;
     byCategory(categoryId: string): Promise<unknown[]>;
+    /** Localized app-center chrome strings (`whatseek.apps.*` fragments). */
+    strings(): AppsStrings;
   };
   contacts: {
     search(query: string): Promise<unknown[]>;
     detail(contactId: string): Promise<unknown>;
     /** Localized contact-kind label (`whatseek.contacts.segment.*`). */
     kindLabel(kind: string): string;
+    /** Localized contacts chrome strings (`whatseek.contacts.*` fragments). */
+    strings(): ContactsStrings;
   };
   messages: {
     conversations(): Promise<unknown[]>;
@@ -89,6 +101,8 @@ export interface PageApi {
     markRead(conversationId: string): Promise<void>;
     unread(): Promise<number>;
     openDirect(contactId: string): Promise<unknown>;
+    /** Localized messages chrome strings (`whatseek.messages.*` fragments). */
+    strings(): MessagesStrings;
   };
   profile: {
     summary(): Promise<unknown>;
@@ -103,6 +117,12 @@ export interface PageApi {
     };
     /** Persist the locale and switch the chat reply language in one call. */
     setLocale(locale: 'zh-CN' | 'en-US'): void;
+    /** Localized profile/settings chrome strings (`whatseek.profile.*` fragments). */
+    strings(): ProfileStrings;
+  };
+  commons: {
+    /** Localized shared state chrome strings (`whatseek.commons.*` fragments). */
+    strings(): CommonsStrings;
   };
   shell: {
     tabs: readonly string[];
@@ -201,6 +221,7 @@ export function bootstrapRuntime(): PageApi {
         return chat.runCardAction(action as Parameters<typeof chat.runCardAction>[0]);
       },
       taskStatus: (taskId) => chat.taskStatus(taskId),
+      strings: () => chat.strings(),
     },
     apps: {
       search: (query) => apps.searchApps(query),
@@ -224,11 +245,13 @@ export function bootstrapRuntime(): PageApi {
       recents: () => apps.listRecentApps(),
       hot: () => apps.listHotApps(),
       byCategory: (categoryId) => apps.listAppsByCategory(categoryId),
+      strings: () => apps.strings(),
     },
     contacts: {
       search: (query) => contacts.searchContacts(query),
       detail: (contactId) => contacts.getContact(contactId),
       kindLabel: (kind) => contacts.kindLabel(kind),
+      strings: () => contacts.strings(),
     },
     messages: {
       conversations: () => messages.listConversations(),
@@ -238,6 +261,7 @@ export function bootstrapRuntime(): PageApi {
       markRead: (conversationId) => messages.markRead(conversationId),
       unread: () => messages.unreadTotal(),
       openDirect: (contactId) => messages.openDirectConversation(contactId),
+      strings: () => messages.strings(),
     },
     profile: {
       summary: () => profile.loadProfileSummary(),
@@ -246,12 +270,19 @@ export function bootstrapRuntime(): PageApi {
       signOut: () => profile.signOut(),
       getAppearance: () => profile.getAppearanceSettings(),
       setAppearance: (next) => profile.setAppearanceSettings(next),
+      strings: () => profile.strings(),
       setLocale: (locale) => {
         profile.setAppearanceSettings({ locale });
         chat.setChatLocale(locale);
         contacts.setContactsLocale(locale);
         messages.setMessagesLocale(locale);
+        apps.setAppsLocale(locale);
+        profile.setProfileLocale(locale);
+        commons.setCommonsLocale(locale);
       },
+    },
+    commons: {
+      strings: () => commons.strings(),
     },
     shell: {
       tabs: TAB_PAGE_PATHS,

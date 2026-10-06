@@ -51,7 +51,9 @@ export function AppDetailScreen() {
         <Avatar glyph={app.icon} size="lg" />
         <div className="min-w-0 flex-1">
           <p className="text-base font-semibold text-primary">{app.name}</p>
-          <p className="mt-0.5 text-xs text-muted">{app.developer}</p>
+          <p className="mt-0.5 text-xs text-muted">
+            {app.developer} · {app.category}
+          </p>
           <p className="mt-1 flex items-center gap-2 text-xs text-secondary">
             <span className="flex items-center gap-0.5 text-warning">
               <Star aria-hidden="true" className="h-3 w-3 fill-current" />
@@ -85,7 +87,18 @@ export function AppDetailScreen() {
       </Card>
 
       <Card className="mt-3 p-4">
-        <h2 className="text-sm font-semibold text-primary">{t('whatseek.apps.detail.priceTitle')}</h2>
+        <h2 className="text-sm font-semibold text-primary">{t('whatseek.apps.detail.screenshots')}</h2>
+        {/* PRD §16 screenshots field — Phase-1 placeholder strip. */}
+        <div className="mt-2 flex gap-2 overflow-hidden">
+          {[0, 1, 2].map((index) => (
+            <div
+              key={index}
+              aria-hidden="true"
+              className="h-28 w-20 shrink-0 rounded-lg border border-border-subtle bg-panel-muted"
+            />
+          ))}
+        </div>
+        <h2 className="mt-3 text-sm font-semibold text-primary">{t('whatseek.apps.detail.priceTitle')}</h2>
         <p className="mt-1 text-sm text-secondary">{app.priceLabel}</p>
         <h2 className="mt-3 text-sm font-semibold text-primary">{t('whatseek.apps.detail.permissionsTitle')}</h2>
         {app.permissions.length > 0 ? (

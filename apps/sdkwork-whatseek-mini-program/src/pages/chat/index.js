@@ -2,6 +2,8 @@
 // this page layer only binds data and events (MINI_PROGRAM_APP_ARCHITECTURE_SPEC
 // §Packages vs platform pages). Assistant turns carry card views and an
 // optional task chip whose state refreshes through the shared TasksPort.
+// Static chrome strings bind through `appApi.chat.strings()` and re-apply in
+// onShow so a settings locale switch takes effect on the next visit.
 const { appApi } = require('../../runtime/app.js');
 
 Page({
@@ -9,10 +11,12 @@ Page({
     entries: [],
     input: '',
     sending: false,
-    suggestionKeys: ['帮我找一个视频剪辑工具', '帮我做一个库存管理系统', '给张三发消息，告诉他下午三点开会', '找一个支持定制的手机壳供应商'],
+    t: {},
+    suggestionKeys: [],
   },
 
   onShow() {
+    this.applyStrings();
     // PRD §5.5 deep link: a task notification in Messages parks the task id
     // in globalData (switchTab cannot carry params) — restore it as a chat
     // entry with its state chip.
@@ -43,9 +47,17 @@ Page({
           ],
         });
       } catch (error) {
-        appApi.shell.toast('任务加载失败，请重试');
+        appApi.shell.toast(appApi.chat.strings().page.taskLoadFailedToast);
       }
     })();
+  },
+
+  applyStrings() {
+    const t = appApi.chat.strings();
+    this.setData({
+      t,
+      suggestionKeys: [t.suggest.searchApp, t.suggest.createApp, t.suggest.sendMessage, t.suggest.searchSupplier],
+    });
   },
 
   onInput(event) {
@@ -78,7 +90,7 @@ Page({
       });
     } catch (error) {
       this.setData({
-        entries: [...entries, { role: 'assistant', text: '出了点问题，请重试。' }],
+        entries: [...entries, { role: 'assistant', text: appApi.chat.strings().reply.error }],
         sending: false,
       });
     }
@@ -101,7 +113,7 @@ Page({
       });
     } catch (error) {
       this.setData({
-        entries: [...this.data.entries, { role: 'assistant', text: '操作失败，请重试。' }],
+        entries: [...this.data.entries, { role: 'assistant', text: appApi.chat.strings().page.actionFailed }],
       });
     }
   },
@@ -118,7 +130,7 @@ Page({
       });
       await this.refreshTaskState(Number(entryindex));
     } catch (error) {
-      appApi.shell.toast('操作失败，请重试');
+      appApi.shell.toast(appApi.chat.strings().page.actionFailedToast);
     }
   },
 
@@ -136,7 +148,7 @@ Page({
         [`entries[${entryindex}].taskWaiting`]: task.state === 'waiting_confirmation',
       });
     } catch (error) {
-      appApi.shell.toast('任务状态获取失败');
+      appApi.shell.toast(appApi.chat.strings().page.taskStateFailedToast);
     }
   },
 

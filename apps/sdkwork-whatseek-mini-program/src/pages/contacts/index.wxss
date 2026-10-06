@@ -1,1 +1,14 @@
 .contact-main { flex: 1; min-width: 0; }
+
+.segs { display: flex; gap: 12rpx; padding: 8rpx 24rpx 4rpx; flex-wrap: wrap; }
+
+.seg {
+  font-size: 22rpx;
+  color: var(--sdk-color-text-secondary);
+  background: var(--sdk-color-surface-canvas);
+  border: 1rpx solid var(--sdk-color-border-subtle);
+  border-radius: 999rpx;
+  padding: 8rpx 24rpx;
+}
+
+.seg-active { color: #ffffff; background: var(--sdk-color-brand); border-color: var(--sdk-color-brand); }

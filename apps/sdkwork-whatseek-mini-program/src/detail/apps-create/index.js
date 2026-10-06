@@ -11,12 +11,21 @@ Page({
     step: 'input',
     working: false,
     error: '',
+    t: {},
   },
 
   onLoad(options) {
     if (typeof options.requirement === 'string' && options.requirement.length > 0) {
       this.setData({ requirement: options.requirement });
     }
+  },
+
+  onShow() {
+    this.applyStrings();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.apps.strings() });
   },
 
   onRequirementInput(event) {
@@ -34,9 +43,9 @@ Page({
     try {
       const app = await appApi.apps.modify(this.data.app.id, instruction);
       this.setData({ app, instruction: '', working: false });
-      appApi.shell.toast('已按指令更新应用');
+      appApi.shell.toast(appApi.apps.strings().create.modifiedToast);
     } catch (error) {
-      this.setData({ working: false, error: '修改失败，请重试。' });
+      this.setData({ working: false, error: appApi.apps.strings().create.modifyFailed });
     }
   },
 
@@ -44,7 +53,7 @@ Page({
     const requirement = this.data.requirement.trim();
     if (this.data.working) return;
     if (requirement.length === 0) {
-      this.setData({ error: '请先描述你想做的应用，再生成方案。' });
+      this.setData({ error: appApi.apps.strings().create.requirementRequired });
       return;
     }
     this.setData({ working: true, error: '' });
@@ -52,7 +61,7 @@ Page({
       const plan = await Promise.resolve(appApi.apps.draftPlan(requirement));
       this.setData({ plan, step: 'plan', working: false });
     } catch (error) {
-      this.setData({ working: false, error: '方案生成失败，请重试。' });
+      this.setData({ working: false, error: appApi.apps.strings().create.planFailed });
     }
   },
 
@@ -63,7 +72,7 @@ Page({
       const app = await appApi.apps.createFromPlan(this.data.requirement.trim(), this.data.plan.modules);
       this.setData({ app, step: 'created', working: false });
     } catch (error) {
-      this.setData({ working: false, error: '应用创建失败，请重试。' });
+      this.setData({ working: false, error: appApi.apps.strings().create.createFailed });
     }
   },
 
@@ -73,9 +82,9 @@ Page({
     try {
       const app = await appApi.apps.publish(this.data.app.id);
       this.setData({ app, working: false });
-      appApi.shell.toast('已发布到应用市场');
+      appApi.shell.toast(appApi.apps.strings().my.publishedToast);
     } catch (error) {
-      this.setData({ working: false, error: '发布失败，请重试。' });
+      this.setData({ working: false, error: appApi.apps.strings().create.publishFailed });
     }
   },
 

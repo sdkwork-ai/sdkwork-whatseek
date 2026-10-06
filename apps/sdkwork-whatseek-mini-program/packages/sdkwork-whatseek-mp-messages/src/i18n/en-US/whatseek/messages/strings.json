@@ -1,11 +1,21 @@
 {
   "home": {
     "title": "Messages",
-    "subtitle": "Chats, notifications, and AI task events in one place"
+    "subtitle": "Chats, notifications, and AI task events in one place",
+    "emptyTitle": "No conversations yet",
+    "emptyDesc": "Chat with the AI in Chat, or start a direct message from Contacts"
   },
   "kind": {
     "system": "System",
     "app": "App",
     "task": "AI task"
+  },
+  "conversation": {
+    "emptyTitle": "No messages yet",
+    "emptyDesc": "Send the first message to start the conversation",
+    "viewTask": "View task result",
+    "inputPlaceholder": "Type a message…",
+    "send": "Send",
+    "sendFailedToast": "Send failed. Please retry."
   }
 }

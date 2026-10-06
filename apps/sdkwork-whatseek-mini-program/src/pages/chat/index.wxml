@@ -1,8 +1,8 @@
 <scroll-view scroll-y class="thread" scroll-into-view="thread-bottom">
   <block wx:if="{{entries.length === 0}}">
     <view class="hero">
-      <view class="hero-title">你想做什么？</view>
-      <view class="hero-sub">告诉我就可以。</view>
+      <view class="hero-title">{{t.home.heroTitle}}</view>
+      <view class="hero-sub">{{t.home.heroSubtitle}}</view>
     </view>
     <view class="suggestions">
       <button
@@ -21,11 +21,11 @@
     <view wx:if="{{item.taskId}}" class="task-chip-row">
       <view class="chip" data-entryindex="{{entryIndex}}" bindtap="onTaskTap">
         <view class="chip-dot"></view>
-        <text>{{item.taskState || '任务已创建 · 点按查看状态'}}</text>
+        <text>{{item.taskState || t.page.taskCreatedHint}}</text>
       </view>
       <view wx:if="{{item.taskWaiting}}" class="task-actions">
-        <button class="task-action task-action-confirm" size="mini" data-kind="confirm" data-entryindex="{{entryIndex}}" bindtap="onTaskAction">确认完成</button>
-        <button class="task-action task-action-cancel" size="mini" data-kind="cancel" data-entryindex="{{entryIndex}}" bindtap="onTaskAction">取消任务</button>
+        <button class="task-action task-action-confirm" size="mini" data-kind="confirm" data-entryindex="{{entryIndex}}" bindtap="onTaskAction">{{t.taskAction.confirm}}</button>
+        <button class="task-action task-action-cancel" size="mini" data-kind="cancel" data-entryindex="{{entryIndex}}" bindtap="onTaskAction">{{t.taskAction.cancel}}</button>
       </view>
     </view>
 
@@ -35,11 +35,11 @@
         <view class="plan-modules">
           <view wx:for="{{item.cards.plan.modules}}" wx:for-item="mod" wx:key="*this" class="plan-module">✓ {{mod}}</view>
         </view>
-        <button class="btn-brand" data-kind="generate" data-entryindex="{{entryIndex}}" bindtap="onAction">直接生成</button>
+        <button class="btn-brand" data-kind="generate" data-entryindex="{{entryIndex}}" bindtap="onAction">{{t.card.generateNow}}</button>
       </view>
 
       <view class="panel card" wx:if="{{item.cards.sendMessage}}">
-        <view class="row-title">发送给 {{item.cards.sendMessage.contactName}}：</view>
+        <view class="row-title">{{t.card.sendToPrefix}} {{item.cards.sendMessage.contactName}}{{t.card.sendToSuffix}}</view>
         <view class="draft">{{item.cards.sendMessage.draft}}</view>
         <button
           class="btn-brand"
@@ -48,8 +48,8 @@
           data-contactname="{{item.cards.sendMessage.contactName}}"
           data-draft="{{item.cards.sendMessage.draft}}"
           bindtap="onAction"
-        >确认发送</button>
-        <view class="confirm-note">涉及对外发送，需要你明确确认后才会执行。</view>
+        >{{t.card.confirmSend}}</button>
+        <view class="confirm-note">{{t.card.confirmNote}}</view>
       </view>
 
       <view class="panel card" wx:if="{{item.cards.apps.length > 0}}">
@@ -57,9 +57,9 @@
           <view class="app-main">
             <view class="row-title">{{app.name}}</view>
             <view class="row-desc">{{app.summary}}</view>
-            <view class="app-reason">匹配 {{app.reason}} · {{app.priceLabel}}</view>
+            <view class="app-reason">{{t.card.matched}}{{app.reason}} · {{app.priceLabel}}{{app.aiCapability ? ' · ' + t.card.aiCapability : ''}}</view>
           </view>
-          <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">使用</navigator>
+          <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">{{t.card.use}}</navigator>
         </view>
       </view>
 
@@ -74,7 +74,7 @@
       </view>
 
       <view class="panel card" wx:if="{{item.cards.commerce}}">
-        <view class="row-title">{{item.cards.commerce.domain}} · 为你找到</view>
+        <view class="row-title">{{item.cards.commerce.domain}} · {{t.card.commerceFound}}</view>
         <view wx:for="{{item.cards.commerce.items}}" wx:for-item="item2" wx:key="id" class="row">
           <view class="app-main">
             <view class="row-title">{{item2.title}}</view>
@@ -86,7 +86,7 @@
     </block>
   </block>
 
-  <view wx:if="{{sending}}" class="bubble bubble-ai">问寻正在思考…</view>
+  <view wx:if="{{sending}}" class="bubble bubble-ai">{{t.home.thinking}}</view>
   <view id="thread-bottom"></view>
 </scroll-view>
 
@@ -94,10 +94,10 @@
   <input
     class="composer-input"
     value="{{input}}"
-    placeholder="输入消息……"
+    placeholder="{{t.home.inputPlaceholder}}"
     bindinput="onInput"
     confirm-type="send"
     bindconfirm="onSend"
   />
-  <button class="composer-send" size="mini" bindtap="onSend" disabled="{{sending}}">发送</button>
+  <button class="composer-send" size="mini" bindtap="onSend" disabled="{{sending}}">{{t.home.send}}</button>
 </view>

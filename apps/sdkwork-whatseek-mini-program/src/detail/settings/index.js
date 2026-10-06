@@ -8,10 +8,12 @@ Page({
     locale: 'zh-CN',
     systemTheme: 'light',
     version: '0.1.0',
+    t: {},
   },
 
   onLoad() {
     this.setData({ locale: appApi.profile.getAppearance().locale });
+    this.applyStrings();
     this.applySystemTheme();
     this.onThemeChanged = (result) => {
       this.applySystemTheme(result.theme);
@@ -19,6 +21,14 @@ Page({
     if (typeof wx.onThemeChange === 'function') {
       wx.onThemeChange(this.onThemeChanged);
     }
+  },
+
+  onShow() {
+    this.applyStrings();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.profile.strings() });
   },
 
   onUnload() {
@@ -45,6 +55,7 @@ Page({
     if (locale !== 'zh-CN' && locale !== 'en-US') return;
     appApi.profile.setLocale(locale);
     this.setData({ locale });
-    appApi.shell.toast(locale === 'zh-CN' ? '已切换为中文' : 'Switched to English');
+    const settings = appApi.profile.strings().settings;
+    appApi.shell.toast(locale === 'zh-CN' ? settings.switchedToZh : settings.switchedToEn);
   },
 });

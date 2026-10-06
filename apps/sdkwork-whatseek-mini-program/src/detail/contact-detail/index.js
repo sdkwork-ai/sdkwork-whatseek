@@ -9,6 +9,8 @@ Page({
     loading: true,
     error: '',
     opening: false,
+    t: {},
+    c: {},
   },
 
   onLoad(options) {
@@ -16,17 +18,25 @@ Page({
     this.load();
   },
 
+  onShow() {
+    this.applyStrings();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.contacts.strings(), c: appApi.commons.strings() });
+  },
+
   async load() {
     this.setData({ loading: true, error: '' });
     try {
       const contact = await appApi.contacts.detail(this.contactId);
       if (contact === null) {
-        this.setData({ loading: false, error: '联系人不存在或已删除。' });
+        this.setData({ loading: false, error: appApi.contacts.strings().detail.notFound });
         return;
       }
       this.setData({ contact, kindLabel: appApi.contacts.kindLabel(contact.kind), loading: false });
     } catch (error) {
-      this.setData({ loading: false, error: '加载失败，请稍后重试。' });
+      this.setData({ loading: false, error: appApi.commons.strings().state.loadFailedDesc });
     }
   },
 
@@ -43,7 +53,7 @@ Page({
       wx.redirectTo({ url: `/detail/conversation/index?conversationId=${conversation.id}` });
     } catch (error) {
       this.setData({ opening: false });
-      appApi.shell.toast('会话打开失败，请重试');
+      appApi.shell.toast(appApi.contacts.strings().detail.openFailedToast);
     }
   },
 });

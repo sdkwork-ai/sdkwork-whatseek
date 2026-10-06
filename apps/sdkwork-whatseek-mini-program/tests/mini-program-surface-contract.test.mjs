@@ -105,7 +105,13 @@ test('list_pages_support_pull_down_refresh_and_forms_show_validation_messages', 
     assert.match(js, /stopPullDownRefresh/u, `${page} must stop pull-down refresh`);
   }
   const createJs = readFileSync(path.join(surfaceRoot, 'src', 'detail/apps-create/index.js'), 'utf8');
-  assert.match(createJs, /请先描述/u, 'create form must show a validation message for empty requirement');
+  // The validation message is locale-aware: the page wires the fragment key and
+  // the zh-CN fragment carries the actual message (APP_MINI_PROGRAM_UI_SPEC §7).
+  assert.match(createJs, /create\.requirementRequired/u, 'create form must show a validation message for empty requirement');
+  const appsZh = JSON.parse(
+    readFileSync(path.join(surfaceRoot, 'packages', 'sdkwork-whatseek-mp-apps', 'src', 'i18n', 'zh-CN', 'whatseek', 'apps', 'strings.json'), 'utf8'),
+  );
+  assert.match(appsZh.create.requirementRequired, /请先描述/u, 'create validation fragment must keep the zh message');
 });
 
 test('native_dark_mode_is_wired_through_theme_json_with_locale_parity', () => {

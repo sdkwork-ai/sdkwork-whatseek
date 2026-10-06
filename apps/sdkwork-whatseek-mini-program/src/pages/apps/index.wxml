@@ -1,23 +1,23 @@
 <view class="apps-head">
-  <view class="page-title">应用中心</view>
-  <button class="apps-create" size="mini" bindtap="onCreate">+ 创建</button>
+  <view class="page-title">{{t.home.title}}</view>
+  <button class="apps-create" size="mini" bindtap="onCreate">+ {{t.home.create}}</button>
 </view>
 
 <view class="search-bar">
-  <input class="search-input" placeholder="搜索应用，或者直接告诉我你要做什么" value="{{query}}" bindinput="onQueryInput" confirm-type="search" bindconfirm="onSearch" />
-  <button class="search-btn" size="mini" bindtap="onSearch">搜索</button>
+  <input class="search-input" placeholder="{{t.home.searchPlaceholder}}" value="{{query}}" bindinput="onQueryInput" confirm-type="search" bindconfirm="onSearch" />
+  <button class="search-btn" size="mini" bindtap="onSearch">{{t.home.search}}</button>
 </view>
 
 <view class="cats">
   <view wx:for="{{categories}}" wx:key="id" class="cat" data-id="{{item.id}}" bindtap="onCategoryTap">{{item.icon}} {{item.id}}</view>
 </view>
 
-<view wx:if="{{loading}}" class="state">加载中…</view>
+<view wx:if="{{loading}}" class="state">{{c.state.loading}}</view>
 
 <view wx:elif="{{error}}" class="state">
-  <view class="state-title">加载失败</view>
+  <view class="state-title">{{c.state.loadError}}</view>
   <view class="state-desc">{{error}}</view>
-  <button class="retry-btn" bindtap="onRetry">重试</button>
+  <button class="retry-btn" bindtap="onRetry">{{c.state.retry}}</button>
 </view>
 
 <block wx:else>
@@ -25,8 +25,8 @@
     <view class="row apps-entry" bindtap="onMyApps">
       <view class="row-glyph">🧩</view>
       <view class="apps-entry-main">
-        <view class="row-title">我的应用</view>
-        <view class="row-desc">管理你创建和收藏的应用</view>
+        <view class="row-title">{{t.home.myApps}}</view>
+        <view class="row-desc">{{t.home.myAppsDesc}}</view>
       </view>
       <view class="row-arrow">›</view>
     </view>
@@ -46,7 +46,7 @@
       </swiper-item>
     </swiper>
 
-    <view wx:if="{{feed.stories.length > 0}}" class="page-sub">今日精选</view>
+    <view wx:if="{{feed.stories.length > 0}}" class="page-sub">{{t.home.stories}}</view>
     <scroll-view wx:if="{{feed.stories.length > 0}}" scroll-x class="feed-strip">
       <view wx:for="{{feed.stories}}" wx:key="id" class="feed-story" data-appid="{{item.appId}}" bindtap="onStoryTap">
         <view class="feed-story-icon">{{item.icon}}</view>
@@ -55,7 +55,7 @@
       </view>
     </scroll-view>
 
-    <view wx:if="{{feed.collections.length > 0}}" class="page-sub">编辑精选</view>
+    <view wx:if="{{feed.collections.length > 0}}" class="page-sub">{{t.home.collections}}</view>
     <scroll-view wx:if="{{feed.collections.length > 0}}" scroll-x class="feed-strip">
       <view wx:for="{{feed.collections}}" wx:key="id" class="feed-collection" data-id="{{item.id}}" bindtap="onCollectionTap">
         <view class="feed-collection-title">{{item.title}}</view>
@@ -67,7 +67,7 @@
     </scroll-view>
   </block>
 
-  <view class="page-sub">推荐应用 · 共 {{recommended.length}} 个</view>
+  <view class="page-sub">{{t.home.recommended}} · {{t.home.countPrefix}}{{recommended.length}}{{t.home.countSuffix}}</view>
   <view class="panel">
     <view wx:for="{{recommended}}" wx:key="id" class="row">
       <view class="row-glyph">{{item.icon}}</view>
@@ -75,41 +75,41 @@
         <view class="row-title">{{item.name}}</view>
         <view class="row-desc">{{item.summary}}</view>
       </view>
-      <navigator class="app-use" url="/detail/apps-detail/index?appId={{item.id}}">详情</navigator>
+      <navigator class="app-use" url="/detail/apps-detail/index?appId={{item.id}}">{{t.row.detail}}</navigator>
     </view>
   </view>
 
-  <view wx:if="{{hot.length > 0}}" class="page-sub">热门应用</view>
+  <view wx:if="{{hot.length > 0}}" class="page-sub">{{t.home.hot}}</view>
   <view wx:if="{{hot.length > 0}}" class="panel">
     <view wx:for="{{hot}}" wx:key="id" class="row">
       <view class="row-glyph">{{item.icon}}</view>
       <view class="app-main">
         <view class="row-title">{{item.name}}</view>
-        <view class="row-desc">{{item.usersLabel}} 在用 · {{item.priceLabel}}</view>
+        <view class="row-desc">{{item.usersLabel}} {{t.tile.inUse}} · {{item.priceLabel}}</view>
       </view>
-      <navigator class="app-use" url="/detail/apps-detail/index?appId={{item.id}}">详情</navigator>
+      <navigator class="app-use" url="/detail/apps-detail/index?appId={{item.id}}">{{t.row.detail}}</navigator>
     </view>
   </view>
 
   <block wx:if="{{feed && feed.charts.length > 0}}">
-    <view class="page-sub">榜单速览</view>
+    <view class="page-sub">{{t.home.charts}}</view>
     <view wx:for="{{feed.charts}}" wx:key="id" class="panel feed-chart">
       <view class="feed-chart-head">
-        <view class="feed-chart-title">{{item.id === 'hot' ? '热门榜' : item.id === 'free' ? '免费榜' : '新品榜'}}</view>
-        <view class="feed-chart-more" bindtap="onCharts">查看完整榜单 ›</view>
+        <view class="feed-chart-title">{{t.chart[item.id]}}</view>
+        <view class="feed-chart-more" bindtap="onCharts">{{t.home.chartsMore}} ›</view>
       </view>
       <view wx:for="{{item.apps}}" wx:for-item="app" wx:key="id" class="row">
         <view class="row-glyph">{{app.icon}}</view>
         <view class="app-main">
           <view class="row-title">{{app.name}}</view>
-          <view class="row-desc">{{app.usersLabel}} 在用 · {{app.priceLabel}}</view>
+          <view class="row-desc">{{app.usersLabel}} {{t.tile.inUse}} · {{app.priceLabel}}</view>
         </view>
-        <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">详情</navigator>
+        <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">{{t.row.detail}}</navigator>
       </view>
     </view>
   </block>
 
-  <view wx:if="{{recents.length > 0}}" class="page-sub">最近使用</view>
+  <view wx:if="{{recents.length > 0}}" class="page-sub">{{t.home.recent}}</view>
   <view wx:if="{{recents.length > 0}}" class="panel">
     <view wx:for="{{recents}}" wx:key="id" class="row">
       <view class="row-glyph">{{item.icon}}</view>
@@ -117,7 +117,7 @@
         <view class="row-title">{{item.name}}</view>
         <view class="row-desc">{{item.summary}}</view>
       </view>
-      <navigator class="app-use" url="/detail/apps-detail/index?appId={{item.id}}">详情</navigator>
+      <navigator class="app-use" url="/detail/apps-detail/index?appId={{item.id}}">{{t.row.detail}}</navigator>
     </view>
   </view>
 </block>

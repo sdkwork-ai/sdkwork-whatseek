@@ -49,6 +49,16 @@ export function kindLabel(kind: string): string {
   return KIND_LABELS[locale][kind] ?? kind;
 }
 
+/** Widen JSON-import literal types to plain strings, keeping the key structure. */
+type WidenStrings<T> = T extends string ? string : { -readonly [K in keyof T]: WidenStrings<T[K]> };
+
+export type ContactsStrings = WidenStrings<typeof zhStrings>;
+
+/** Localized contacts chrome strings for the current locale; pages bind this into `data`. */
+export function strings(): ContactsStrings {
+  return locale === 'en-US' ? enStrings : zhStrings;
+}
+
 export {
   createImContactsClient,
   type ImContactsClientOptions,

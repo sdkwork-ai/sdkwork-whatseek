@@ -1,9 +1,9 @@
-<view wx:if="{{loading}}" class="state">加载中…</view>
+<view wx:if="{{loading}}" class="state">{{c.state.loading}}</view>
 
 <view wx:elif="{{error}}" class="state">
-  <view class="state-title">无法打开应用</view>
+  <view class="state-title">{{t.detail.openFailedTitle}}</view>
   <view class="state-desc">{{error}}</view>
-  <button class="retry-btn" bindtap="onRetry">重试</button>
+  <button class="retry-btn" bindtap="onRetry">{{c.state.retry}}</button>
 </view>
 
 <view wx:elif="{{app}}" class="detail">
@@ -11,17 +11,28 @@
     <view class="detail-icon">{{app.icon}}</view>
     <view>
       <view class="row-title">{{app.name}}</view>
-      <view class="row-desc">{{app.developer}} · {{app.priceLabel}} · ⭐ {{app.rating}}</view>
+      <view class="row-desc">{{app.developer}} · {{app.category}} · {{app.priceLabel}} · ⭐ {{app.rating}}</view>
+      <view class="row-desc">{{app.usersLabel}} {{t.detail.users}} · {{t.detail.updated}} {{app.updatedAt}}</view>
     </view>
   </view>
   <view class="detail-tags">
+    <view wx:if="{{app.aiCapability}}" class="badge badge-ai">{{t.detail.aiCapability}}</view>
     <view wx:for="{{app.tags}}" wx:key="*this" class="badge">{{item}}</view>
   </view>
   <view class="panel detail-card">
-    <view class="row-desc">{{app.summary}}</view>
+    <view class="detail-section-title">{{t.detail.screenshots}}</view>
+    <view class="detail-shots">
+      <view class="detail-shot"></view>
+      <view class="detail-shot"></view>
+      <view class="detail-shot"></view>
+    </view>
+    <view class="detail-section-title">{{app.priceLabel}}</view>
+    <view class="detail-section-title">{{t.detail.permissions}}</view>
+    <view wx:if="{{app.permissions.length === 0}}" class="row-desc">{{t.detail.noPermissions}}</view>
+    <view wx:for="{{app.permissions}}" wx:key="*this" class="row-desc">· {{item}}</view>
   </view>
-  <button class="btn-brand detail-btn" bindtap="onUse">立即使用</button>
+  <button class="btn-brand detail-btn" bindtap="onUse">{{t.detail.use}}</button>
   <button class="detail-fav {{favorite ? 'detail-fav-active' : ''}}" disabled="{{favoriting}}" bindtap="onFavorite">
-    {{favorite ? '★ 已收藏' : '☆ 收藏'}}{{favoriting ? '…' : ''}}
+    {{favorite ? '★ ' + t.detail.favorited : '☆ ' + t.detail.favorite}}{{favoriting ? '…' : ''}}
   </button>
 </view>

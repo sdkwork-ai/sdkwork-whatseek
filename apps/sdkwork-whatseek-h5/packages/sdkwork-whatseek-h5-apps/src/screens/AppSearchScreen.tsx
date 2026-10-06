@@ -72,7 +72,16 @@ export function AppSearchScreen() {
                   key={app.id}
                   leading={<Avatar glyph={app.icon} />}
                   title={app.name}
-                  description={app.summary}
+                  description={
+                    <>
+                      <span className="block truncate">{app.summary}</span>
+                      {/* REQ-0002 row coverage: category · rating · users · price · AI. */}
+                      <span className="mt-0.5 block truncate text-[0.6875rem] text-muted">
+                        {app.category} · ⭐ {app.rating.toFixed(1)} · {app.usersLabel} · {app.priceLabel}
+                        {app.aiCapability ? ` · ${t('whatseek.apps.search.aiCapability')}` : ''}
+                      </span>
+                    </>
+                  }
                   trailing={
                     <span className="shrink-0 rounded-full bg-brand-soft px-2 py-0.5 text-[0.625rem] text-brand">
                       {t('whatseek.apps.search.matchedOn', { keyword: reason })}

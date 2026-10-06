@@ -1,12 +1,12 @@
-<view class="page-title">我的</view>
-<view class="page-sub">你负责问，AI 负责寻</view>
+<view class="page-title">{{t.home.title}}</view>
+<view class="page-sub">{{t.home.brand}}</view>
 
-<view wx:if="{{loading}}" class="state">加载中…</view>
+<view wx:if="{{loading}}" class="state">{{c.state.loading}}</view>
 
 <view wx:elif="{{error}}" class="state">
-  <view class="state-title">加载失败</view>
+  <view class="state-title">{{c.state.loadError}}</view>
   <view class="state-desc">{{error}}</view>
-  <button class="retry-btn" bindtap="onRetry">重试</button>
+  <button class="retry-btn" bindtap="onRetry">{{c.state.retry}}</button>
 </view>
 
 <block wx:else>
@@ -14,33 +14,33 @@
     <view class="avatar">{{summary.user.avatar}}</view>
     <view class="profile-main">
       <view class="row-title">{{summary.user.name}}</view>
-      <view class="row-desc">{{summary.user.isVisitor ? '登录后同步你的数字资产' : '欢迎回来'}}</view>
+      <view class="row-desc">{{summary.user.isVisitor ? t.home.visitorHint : t.home.welcomeBack}}</view>
     </view>
-    <button wx:if="{{summary.user.isVisitor}}" class="session-pill session-pill-brand" size="mini" bindtap="onSignIn">登录</button>
-    <button wx:else class="session-pill" size="mini" bindtap="onSignOut">退出登录</button>
+    <button wx:if="{{summary.user.isVisitor}}" class="session-pill session-pill-brand" size="mini" bindtap="onSignIn">{{t.home.signIn}}</button>
+    <button wx:else class="session-pill" size="mini" bindtap="onSignOut">{{t.home.signOut}}</button>
   </view>
 
   <view class="panel">
-    <view class="row"><view class="stat">{{summary.chats}}</view><view class="stat-label">对话</view></view>
-    <view class="row"><view class="stat">{{summary.apps}}</view><view class="stat-label">应用</view></view>
-    <view class="row"><view class="stat">{{summary.agents}}</view><view class="stat-label">Agent</view></view>
-    <view class="row"><view class="stat">{{summary.contacts}}</view><view class="stat-label">联系人</view></view>
+    <view class="row"><view class="stat">{{summary.chats}}</view><view class="stat-label">{{t.home.asset.chats}}</view></view>
+    <view class="row"><view class="stat">{{summary.apps}}</view><view class="stat-label">{{t.home.asset.apps}}</view></view>
+    <view class="row"><view class="stat">{{summary.agents}}</view><view class="stat-label">{{t.home.asset.agents}}</view></view>
+    <view class="row"><view class="stat">{{summary.contacts}}</view><view class="stat-label">{{t.home.asset.contacts}}</view></view>
   </view>
 
   <view class="panel">
     <view class="row" bindtap="onMyApps">
       <view class="row-glyph">🧩</view>
       <view class="profile-row-main">
-        <view class="row-title">我的应用</view>
-        <view class="row-desc">管理你创建和收藏的应用</view>
+        <view class="row-title">{{t.home.myApps}}</view>
+        <view class="row-desc">{{t.home.myAppsDesc}}</view>
       </view>
       <view class="row-arrow">›</view>
     </view>
     <view class="row" bindtap="onSettings">
       <view class="row-glyph">⚙️</view>
       <view class="profile-row-main">
-        <view class="row-title">设置</view>
-        <view class="row-desc">深色模式、语言与关于</view>
+        <view class="row-title">{{t.home.settings}}</view>
+        <view class="row-desc">{{t.home.settingsDesc}}</view>
       </view>
       <view class="row-arrow">›</view>
     </view>

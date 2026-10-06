@@ -5,6 +5,25 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-07 — Final PRD P1 closes; five P2 conformance gaps shut
+
+- **Mini-program chrome i18n (last P1)**: every page's static strings are
+  locale-aware through per-capability `strings()` accessors wired into the
+  settings locale switch; zh chrome byte-identical, en mirrors H5. Native
+  tabBar labels stay the documented platform boundary.
+- **Profile fifth asset (消息)** joins 对话/应用/Agent/联系人 on all four
+  surfaces (REQ-0004).
+- **Search rows** gain the full REQ-0002 coverage line (category · rating ·
+  users · price · AI) on every surface; **app details** gain category +
+  screenshots placeholder everywhere and close the Flutter/MP-specific gaps
+  (rating/updated/permissions; users/updated/permissions/AI badge).
+- **Chat recommendation cards** carry the AI capability marker on all four
+  surfaces; **mini-program contacts** gains the six-segment kind filter.
+- REQ-2026-0005 backlog shrinks to two P2s (我的应用 edit/share entry;
+  generation plan page/data-model artifacts).
+- Verification: `pnpm verify` green; mp 31 tests; Flutter analyze clean +
+  54 root + 13 apps tests; standards gates + `pnpm check` green.
+
 ### 2026-10-07 — Appstore home feed lands on PC, mini-program, and Flutter (PRD §4/§5.1)
 
 The 编辑流 home feed (hero carousel → 今日精选 → 编辑精选 → 为你推荐 →

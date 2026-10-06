@@ -53,6 +53,8 @@ export function ChatCardView({
                       <p className="mt-0.5 text-xs text-muted">{app.summary}</p>
                       <p className="mt-1 text-[0.625rem] text-brand">
                         {t('whatseek.chat.card.recommendReason', { keyword: reason })} · {app.priceLabel}
+                        {/* PRD §5.1 recommendation coverage: AI capability marker. */}
+                        {app.aiCapability ? ` · ${t('whatseek.chat.card.aiCapability')}` : ''}
                       </p>
                     </div>
                     <div className="flex shrink-0 flex-col gap-1">

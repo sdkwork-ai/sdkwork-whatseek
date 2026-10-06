@@ -1,23 +1,23 @@
 <!-- 第 1 步：需求输入 -->
 <block wx:if="{{step === 'input'}}">
-  <view class="page-title">描述你想做的应用</view>
-  <view class="page-sub">一句话说明用途、对象和关键功能，AI 会生成创建方案</view>
+  <view class="page-title">{{t.create.inputTitle}}</view>
+  <view class="page-sub">{{t.create.inputDesc}}</view>
   <view class="panel create-panel">
-    <textarea class="create-input" value="{{requirement}}" bindinput="onRequirementInput" maxlength="200" placeholder="例如：给门店做一个库存管理系统，支持出入库和盘点" auto-height />
+    <textarea class="create-input" value="{{requirement}}" bindinput="onRequirementInput" maxlength="200" placeholder="{{t.create.placeholder}}" auto-height />
   </view>
   <view wx:if="{{error}}" class="state-desc create-error">{{error}}</view>
   <view class="create-actions">
-    <button class="btn-brand create-btn" disabled="{{working}}" bindtap="onDraftPlan">{{working ? '生成中…' : '生成创建方案'}}</button>
+    <button class="btn-brand create-btn" disabled="{{working}}" bindtap="onDraftPlan">{{working ? t.create.planning : t.create.planAction}}</button>
   </view>
 </block>
 
 <!-- 第 2 步：方案确认 -->
 <block wx:elif="{{step === 'plan'}}">
-  <view class="page-title">创建方案</view>
+  <view class="page-title">{{t.create.planTitle}}</view>
   <view class="panel create-panel">
-    <view class="row"><view class="row-title">应用名称</view><view class="plan-value">{{plan.title}}</view></view>
+    <view class="row"><view class="row-title">{{t.create.appNameLabel}}</view><view class="plan-value">{{plan.title}}</view></view>
     <view class="row plan-modules-row">
-      <view class="row-title">功能模块</view>
+      <view class="row-title">{{t.create.modulesLabel}}</view>
       <view class="plan-modules">
         <view wx:for="{{plan.modules}}" wx:key="*this" class="chip">{{item}}</view>
       </view>
@@ -25,20 +25,20 @@
   </view>
   <view wx:if="{{error}}" class="state-desc create-error">{{error}}</view>
   <view class="create-actions">
-    <button class="btn-brand create-btn" disabled="{{working}}" bindtap="onCreate">{{working ? '创建中…' : '创建应用'}}</button>
-    <button class="btn-ghost create-btn" bindtap="onRestart">重新描述</button>
+    <button class="btn-brand create-btn" disabled="{{working}}" bindtap="onCreate">{{working ? t.create.creating : t.create.createAction}}</button>
+    <button class="btn-ghost create-btn" bindtap="onRestart">{{t.create.redescribe}}</button>
   </view>
 </block>
 
 <!-- 第 3 步：创建结果 -->
 <block wx:elif="{{step === 'created'}}">
-  <view class="page-title">应用已创建</view>
+  <view class="page-title">{{t.create.createdTitle}}</view>
   <view class="panel create-panel created-card">
     <view class="created-head">
       <view class="created-icon">{{app.icon}}</view>
       <view>
         <view class="row-title">{{app.name}}</view>
-        <view class="created-life {{app.lifecycle === 'published' ? 'badge-published' : ''}}">{{app.lifecycle === 'published' ? '已发布' : '草稿'}}</view>
+        <view class="created-life {{app.lifecycle === 'published' ? 'badge-published' : ''}}">{{app.lifecycle === 'published' ? t.lifecycle.published : t.lifecycle.draft}}</view>
       </view>
     </view>
     <view class="plan-modules">
@@ -47,12 +47,12 @@
   </view>
   <view wx:if="{{error}}" class="state-desc create-error">{{error}}</view>
   <view class="panel create-panel create-modify-panel">
-    <input class="create-modify-input" value="{{instruction}}" bindinput="onInstructionInput" maxlength="100" placeholder="追加修改指令，例如：增加订单管理" confirm-type="done" />
-    <button class="create-modify-btn" size="mini" disabled="{{working || !instruction}}" bindtap="onModify">修改</button>
+    <input class="create-modify-input" value="{{instruction}}" bindinput="onInstructionInput" maxlength="100" placeholder="{{t.create.modifyPlaceholder}}" confirm-type="done" />
+    <button class="create-modify-btn" size="mini" disabled="{{working || !instruction}}" bindtap="onModify">{{t.create.modifyAction}}</button>
   </view>
   <view class="create-actions">
-    <button wx:if="{{app.lifecycle !== 'published'}}" class="btn-brand create-btn" disabled="{{working}}" bindtap="onPublish">{{working ? '发布中…' : '发布到应用市场'}}</button>
-    <button class="btn-ghost create-btn" bindtap="onRun">立即运行</button>
-    <button class="btn-ghost create-btn" bindtap="onRestart">再创建一个</button>
+    <button wx:if="{{app.lifecycle !== 'published'}}" class="btn-brand create-btn" disabled="{{working}}" bindtap="onPublish">{{working ? t.create.publishing : t.create.publishAction}}</button>
+    <button class="btn-ghost create-btn" bindtap="onRun">{{t.create.runAction}}</button>
+    <button class="btn-ghost create-btn" bindtap="onRestart">{{t.create.createAnother}}</button>
   </view>
 </block>

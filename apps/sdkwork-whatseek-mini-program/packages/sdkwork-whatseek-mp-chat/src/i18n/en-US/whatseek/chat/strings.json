@@ -1,4 +1,39 @@
 {
+  "home": {
+    "heroTitle": "What do you want to do?",
+    "heroSubtitle": "Just tell me.",
+    "inputPlaceholder": "Type a message…",
+    "send": "Send",
+    "thinking": "WhatSeek is thinking…"
+  },
+  "suggest": {
+    "searchApp": "Find me a video editing tool",
+    "createApp": "Build me an inventory management system",
+    "sendMessage": "Message Zhang San about the 3 pm meeting",
+    "searchSupplier": "Find a supplier for custom phone cases"
+  },
+  "taskAction": {
+    "confirm": "Confirm completion",
+    "cancel": "Cancel task"
+  },
+  "card": {
+    "generateNow": "Generate now",
+    "sendToPrefix": "Send to",
+    "sendToSuffix": ":",
+    "confirmSend": "Confirm send",
+    "confirmNote": "This sends content externally — it only runs after you confirm.",
+    "matched": "matches ",
+    "use": "Use",
+    "commerceFound": "Found for you",
+    "aiCapability": "AI-powered"
+  },
+  "page": {
+    "taskCreatedHint": "Task created · tap to check status",
+    "actionFailed": "Action failed. Please retry.",
+    "actionFailedToast": "Action failed. Please retry",
+    "taskLoadFailedToast": "Failed to load the task. Please retry",
+    "taskStateFailedToast": "Failed to fetch the task status"
+  },
   "reply": {
     "searchAppFound": "I found apps that fit:",
     "searchAppNotFoundCreate": "No existing app matched — I can create one for you:",

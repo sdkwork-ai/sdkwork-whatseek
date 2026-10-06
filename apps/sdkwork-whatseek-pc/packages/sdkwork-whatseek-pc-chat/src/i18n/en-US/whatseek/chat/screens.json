@@ -45,7 +45,8 @@
       "supplier": "Supplier results (commerce preview)",
       "service": "Service results (commerce preview)"
     },
-    "commerceNote": "Full supply-demand network and inquiries arrive in Phase 2"
+    "commerceNote": "Full supply-demand network and inquiries arrive in Phase 2",
+    "aiCapability": "AI-powered"
   },
   "reply": {
     "searchApp": {

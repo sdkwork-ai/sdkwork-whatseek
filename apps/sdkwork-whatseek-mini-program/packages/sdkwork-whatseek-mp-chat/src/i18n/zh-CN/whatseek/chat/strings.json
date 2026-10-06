@@ -1,4 +1,39 @@
 {
+  "home": {
+    "heroTitle": "你想做什么？",
+    "heroSubtitle": "告诉我就可以。",
+    "inputPlaceholder": "输入消息……",
+    "send": "发送",
+    "thinking": "问寻正在思考…"
+  },
+  "suggest": {
+    "searchApp": "帮我找一个视频剪辑工具",
+    "createApp": "帮我做一个库存管理系统",
+    "sendMessage": "给张三发消息，告诉他下午三点开会",
+    "searchSupplier": "找一个支持定制的手机壳供应商"
+  },
+  "taskAction": {
+    "confirm": "确认完成",
+    "cancel": "取消任务"
+  },
+  "card": {
+    "generateNow": "直接生成",
+    "sendToPrefix": "发送给",
+    "sendToSuffix": "：",
+    "confirmSend": "确认发送",
+    "confirmNote": "涉及对外发送，需要你明确确认后才会执行。",
+    "matched": "匹配 ",
+    "use": "使用",
+    "commerceFound": "为你找到",
+    "aiCapability": "AI 能力"
+  },
+  "page": {
+    "taskCreatedHint": "任务已创建 · 点按查看状态",
+    "actionFailed": "操作失败，请重试。",
+    "actionFailedToast": "操作失败，请重试",
+    "taskLoadFailedToast": "任务加载失败，请重试",
+    "taskStateFailedToast": "任务状态获取失败"
+  },
   "reply": {
     "searchAppFound": "找到适合你的应用：",
     "searchAppNotFoundCreate": "没有找到现成的应用 —— 我可以直接帮你创建一个：",

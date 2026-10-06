@@ -11,7 +11,8 @@
       "chats": "Chats",
       "apps": "Apps",
       "contacts": "Contacts",
-      "agents": "Agents"
+      "agents": "Agents",
+      "messages": "Messages"
     },
     "myApps": "My apps",
     "myAppsHint": "View, edit, and share apps you created",

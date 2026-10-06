@@ -1,9 +1,121 @@
 {
   "home": {
     "title": "应用中心",
-    "searchPlaceholder": "搜索应用，或者直接告诉我你要做什么"
+    "searchPlaceholder": "搜索应用，或者直接告诉我你要做什么",
+    "create": "创建",
+    "search": "搜索",
+    "myApps": "我的应用",
+    "myAppsDesc": "管理你创建和收藏的应用",
+    "stories": "今日精选",
+    "collections": "编辑精选",
+    "recommended": "推荐应用",
+    "countPrefix": "共 ",
+    "countSuffix": " 个",
+    "hot": "热门应用",
+    "charts": "榜单速览",
+    "chartsMore": "查看完整榜单",
+    "recent": "最近使用"
+  },
+  "chart": {
+    "hot": "热门榜",
+    "free": "免费榜",
+    "new": "新品榜"
+  },
+  "row": {
+    "detail": "详情"
+  },
+  "tile": {
+    "inUse": "在用"
   },
   "detail": {
-    "use": "立即使用"
+    "use": "立即使用",
+    "openFailedTitle": "无法打开应用",
+    "notFound": "应用不存在或已下架。",
+    "favorite": "收藏",
+    "favorited": "已收藏",
+    "addedToast": "已收藏",
+    "removedToast": "已取消收藏",
+    "users": "在用",
+    "updated": "更新于",
+    "screenshots": "截图预览",
+    "aiCapability": "AI 能力",
+    "permissions": "所需权限",
+    "noPermissions": "未声明敏感权限"
+  },
+  "search": {
+    "searching": "搜索中…",
+    "failed": "搜索失败",
+    "failedDesc": "搜索失败，请检查网络后重试。",
+    "emptyTitle": "未找到相关应用",
+    "emptyDesc": "换个关键词试试，或者去对话页直接描述你的需求",
+    "matchedPrefix": "匹配："
+  },
+  "my": {
+    "title": "我的应用",
+    "createdTab": "我的",
+    "favoritesTab": "收藏",
+    "emptyCreatedTitle": "还没有创建过应用",
+    "emptyCreatedDesc": "去对话页描述需求，或直接创建一个",
+    "createAction": "创建应用",
+    "emptyFavoritesTitle": "还没有收藏的应用",
+    "emptyFavoritesDesc": "在应用详情页点「收藏」，会出现在这里",
+    "run": "运行",
+    "publish": "发布",
+    "unfavorite": "取消收藏",
+    "delete": "删除",
+    "deleteTitle": "删除应用",
+    "deleteConfirm": "确定删除「{name}」吗？删除后不可恢复。",
+    "deletedToast": "已删除",
+    "deleteFailedToast": "删除失败，请重试",
+    "publishedToast": "已发布到应用市场",
+    "publishFailedToast": "发布失败，请重试"
+  },
+  "lifecycle": {
+    "draft": "草稿",
+    "generating": "生成中",
+    "preview": "预览",
+    "published": "已发布",
+    "updated": "已更新",
+    "archived": "已归档"
+  },
+  "create": {
+    "inputTitle": "描述你想做的应用",
+    "inputDesc": "一句话说明用途、对象和关键功能，AI 会生成创建方案",
+    "placeholder": "例如：给门店做一个库存管理系统，支持出入库和盘点",
+    "planning": "生成中…",
+    "planAction": "生成创建方案",
+    "planTitle": "创建方案",
+    "appNameLabel": "应用名称",
+    "modulesLabel": "功能模块",
+    "creating": "创建中…",
+    "createAction": "创建应用",
+    "redescribe": "重新描述",
+    "createdTitle": "应用已创建",
+    "modifyPlaceholder": "追加修改指令，例如：增加订单管理",
+    "modifyAction": "修改",
+    "publishing": "发布中…",
+    "publishAction": "发布到应用市场",
+    "runAction": "立即运行",
+    "createAnother": "再创建一个",
+    "requirementRequired": "请先描述你想做的应用，再生成方案。",
+    "planFailed": "方案生成失败，请重试。",
+    "createFailed": "应用创建失败，请重试。",
+    "modifyFailed": "修改失败，请重试。",
+    "publishFailed": "发布失败，请重试。",
+    "modifiedToast": "已按指令更新应用"
+  },
+  "runner": {
+    "opening": "正在打开应用…",
+    "deniedTitle": "需要企业身份",
+    "deniedPrefix": "「",
+    "deniedSuffix": "」是企业应用，访客身份无法打开。请使用企业账号登录后再试。",
+    "back": "返回",
+    "openFailed": "应用打开失败，请稍后重试。",
+    "running": "运行中",
+    "sandbox": "沙箱预览",
+    "note": "正式版将在云端沙箱中运行真实应用，当前为 Phase 1 预览。"
+  },
+  "collection": {
+    "notFound": "合集不存在"
   }
 }

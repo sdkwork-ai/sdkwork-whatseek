@@ -5,3 +5,17 @@
 .detail-btn { margin: 24rpx 24rpx; }
 .detail-fav { text-align: center; color: var(--sdk-color-text-secondary); font-size: 26rpx; padding: 12rpx; }
 .detail-fav-active { color: var(--sdk-color-brand); }
+
+.badge-ai { color: var(--sdk-color-brand); border-color: var(--sdk-color-brand); }
+
+.detail-section-title { font-size: 28rpx; font-weight: 600; color: var(--sdk-color-text-primary); margin-top: 20rpx; }
+
+.detail-shots { display: flex; gap: 12rpx; margin-top: 12rpx; }
+
+.detail-shot {
+  width: 160rpx;
+  height: 224rpx;
+  border-radius: 16rpx;
+  background: var(--sdk-color-surface-canvas);
+  border: 1rpx solid var(--sdk-color-border-subtle);
+}

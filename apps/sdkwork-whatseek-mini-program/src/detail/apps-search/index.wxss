@@ -1,2 +1,4 @@
 .result-main { flex: 1; min-width: 0; }
 .row-reason { margin-top: 6rpx; font-size: 22rpx; color: var(--sdk-color-brand); }
+
+.row-meta { font-size: 20rpx; color: var(--sdk-color-text-muted); margin-top: 2rpx; }

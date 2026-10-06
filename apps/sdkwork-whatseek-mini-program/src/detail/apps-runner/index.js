@@ -10,6 +10,8 @@ Page({
     loading: true,
     error: '',
     denied: false,
+    t: {},
+    c: {},
   },
 
   onLoad(options) {
@@ -17,12 +19,20 @@ Page({
     this.load();
   },
 
+  onShow() {
+    this.applyStrings();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.apps.strings(), c: appApi.commons.strings() });
+  },
+
   async load() {
     this.setData({ loading: true, error: '', denied: false });
     try {
       const app = await appApi.apps.detail(this.appId);
       if (app === null) {
-        this.setData({ loading: false, error: '应用不存在或已下架。' });
+        this.setData({ loading: false, error: appApi.apps.strings().detail.notFound });
         return;
       }
       if (app.kind === 'enterprise' && appApi.profile.getSession().isVisitor) {
@@ -35,7 +45,7 @@ Page({
       await appApi.apps.open(app.id);
       this.setData({ app, loading: false });
     } catch (error) {
-      this.setData({ loading: false, error: '应用打开失败，请稍后重试。' });
+      this.setData({ loading: false, error: appApi.apps.strings().runner.openFailed });
     }
   },
 

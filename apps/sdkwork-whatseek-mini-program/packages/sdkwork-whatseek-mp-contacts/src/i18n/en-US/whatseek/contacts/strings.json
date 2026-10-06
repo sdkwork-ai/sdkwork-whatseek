@@ -1,9 +1,21 @@
 {
   "home": {
-    "title": "Contacts"
+    "title": "Contacts",
+    "subtitle": "People, groups, businesses, suppliers, agents, and AI assistants",
+    "searchPlaceholder": "Search contacts, groups, or businesses",
+    "search": "Search",
+    "emptyTitle": "No matching contacts",
+    "emptyDesc": "Try a different keyword"
   },
   "detail": {
-    "sendMessage": "Message"
+    "sendMessage": "Message",
+    "opening": "Opening chat…",
+    "openFailedTitle": "Cannot open this contact",
+    "openFailedToast": "Failed to open the conversation. Please retry.",
+    "notFound": "This contact does not exist or was deleted.",
+    "bio": "Bio",
+    "company": "Company",
+    "tags": "Tags"
   },
   "segment": {
     "all": "All",

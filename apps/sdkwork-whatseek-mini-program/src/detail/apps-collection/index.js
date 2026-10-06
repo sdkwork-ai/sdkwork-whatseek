@@ -8,11 +8,21 @@ Page({
     apps: [],
     loading: true,
     error: '',
+    t: {},
+    c: {},
   },
 
   onLoad(options) {
     this.collectionId = typeof options.collectionId === 'string' ? options.collectionId : '';
     this.load();
+  },
+
+  onShow() {
+    this.applyStrings();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.apps.strings(), c: appApi.commons.strings() });
   },
 
   async load(options = {}) {
@@ -24,12 +34,12 @@ Page({
         appApi.apps.collectionApps(this.collectionId),
       ]);
       if (collection === null) {
-        this.setData({ loading: false, error: '合集不存在' });
+        this.setData({ loading: false, error: appApi.apps.strings().collection.notFound });
         return;
       }
       this.setData({ collection, apps, loading: false });
     } catch (error) {
-      this.setData({ loading: false, error: '加载失败，请稍后重试。' });
+      this.setData({ loading: false, error: appApi.commons.strings().state.loadFailedDesc });
     }
   },
 

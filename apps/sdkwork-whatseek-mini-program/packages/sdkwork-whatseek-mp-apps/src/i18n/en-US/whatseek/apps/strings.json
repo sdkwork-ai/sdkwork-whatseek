@@ -1,9 +1,121 @@
 {
   "home": {
     "title": "App Center",
-    "searchPlaceholder": "Search apps, or just tell me what you need"
+    "searchPlaceholder": "Search apps, or just tell me what you need",
+    "create": "Create",
+    "search": "Search",
+    "myApps": "My apps",
+    "myAppsDesc": "Manage apps you created or favorited",
+    "stories": "Today",
+    "collections": "Collections",
+    "recommended": "Recommended",
+    "countPrefix": "",
+    "countSuffix": " in total",
+    "hot": "Popular apps",
+    "charts": "Charts",
+    "chartsMore": "See all charts",
+    "recent": "Recently used"
+  },
+  "chart": {
+    "hot": "Popular",
+    "free": "Top Free",
+    "new": "New Releases"
+  },
+  "row": {
+    "detail": "Details"
+  },
+  "tile": {
+    "inUse": "users"
   },
   "detail": {
-    "use": "Use now"
+    "use": "Use now",
+    "openFailedTitle": "Cannot open this app",
+    "notFound": "This app does not exist or has been removed.",
+    "favorite": "Favorite",
+    "favorited": "Favorited",
+    "addedToast": "Added to favorites",
+    "removedToast": "Removed from favorites",
+    "users": "users",
+    "updated": "Updated",
+    "screenshots": "Screenshots",
+    "aiCapability": "AI-powered",
+    "permissions": "Required permissions",
+    "noPermissions": "No sensitive permissions declared"
+  },
+  "search": {
+    "searching": "Searching…",
+    "failed": "Search failed",
+    "failedDesc": "Search failed. Check your network and try again.",
+    "emptyTitle": "No matching apps",
+    "emptyDesc": "Try another keyword, or describe what you need in Chat",
+    "matchedPrefix": "Matches: "
+  },
+  "my": {
+    "title": "My apps",
+    "createdTab": "Mine",
+    "favoritesTab": "Favorites",
+    "emptyCreatedTitle": "No apps created yet",
+    "emptyCreatedDesc": "Describe what you need in Chat, or create one directly",
+    "createAction": "Create an app",
+    "emptyFavoritesTitle": "No favorites yet",
+    "emptyFavoritesDesc": "Tap \"Favorite\" on an app's detail page and it shows up here",
+    "run": "Run",
+    "publish": "Publish",
+    "unfavorite": "Unfavorite",
+    "delete": "Delete",
+    "deleteTitle": "Delete app",
+    "deleteConfirm": "Delete \"{name}\"? This cannot be undone.",
+    "deletedToast": "Deleted",
+    "deleteFailedToast": "Delete failed. Please retry.",
+    "publishedToast": "Published to the app store",
+    "publishFailedToast": "Publish failed. Please retry."
+  },
+  "lifecycle": {
+    "draft": "Draft",
+    "generating": "Generating",
+    "preview": "Preview",
+    "published": "Published",
+    "updated": "Updated",
+    "archived": "Archived"
+  },
+  "create": {
+    "inputTitle": "Describe the app you want",
+    "inputDesc": "One sentence about the purpose, audience, and key features — AI drafts the creation plan",
+    "placeholder": "e.g. an inventory system for my store with stock in/out and counting",
+    "planning": "Planning…",
+    "planAction": "Generate plan",
+    "planTitle": "Creation plan",
+    "appNameLabel": "App name",
+    "modulesLabel": "Modules",
+    "creating": "Creating…",
+    "createAction": "Create app",
+    "redescribe": "Rephrase",
+    "createdTitle": "App created",
+    "modifyPlaceholder": "Add an instruction, e.g. add order management",
+    "modifyAction": "Apply",
+    "publishing": "Publishing…",
+    "publishAction": "Publish to the app store",
+    "runAction": "Run now",
+    "createAnother": "Create another",
+    "requirementRequired": "Describe the app you want first, then generate the plan.",
+    "planFailed": "Plan generation failed. Please retry.",
+    "createFailed": "App creation failed. Please retry.",
+    "modifyFailed": "Modify failed. Please retry.",
+    "publishFailed": "Publish failed. Please retry.",
+    "modifiedToast": "App updated with your instruction"
+  },
+  "runner": {
+    "opening": "Opening app…",
+    "deniedTitle": "Enterprise sign-in required",
+    "deniedPrefix": "\"",
+    "deniedSuffix": "\" is an enterprise app. Sign in with an enterprise account and try again.",
+    "back": "Back",
+    "openFailed": "Failed to open the app. Please try again later.",
+    "running": "Running",
+    "sandbox": "Sandbox preview",
+    "note": "The production version runs the real app in a cloud sandbox — this is the Phase 1 preview."
+  },
+  "collection": {
+    "notFound": "Collection not found"
   }
 }

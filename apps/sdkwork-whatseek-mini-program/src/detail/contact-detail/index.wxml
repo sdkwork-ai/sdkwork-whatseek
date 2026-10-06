@@ -1,9 +1,9 @@
-<view wx:if="{{loading}}" class="state">加载中…</view>
+<view wx:if="{{loading}}" class="state">{{c.state.loading}}</view>
 
 <view wx:elif="{{error}}" class="state">
-  <view class="state-title">无法打开联系人</view>
+  <view class="state-title">{{t.detail.openFailedTitle}}</view>
   <view class="state-desc">{{error}}</view>
-  <button class="retry-btn" bindtap="onRetry">重试</button>
+  <button class="retry-btn" bindtap="onRetry">{{c.state.retry}}</button>
 </view>
 
 <block wx:elif="{{contact}}">
@@ -14,10 +14,10 @@
   </view>
 
   <view class="panel">
-    <view class="row"><view class="row-title">简介</view><view class="contact-value">{{contact.bio}}</view></view>
-    <view wx:if="{{contact.company}}" class="row"><view class="row-title">公司</view><view class="contact-value">{{contact.company}}</view></view>
+    <view class="row"><view class="row-title">{{t.detail.bio}}</view><view class="contact-value">{{contact.bio}}</view></view>
+    <view wx:if="{{contact.company}}" class="row"><view class="row-title">{{t.detail.company}}</view><view class="contact-value">{{contact.company}}</view></view>
     <view class="row contact-tags-row">
-      <view class="row-title">标签</view>
+      <view class="row-title">{{t.detail.tags}}</view>
       <view class="contact-tags">
         <view wx:for="{{contact.tags}}" wx:key="*this" class="badge">{{item}}</view>
       </view>
@@ -25,6 +25,6 @@
   </view>
 
   <view class="contact-actions">
-    <button class="btn-brand contact-btn" disabled="{{opening}}" bindtap="onSendMessage">{{opening ? '打开会话…' : '发消息'}}</button>
+    <button class="btn-brand contact-btn" disabled="{{opening}}" bindtap="onSendMessage">{{opening ? t.detail.opening : t.detail.sendMessage}}</button>
   </view>
 </block>

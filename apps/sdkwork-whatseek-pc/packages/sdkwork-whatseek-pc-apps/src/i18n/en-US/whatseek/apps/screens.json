@@ -36,7 +36,8 @@
     "emptyTitle": "No suitable app found",
     "emptyDescription": "That's fine — tell WhatSeek what you need and AI can create one for you.",
     "createFallback": "Nothing fits?",
-    "createFallbackAction": "Let AI create one"
+    "createFallbackAction": "Let AI create one",
+    "aiCapability": "AI-powered"
   },
   "detail": {
     "title": "App details",
@@ -48,7 +49,8 @@
     "use": "Use now",
     "createFrom": "Create from this",
     "favorite": "Favorite",
-    "favorited": "Favorited"
+    "favorited": "Favorited",
+    "screenshots": "Screenshots"
   },
   "runner": {
     "title": "Run app",

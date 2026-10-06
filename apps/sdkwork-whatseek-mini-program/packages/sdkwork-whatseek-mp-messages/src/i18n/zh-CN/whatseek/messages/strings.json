@@ -1,11 +1,21 @@
 {
   "home": {
     "title": "消息",
-    "subtitle": "私聊、通知与 AI 任务事件都在这里"
+    "subtitle": "私聊、通知与 AI 任务事件都在这里",
+    "emptyTitle": "还没有会话",
+    "emptyDesc": "去对话页和 AI 聊聊，或从通讯录发起私聊"
   },
   "kind": {
     "system": "系统通知",
     "app": "应用通知",
     "task": "AI 任务"
+  },
+  "conversation": {
+    "emptyTitle": "还没有消息",
+    "emptyDesc": "发送第一条消息开始对话",
+    "viewTask": "查看任务结果",
+    "inputPlaceholder": "输入消息……",
+    "send": "发送",
+    "sendFailedToast": "发送失败，请重试"
   }
 }

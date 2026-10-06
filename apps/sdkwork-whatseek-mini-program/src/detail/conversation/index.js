@@ -12,12 +12,22 @@ Page({
     loading: true,
     error: '',
     sending: false,
+    t: {},
+    c: {},
   },
 
   onLoad(options) {
     const conversationId = typeof options.conversationId === 'string' ? options.conversationId : '';
     this.setData({ conversationId });
     this.load(conversationId);
+  },
+
+  onShow() {
+    this.applyStrings();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.messages.strings(), c: appApi.commons.strings() });
   },
 
   async load(conversationId) {
@@ -40,7 +50,7 @@ Page({
         loading: false,
       });
     } catch (error) {
-      this.setData({ loading: false, error: '加载失败，请稍后重试。' });
+      this.setData({ loading: false, error: appApi.commons.strings().state.loadFailedDesc });
     }
   },
 
@@ -69,7 +79,7 @@ Page({
       this.setData({ messages: [...this.data.messages, message], input: '', sending: false });
     } catch (error) {
       this.setData({ sending: false });
-      appApi.shell.toast('发送失败，请重试');
+      appApi.shell.toast(appApi.messages.strings().conversation.sendFailedToast);
     }
   },
 });

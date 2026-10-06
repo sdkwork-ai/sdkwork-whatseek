@@ -7,10 +7,17 @@ Page({
     summary: null,
     loading: true,
     error: '',
+    t: {},
+    c: {},
   },
 
   onShow() {
+    this.applyStrings();
     this.load();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.profile.strings(), c: appApi.commons.strings() });
   },
 
   async load() {
@@ -19,7 +26,7 @@ Page({
       const summary = await appApi.profile.summary();
       this.setData({ summary, loading: false });
     } catch (error) {
-      this.setData({ loading: false, error: '加载失败，请稍后重试。' });
+      this.setData({ loading: false, error: appApi.commons.strings().state.loadFailedDesc });
     }
   },
 
@@ -37,13 +44,13 @@ Page({
 
   async onSignIn() {
     appApi.profile.signIn();
-    appApi.shell.toast('已登录');
+    appApi.shell.toast(appApi.profile.strings().home.signedInToast);
     this.load();
   },
 
   async onSignOut() {
     appApi.profile.signOut();
-    appApi.shell.toast('已退出登录');
+    appApi.shell.toast(appApi.profile.strings().home.signedOutToast);
     this.load();
   },
 });

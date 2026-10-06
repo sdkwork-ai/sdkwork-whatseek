@@ -3,6 +3,42 @@
     "title": "Me",
     "visitor": "Visitor",
     "brand": "You ask, AI seeks",
-    "agents": "Agents"
+    "agents": "Agents",
+    "visitorHint": "Sign in to sync your digital assets",
+    "welcomeBack": "Welcome back",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "asset": {
+      "chats": "Chats",
+      "apps": "Apps",
+      "agents": "Agents",
+      "contacts": "Contacts"
+    },
+    "myApps": "My apps",
+    "myAppsDesc": "Manage apps you created or favorited",
+    "settings": "Settings",
+    "settingsDesc": "Dark mode, language, and about",
+    "signedInToast": "Signed in",
+    "signedOutToast": "Signed out"
+  },
+  "settings": {
+    "title": "Settings",
+    "darkMode": "Dark mode",
+    "followSystemPrefix": "Follows WeChat's dark mode setting (currently: ",
+    "followSystemSuffix": ")",
+    "mode": {
+      "dark": "Dark",
+      "light": "Light"
+    },
+    "language": "Language",
+    "languageHint": "Switch the language of AI chat replies",
+    "localeZh": "简体中文",
+    "localeEn": "English",
+    "brandTitle": "WhatSeek",
+    "brandMessage": "You ask, AI seeks. Version ",
+    "routeContractTitle": "Cross-surface route contract",
+    "routeContractDesc": "13 route ids aligned across H5 / PC / mini-program / Flutter",
+    "switchedToZh": "Switched to Chinese",
+    "switchedToEn": "Switched to English"
   }
 }

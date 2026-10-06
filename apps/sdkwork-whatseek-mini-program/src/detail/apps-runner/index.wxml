@@ -1,27 +1,27 @@
-<view wx:if="{{loading}}" class="state">正在打开应用…</view>
+<view wx:if="{{loading}}" class="state">{{t.runner.opening}}</view>
 
 <view wx:elif="{{denied}}" class="state">
   <view class="denied-glyph">🔒</view>
-  <view class="state-title">需要企业身份</view>
-  <view class="state-desc">「{{appName}}」是企业应用，访客身份无法打开。请使用企业账号登录后再试。</view>
-  <button class="retry-btn" bindtap="onBack">返回</button>
+  <view class="state-title">{{t.runner.deniedTitle}}</view>
+  <view class="state-desc">{{t.runner.deniedPrefix}}{{appName}}{{t.runner.deniedSuffix}}</view>
+  <button class="retry-btn" bindtap="onBack">{{t.runner.back}}</button>
 </view>
 
 <view wx:elif="{{error}}" class="state">
-  <view class="state-title">无法打开应用</view>
+  <view class="state-title">{{t.detail.openFailedTitle}}</view>
   <view class="state-desc">{{error}}</view>
-  <button class="retry-btn" bindtap="onRetry">重试</button>
+  <button class="retry-btn" bindtap="onRetry">{{c.state.retry}}</button>
 </view>
 
 <block wx:elif="{{app}}">
   <view class="runner-head">
-    <view class="runner-name">{{app.name}} · 运行中</view>
-    <view class="runner-live"><view class="chip-dot"></view>沙箱预览</view>
+    <view class="runner-name">{{app.name}} · {{t.runner.running}}</view>
+    <view class="runner-live"><view class="chip-dot"></view>{{t.runner.sandbox}}</view>
   </view>
   <view class="runner-body">
     <view class="runner-icon">{{app.icon}}</view>
     <view class="runner-title">{{app.name}}</view>
-    <view class="runner-note">正式版将在云端沙箱中运行真实应用，当前为 Phase 1 预览。</view>
+    <view class="runner-note">{{t.runner.note}}</view>
     <view class="runner-frame" aria-hidden="true">
       <view class="runner-line w-half"></view>
       <view class="runner-line w-full"></view>

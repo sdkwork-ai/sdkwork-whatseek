@@ -35,7 +35,8 @@
       "product": "Product results (commerce preview)",
       "supplier": "Supplier results (commerce preview)",
       "service": "Service results (commerce preview)"
-    }
+    },
+    "aiCapability": "AI-powered"
   },
   "reply": {
     "searchAppFound": "I found apps that fit:",

@@ -11,7 +11,8 @@
       "chats": "对话",
       "apps": "应用",
       "contacts": "联系人",
-      "agents": "Agent"
+      "agents": "Agent",
+      "messages": "消息"
     },
     "myApps": "我的应用",
     "myAppsHint": "查看、编辑、分享你创建的应用",

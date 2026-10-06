@@ -1,9 +1,9 @@
-<view wx:if="{{loading}}" class="state">加载中…</view>
+<view wx:if="{{loading}}" class="state">{{c.state.loading}}</view>
 
 <view wx:elif="{{error}}" class="state">
-  <view class="state-title">加载失败</view>
+  <view class="state-title">{{c.state.loadError}}</view>
   <view class="state-desc">{{error}}</view>
-  <button class="retry-btn" bindtap="onRetry">重试</button>
+  <button class="retry-btn" bindtap="onRetry">{{c.state.retry}}</button>
 </view>
 
 <block wx:else>
@@ -13,9 +13,9 @@
       <view class="row-glyph">{{app.icon}}</view>
       <view class="app-main">
         <view class="row-title">{{app.name}}</view>
-        <view class="row-desc">{{app.usersLabel}} 在用 · {{app.priceLabel}}</view>
+        <view class="row-desc">{{app.usersLabel}} {{t.tile.inUse}} · {{app.priceLabel}}</view>
       </view>
-      <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">详情</navigator>
+      <navigator class="app-use" url="/detail/apps-detail/index?appId={{app.id}}">{{t.row.detail}}</navigator>
     </view>
   </view>
 </block>

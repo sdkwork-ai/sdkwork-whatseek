@@ -158,27 +158,39 @@ incl. the 19-app shared catalog, charts/collection screens, route table
 rule). Verification: PC 36 tests, mini-program 31 tests, Flutter analyze
 clean + 67 tests (54 root + 13 apps package).
 
+Closed 2026-10-07 (evening round): the last P1 and five P2s.
+
+- **[P1 closed] Mini-program static chrome i18n**: all 15 pages bind
+  localized strings through per-capability `strings()` accessors
+  (`appApi.<cap>.strings()` + `appApi.commons.strings()`), with
+  `set<Cap>Locale` setters wired into the settings locale switch; zh values
+  byte-identical to the previous chrome (visual zero-change), en mirrors H5.
+  Fragment parity held (mp-apps 91 keys, mp-profile 34, mp-chat 54);
+  locale-switch probe verified against the real built runtime. Native tabBar
+  labels remain the platform boundary.
+- **[P2-8 closed] Profile fifth asset (消息)** on all four surfaces: total
+  messages across the inbox (N+1 listing noted in-code for a future
+  server-side aggregate).
+- **[P2-5/6 closed] Search row + detail field coverage**: search rows now
+  show category · rating · users · price · AI on every surface; app detail
+  gains category + screenshots placeholder on H5/PC, and Flutter/MP close
+  their additional gaps (rating/updated/permissions on Flutter;
+  users/updated/permissions/AI badge on MP).
+- **[P2-4 partially closed] Recommendation cards** now carry the AI
+  capability marker on all four surfaces (功能差异/自定义 fields remain a
+  data-model addition).
+- **[P2-11 closed] Mini-program contacts kind segments**: the six-segment
+  filter (keys mirror `whatseek.contacts.segment.*`) with combined
+  query+kind filtering.
+
 Remaining conformance backlog (open, ordered):
 
-1. [P1] Mini-program static UI chrome stays zh regardless of locale
-   (page wxml strings); PRD §7 Phase 1 names zh-CN/en-US across surfaces.
-   Native tabBar labels are a platform boundary until a custom tab bar lands.
-3. [P2] 我的应用 lacks edit/continue-AI-modification on every surface
-   (modify is reachable only inside the creation preview); share/version
-   missing on MP/Flutter respectively.
-4. [P2] Recommendation cards show reason + price only (PRD §5.1 asks AI
-   capability/功能差异/自定义 fields — absent from the data model).
-5. [P2] App detail field coverage degrades off H5 (no category/screenshots on
-   H5/PC; Flutter adds rating/updated/permissions gaps; MP lacks
-   users/updated/permissions/AI badge).
-6. [P2] Search result rows show a subset of REQ-0002 fields (category/users/
-   AI capability missing everywhere).
-7. [P2] App-generation plan stage produces module lists only (PRD §3 asks
+1. [P2] 我的应用 lacks edit/continue-AI-modification on every surface
+   (modify is reachable only inside the creation preview); share missing on
+   MP/Flutter.
+2. [P2] App-generation plan stage produces module lists only (PRD §3 asks
    page-planning and data-model artifacts).
-8. [P2] Profile asset summary renders 4 columns; REQ-0004 names 消息 as a
-   fifth asset.
-9. [P2] Mini-program contacts page has no kind segments (H5/PC/Flutter have
-   the six-segment filter).
+3. [P2] Recommendation 功能差异/自定义 fields remain a data-model addition.
 
 Verification this round: `pnpm verify` EXIT=0 (check + typecheck + tests +
 H5 prod build); mini-program typecheck + 31 tests + dev/staging/prod builds;

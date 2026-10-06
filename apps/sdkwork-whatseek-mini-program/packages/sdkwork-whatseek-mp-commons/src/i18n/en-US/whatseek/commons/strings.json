@@ -1,1 +1,11 @@
-{}
+{
+  "state": {
+    "loading": "Loading…",
+    "loadError": "Failed to load",
+    "retry": "Retry",
+    "loadFailedDesc": "Failed to load. Please try again later."
+  },
+  "action": {
+    "failed": "Action failed. Please retry."
+  }
+}

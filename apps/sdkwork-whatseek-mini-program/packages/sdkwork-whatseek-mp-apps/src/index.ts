@@ -1,12 +1,41 @@
 /**
  * Public export boundary of `@sdkwork/whatseek-mp-apps` — app-center view
- * models for the native pages (list, detail, 我的应用, creation flow).
+ * models for the native pages (list, detail, 我的应用, creation flow). Static
+ * page chrome resolves through the package i18n fragments
+ * (`src/i18n/<locale>/whatseek/apps/strings.json`), zh-CN by default with
+ * en-US selected via `setAppsLocale`.
  */
 
 import type { AppsPort, AppRecommendation, CreatedApp, WhatseekApp, AppCategory, AppHomeFeed, AppChartId, AppCollection } from '@sdkwork/whatseek-service-core';
 import { getWhatseekClient } from '@sdkwork/whatseek-service-core';
 
+import enStrings from './i18n/en-US/whatseek/apps/strings.json';
+import zhStrings from './i18n/zh-CN/whatseek/apps/strings.json';
+
 export type { AppRecommendation, CreatedApp, WhatseekApp, AppCategory, AppHomeFeed, AppCollection };
+
+/** Widen JSON-import literal types to plain strings, keeping the key structure. */
+type WidenStrings<T> = T extends string ? string : { -readonly [K in keyof T]: WidenStrings<T[K]> };
+
+export type AppsStrings = WidenStrings<typeof zhStrings>;
+
+type Locale = 'zh-CN' | 'en-US';
+
+let locale: Locale = 'zh-CN';
+
+/**
+ * Switch the app-center chrome string locale (wired from `profile.setLocale`
+ * in the bootstrap composition root; keys mirror the H5
+ * `whatseek.apps.*` fragments where the same UI string exists).
+ */
+export function setAppsLocale(next: Locale): void {
+  locale = next;
+}
+
+/** Localized app-center chrome strings for the current locale; pages bind this into `data`. */
+export function strings(): AppsStrings {
+  return locale === 'en-US' ? enStrings : zhStrings;
+}
 
 /** Home feed for the 编辑流 (PRD §4.2.1): heroes → stories → collections → charts. */
 export async function listHomeFeed(): Promise<AppHomeFeed> {

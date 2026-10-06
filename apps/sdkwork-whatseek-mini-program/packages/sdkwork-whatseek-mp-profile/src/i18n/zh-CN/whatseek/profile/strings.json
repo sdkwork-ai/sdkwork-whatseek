@@ -3,6 +3,42 @@
     "title": "我的",
     "visitor": "访客",
     "brand": "你负责问，AI 负责寻",
-    "agents": "Agent"
+    "agents": "Agent",
+    "visitorHint": "登录后同步你的数字资产",
+    "welcomeBack": "欢迎回来",
+    "signIn": "登录",
+    "signOut": "退出登录",
+    "asset": {
+      "chats": "对话",
+      "apps": "应用",
+      "agents": "Agent",
+      "contacts": "联系人"
+    },
+    "myApps": "我的应用",
+    "myAppsDesc": "管理你创建和收藏的应用",
+    "settings": "设置",
+    "settingsDesc": "深色模式、语言与关于",
+    "signedInToast": "已登录",
+    "signedOutToast": "已退出登录"
+  },
+  "settings": {
+    "title": "设置",
+    "darkMode": "深色模式",
+    "followSystemPrefix": "跟随微信的深色模式设置（当前：",
+    "followSystemSuffix": "）",
+    "mode": {
+      "dark": "深色",
+      "light": "浅色"
+    },
+    "language": "语言 Language",
+    "languageHint": "切换对话回复的语言",
+    "localeZh": "简体中文",
+    "localeEn": "English",
+    "brandTitle": "问寻 WhatSeek",
+    "brandMessage": "你负责问，AI 负责寻。版本 ",
+    "routeContractTitle": "跨端路由契约",
+    "routeContractDesc": "13 个路由 id 与 H5 / PC / 小程序 / Flutter 对齐",
+    "switchedToZh": "已切换为中文",
+    "switchedToEn": "Switched to English"
   }
 }

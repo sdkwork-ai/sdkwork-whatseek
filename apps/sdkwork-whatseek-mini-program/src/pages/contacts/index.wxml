@@ -1,22 +1,26 @@
-<view class="page-title">通讯录</view>
-<view class="page-sub">人、群、企业、供应商、Agent 与 AI 助手</view>
+<view class="page-title">{{t.home.title}}</view>
+<view class="page-sub">{{t.home.subtitle}}</view>
 
 <view class="search-bar">
-  <input class="search-input" placeholder="搜索联系人、群聊或企业" value="{{query}}" bindinput="onQueryInput" confirm-type="search" bindconfirm="onSearch" />
-  <button class="search-btn" size="mini" bindtap="onSearch">搜索</button>
+  <input class="search-input" placeholder="{{t.home.searchPlaceholder}}" value="{{query}}" bindinput="onQueryInput" confirm-type="search" bindconfirm="onSearch" />
+  <button class="search-btn" size="mini" bindtap="onSearch">{{t.home.search}}</button>
 </view>
 
-<view wx:if="{{loading}}" class="state">加载中…</view>
+<view class="segs">
+  <view wx:for="{{segments}}" wx:key="id" class="seg {{segment === item.id ? 'seg-active' : ''}}" data-id="{{item.id}}" bindtap="onSegmentTap">{{item.label}}</view>
+</view>
+
+<view wx:if="{{loading}}" class="state">{{c.state.loading}}</view>
 
 <view wx:elif="{{error}}" class="state">
-  <view class="state-title">加载失败</view>
+  <view class="state-title">{{c.state.loadError}}</view>
   <view class="state-desc">{{error}}</view>
-  <button class="retry-btn" bindtap="onRetry">重试</button>
+  <button class="retry-btn" bindtap="onRetry">{{c.state.retry}}</button>
 </view>
 
 <view wx:elif="{{contacts.length === 0}}" class="state">
-  <view class="state-title">没有找到匹配的联系人</view>
-  <view class="state-desc">换个关键词试试</view>
+  <view class="state-title">{{t.home.emptyTitle}}</view>
+  <view class="state-desc">{{t.home.emptyDesc}}</view>
 </view>
 
 <view wx:else class="panel">

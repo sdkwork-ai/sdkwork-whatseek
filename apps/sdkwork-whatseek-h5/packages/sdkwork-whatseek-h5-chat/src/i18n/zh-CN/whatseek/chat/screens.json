@@ -45,7 +45,8 @@
       "supplier": "供应商结果（商业生态预览）",
       "service": "服务结果（商业生态预览）"
     },
-    "commerceNote": "Phase 2 将接入完整供需网络与询价"
+    "commerceNote": "Phase 2 将接入完整供需网络与询价",
+    "aiCapability": "AI 能力"
   },
   "reply": {
     "searchApp": {

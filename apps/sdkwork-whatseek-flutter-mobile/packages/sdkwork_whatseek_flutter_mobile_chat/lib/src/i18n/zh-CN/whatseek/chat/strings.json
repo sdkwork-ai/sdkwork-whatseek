@@ -35,7 +35,8 @@
       "product": "商品结果（商业生态预览）",
       "supplier": "供应商结果（商业生态预览）",
       "service": "服务结果（商业生态预览）"
-    }
+    },
+    "aiCapability": "AI 能力"
   },
   "reply": {
     "searchAppFound": "找到适合你的应用：",

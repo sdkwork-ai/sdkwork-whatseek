@@ -21,7 +21,7 @@ export interface ChatEntryView {
 
 export interface ChatCardView {
   type: ChatCard['type'];
-  apps: { id: string; name: string; summary: string; priceLabel: string; reason: string }[];
+  apps: { id: string; name: string; summary: string; priceLabel: string; reason: string; aiCapability: boolean }[];
   plan: { title: string; modules: string[]; requirement: string } | null;
   sendMessage: { contactId: string; contactName: string; draft: string } | null;
   commerce: { domain: string; items: { id: string; title: string; subtitle: string; priceLabel: string }[] } | null;
@@ -56,6 +56,16 @@ let chatLocale: 'zh-CN' | 'en-US' = 'zh-CN';
 
 export function setChatLocale(locale: 'zh-CN' | 'en-US'): void {
   chatLocale = locale;
+}
+
+/** Widen JSON-import literal types to plain strings, keeping the key structure. */
+type WidenStrings<T> = T extends string ? string : { -readonly [K in keyof T]: WidenStrings<T[K]> };
+
+export type ChatStrings = WidenStrings<typeof zhReplies>;
+
+/** Localized chat page chrome strings for the current locale; pages bind this into `data`. */
+export function strings(): ChatStrings {
+  return chatLocale === 'en-US' ? enReplies : zhReplies;
 }
 
 const TASK_STATE_LABELS: Record<'zh-CN' | 'en-US', Record<string, string>> = {
@@ -131,7 +141,7 @@ export function toCardView(cards: ChatReply['cards']): ChatCardView | null {
   for (const card of cards) {
     if (card.type === 'app_results') {
       for (const { app, reason } of card.apps) {
-        view.apps.push({ id: app.id, name: app.name, summary: app.summary, priceLabel: app.priceLabel, reason });
+        view.apps.push({ id: app.id, name: app.name, summary: app.summary, priceLabel: app.priceLabel, reason, aiCapability: app.aiCapability });
       }
     } else if (card.type === 'app_plan') {
       view.plan = { title: card.title, modules: [...card.modules], requirement: card.requirement };

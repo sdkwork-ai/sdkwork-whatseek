@@ -40,7 +40,8 @@
     "emptyTitle": "没有找到合适的应用",
     "emptyDescription": "没关系——告诉问寻你想做什么，AI 可以直接帮你创建一个。",
     "createFallback": "没有合适的？",
-    "createFallbackAction": "让 AI 帮你创建一个"
+    "createFallbackAction": "让 AI 帮你创建一个",
+    "aiCapability": "AI 能力"
   },
   "detail": {
     "title": "应用详情",
@@ -50,7 +51,10 @@
     "createFrom": "基于此创建",
     "users": "{{users}} 人在用",
     "favorite": "收藏",
-    "favorited": "已收藏"
+    "favorited": "已收藏",
+    "screenshots": "截图预览",
+    "permissions": "所需权限",
+    "noPermissions": "未声明敏感权限"
   },
   "runner": {
     "title": "运行应用",

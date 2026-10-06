@@ -345,7 +345,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   subtitle: Text(
                     '${recommendation.app.summary}\n'
                     '${WhatseekChatStrings.of(context, 'card.recommendReason', {'keyword': recommendation.reason})}'
-                    ' · ${recommendation.app.priceLabel}',
+                    ' · ${recommendation.app.priceLabel}'
+                    '${recommendation.app.aiCapability ? ' · ${WhatseekChatStrings.of(context, 'card.aiCapability')}' : ''}',
                   ),
                   isThreeLine: true,
                   trailing: FilledButton.tonal(

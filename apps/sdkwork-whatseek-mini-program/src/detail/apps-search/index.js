@@ -10,6 +10,8 @@ Page({
     searched: false,
     loading: false,
     error: '',
+    t: {},
+    c: {},
   },
 
   onLoad(options) {
@@ -18,6 +20,14 @@ Page({
     if (query.trim().length > 0) {
       this.search(query.trim());
     }
+  },
+
+  onShow() {
+    this.applyStrings();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.apps.strings(), c: appApi.commons.strings() });
   },
 
   onQueryInput(event) {
@@ -36,7 +46,7 @@ Page({
       const results = await appApi.apps.search(query);
       this.setData({ results, searched: true, loading: false });
     } catch (error) {
-      this.setData({ loading: false, error: '搜索失败，请检查网络后重试。' });
+      this.setData({ loading: false, error: appApi.apps.strings().search.failedDesc });
     }
   },
 

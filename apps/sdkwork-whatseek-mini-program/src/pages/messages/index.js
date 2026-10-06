@@ -7,10 +7,17 @@ Page({
     conversations: [],
     loading: true,
     error: '',
+    t: {},
+    c: {},
   },
 
   onShow() {
+    this.applyStrings();
     this.load();
+  },
+
+  applyStrings() {
+    this.setData({ t: appApi.messages.strings(), c: appApi.commons.strings() });
   },
 
   async load(options = {}) {
@@ -20,7 +27,7 @@ Page({
       const conversations = await appApi.messages.conversations();
       this.setData({ conversations, loading: false });
     } catch (error) {
-      this.setData({ loading: false, error: '加载失败，请稍后重试。' });
+      this.setData({ loading: false, error: appApi.commons.strings().state.loadFailedDesc });
     }
   },
 
