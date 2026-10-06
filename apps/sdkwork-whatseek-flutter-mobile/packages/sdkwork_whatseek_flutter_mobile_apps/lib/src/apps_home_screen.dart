@@ -203,8 +203,8 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
     );
   }
 
-  /// 我的应用 / 收藏 quick links (H5 `/apps/my` and `/apps/my?tab=favorites`;
-  /// the Flutter 我的应用 screen opens on its default segment).
+  /// 我的应用 / 收藏 quick links (H5 `/apps/my` and `/apps/my?tab=favorites`
+  /// parity: the 收藏 link opens 我的应用 on the favorites segment).
   Widget _buildMyAppsEntries(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -219,7 +219,10 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: OutlinedButton(
-              onPressed: _openMyApps,
+              onPressed: () => Navigator.of(context).pushNamed(
+                'app.whatseek.apps.my',
+                arguments: 'favorites',
+              ),
               child: Text(WhatseekAppsStrings.of(context, 'home.favorites')),
             ),
           ),

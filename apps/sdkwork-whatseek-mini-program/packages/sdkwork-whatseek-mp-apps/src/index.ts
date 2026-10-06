@@ -92,7 +92,12 @@ export async function generateApp(requirement: string): Promise<CreatedApp> {
   return port.createAppFromPlan(requirement, plan.modules);
 }
 
-export function draftCreationPlan(requirement: string): { title: string; modules: string[] } {
+export function draftCreationPlan(requirement: string): {
+  title: string;
+  modules: string[];
+  pages: string[];
+  dataModel: string[];
+} {
   return appsPort().draftCreationPlan(requirement);
 }
 

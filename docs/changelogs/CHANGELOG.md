@@ -5,6 +5,22 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-07 — Parity polish: Flutter 收藏 deep link + mini-program plan types
+
+- **Flutter 收藏 quick link** now opens 我的应用 on the favorites segment
+  (`MyAppsScreen.openOnFavorites` + route argument), closing the last
+  recorded cross-surface deviation (H5 `/apps/my?tab=favorites` parity).
+- **Mini-program plan types**: the stale `{ title, modules }` declarations on
+  the `draftCreationPlan` wrapper and the runtime `draftPlan` facade are
+  corrected to the full `{ modules, pages, dataModel }` contract shape (the
+  runtime value was already correct; the types now tell the truth).
+- **IM gateway bring-up feasibility (final)**: the standalone gateway is a
+  62-crate Rust workspace requiring PostgreSQL; this environment has no
+  Docker — activation stays documented in runbook §9 for the deployment
+  machine.
+- Verification: `pnpm verify` green; mini-program 34 tests; Flutter analyze
+  clean + 67 tests.
+
 ### 2026-10-07 — Regression hardening: mini-program scenario coverage + desktop exe re-verified
 
 - **Mini-program page-behavior suite 31 → 34**: three scenarios pin the new

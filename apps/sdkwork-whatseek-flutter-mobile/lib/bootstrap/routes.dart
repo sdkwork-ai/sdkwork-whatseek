@@ -58,7 +58,12 @@ Map<String, WidgetBuilder> whatseekDetailRoutes() {
         isVisitor: WhatseekIamRuntime.instance.user?.isVisitor ?? true,
       );
     },
-    'app.whatseek.apps.my': (context) => const MyAppsScreen(),
+    'app.whatseek.apps.my': (context) {
+      // H5 `/apps/my?tab=favorites` parity: the 收藏 quick link passes the
+      // segment as the route argument.
+      final segment = ModalRoute.of(context)?.settings.arguments as String?;
+      return MyAppsScreen(openOnFavorites: segment == 'favorites');
+    },
     'app.whatseek.apps.create': (context) {
       final requirement = ModalRoute.of(context)?.settings.arguments as String? ?? '';
       return AppCreateScreen(initialRequirement: requirement);

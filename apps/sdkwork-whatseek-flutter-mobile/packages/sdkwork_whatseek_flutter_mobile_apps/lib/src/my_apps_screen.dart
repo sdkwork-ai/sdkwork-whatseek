@@ -12,7 +12,11 @@ enum _MyAppsTab { created, favorites }
 /// separated from favorited third-party apps, with the create-first empty
 /// state (H5 `MyAppsScreen` parity).
 class MyAppsScreen extends StatefulWidget {
-  const MyAppsScreen({super.key});
+  const MyAppsScreen({super.key, this.openOnFavorites = false});
+
+  /// H5 `/apps/my?tab=favorites` parity: the home 收藏 quick link opens the
+  /// screen on the favorites segment.
+  final bool openOnFavorites;
 
   @override
   State<MyAppsScreen> createState() => _MyAppsScreenState();
@@ -26,6 +30,9 @@ class _MyAppsScreenState extends State<MyAppsScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.openOnFavorites) {
+      _tab = _MyAppsTab.favorites;
+    }
     _reload();
   }
 

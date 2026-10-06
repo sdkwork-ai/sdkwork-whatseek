@@ -73,7 +73,7 @@ export interface PageApi {
     open(appId: string): Promise<void>;
     generate(requirement: string): Promise<unknown>;
     publish(appId: string): Promise<unknown>;
-    draftPlan(requirement: string): { title: string; modules: string[] };
+    draftPlan(requirement: string): { title: string; modules: string[]; pages: string[]; dataModel: string[] };
     createFromPlan(requirement: string, modules: readonly string[]): Promise<CreatedAppView>;
     modify(appId: string, instruction: string): Promise<CreatedAppView>;
     deleteMyApp(appId: string): Promise<void>;
