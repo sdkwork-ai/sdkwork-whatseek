@@ -46,7 +46,9 @@
       "service": "Service results (commerce preview)"
     },
     "commerceNote": "Full supply-demand network and inquiries arrive in Phase 2",
-    "aiCapability": "AI-powered"
+    "aiCapability": "AI-powered",
+    "planPages": "Page plan",
+    "planDataModel": "Data model"
   },
   "reply": {
     "searchApp": {

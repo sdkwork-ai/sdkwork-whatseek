@@ -175,6 +175,14 @@ class _MyAppsScreenState extends State<MyAppsScreen> {
                         child: Text(WhatseekAppsStrings.of(context, 'my.publish')),
                       ),
                     TextButton(
+                      onPressed: () => _share(app),
+                      child: Text(WhatseekAppsStrings.of(context, 'my.share')),
+                    ),
+                    TextButton(
+                      onPressed: () => _showModifyDialog(context, app),
+                      child: Text(WhatseekAppsStrings.of(context, 'my.modify')),
+                    ),
+                    TextButton(
                       onPressed: () => _confirmDelete(app),
                       child: Text(
                         WhatseekAppsStrings.of(context, 'my.delete'),
@@ -188,6 +196,51 @@ class _MyAppsScreenState extends State<MyAppsScreen> {
         );
       },
     );
+  }
+
+  /// PRD §21 share: copy the app card to the clipboard through the host
+  /// port (H5 `shareApp` semantics).
+  Future<void> _share(CreatedApp app) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final copiedText = WhatseekAppsStrings.of(context, 'my.sharedCopied');
+    await WhatseekHost.clipboard.copy('${app.name} · WhatSeek');
+    messenger.showSnackBar(SnackBar(content: Text(copiedText)));
+  }
+
+  /// PRD §21 AI 修改: continue-modifying from 我的应用 — the dialog collects
+  /// the instruction; the port bumps the created app's version.
+  Future<void> _showModifyDialog(BuildContext context, CreatedApp app) async {
+    final controller = TextEditingController();
+    final instruction = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(WhatseekAppsStrings.of(dialogContext, 'my.modify')),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: WhatseekAppsStrings.of(dialogContext, 'my.modifyPlaceholder'),
+          ),
+          onSubmitted: (value) => Navigator.of(dialogContext).pop(value),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(MaterialLocalizations.of(dialogContext).cancelButtonLabel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(controller.text),
+            child: Text(WhatseekAppsStrings.of(dialogContext, 'my.modifyApply')),
+          ),
+        ],
+      ),
+    );
+    final trimmed = instruction?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return;
+    }
+    await WhatseekRuntime.instance.apps.modifyApp(app.id, trimmed);
+    _reload();
   }
 
   Widget _buildFavorites(BuildContext context) {

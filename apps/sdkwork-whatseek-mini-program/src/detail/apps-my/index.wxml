@@ -39,6 +39,8 @@
     </view>
     <view class="my-actions">
       <button class="my-action my-action-brand" size="mini" data-id="{{item.id}}" bindtap="onRun">{{t.my.run}}</button>
+      <button wx:if="{{tab === 'created'}}" class="my-action" size="mini" data-id="{{item.id}}" bindtap="onModify">{{t.my.modify}}</button>
+      <button class="my-action" size="mini" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onShare">{{t.my.share}}</button>
       <button wx:if="{{tab === 'created' && item.lifecycle !== 'published'}}" class="my-action" size="mini" data-id="{{item.id}}" bindtap="onPublish">{{t.my.publish}}</button>
       <button wx:if="{{tab === 'favorites'}}" class="my-action" size="mini" data-id="{{item.id}}" bindtap="onToggleFavorite">{{t.my.unfavorite}}</button>
       <button wx:if="{{tab === 'created'}}" class="my-action my-action-danger" size="mini" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onDelete">{{t.my.delete}}</button>

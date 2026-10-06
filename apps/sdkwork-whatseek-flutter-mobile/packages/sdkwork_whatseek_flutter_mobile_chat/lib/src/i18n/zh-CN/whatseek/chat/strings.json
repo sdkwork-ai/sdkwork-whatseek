@@ -36,7 +36,9 @@
       "supplier": "供应商结果（商业生态预览）",
       "service": "服务结果（商业生态预览）"
     },
-    "aiCapability": "AI 能力"
+    "aiCapability": "AI 能力",
+    "planPages": "页面规划",
+    "planDataModel": "数据模型规划"
   },
   "reply": {
     "searchAppFound": "找到适合你的应用：",

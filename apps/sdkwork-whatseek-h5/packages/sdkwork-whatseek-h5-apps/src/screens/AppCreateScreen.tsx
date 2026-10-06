@@ -24,6 +24,8 @@ export function AppCreateScreen() {
   const [requirement, setRequirement] = useState(searchParams.get('q') ?? '');
   const [phase, setPhase] = useState<CreationPhase>('input');
   const [modules, setModules] = useState<readonly string[]>([]);
+  const [pages, setPages] = useState<readonly string[]>([]);
+  const [dataModel, setDataModel] = useState<readonly string[]>([]);
   const [generated, setGenerated] = useState<CreatedApp | null>(null);
   const [instruction, setInstruction] = useState('');
   const [published, setPublished] = useState(false);
@@ -48,6 +50,8 @@ export function AppCreateScreen() {
     }
     const plan = apps.draftCreationPlan(trimmed);
     setModules(plan.modules);
+    setPages(plan.pages);
+    setDataModel(plan.dataModel);
     setPhase('plan');
   };
 
@@ -144,6 +148,25 @@ export function AppCreateScreen() {
                 <li key={moduleName} className="flex items-center gap-2 text-sm text-secondary">
                   <span aria-hidden="true" className="text-success">✓</span>
                   {moduleName}
+                </li>
+              ))}
+            </ul>
+            {/* PRD §3 plan chain: 页面规划 + 数据模型规划 artifacts. */}
+            <p className="mt-3 text-xs font-semibold text-secondary">{t('whatseek.apps.create.planPages')}</p>
+            <ul className="mt-1 space-y-1">
+              {pages.map((page) => (
+                <li key={page} className="flex items-center gap-2 text-sm text-secondary">
+                  <span aria-hidden="true" className="text-success">✓</span>
+                  {page}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-xs font-semibold text-secondary">{t('whatseek.apps.create.planDataModel')}</p>
+            <ul className="mt-1 space-y-1">
+              {dataModel.map((entity) => (
+                <li key={entity} className="flex items-center gap-2 text-sm text-secondary">
+                  <span aria-hidden="true" className="text-success">✓</span>
+                  {entity}
                 </li>
               ))}
             </ul>

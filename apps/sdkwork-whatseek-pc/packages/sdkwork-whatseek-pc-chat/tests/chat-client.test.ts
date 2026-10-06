@@ -30,6 +30,8 @@ function fakeDeps(overrides: {
       draftCreationPlan: (requirement) => ({
         title: `「${requirement}」方案`,
         modules: ['客户列表', '数据统计'],
+        pages: ['客户 360 视图', '跟进时间线'],
+        dataModel: ['客户', '跟进记录'],
       }),
       createAppFromPlan: async (requirement, modules) => ({
         id: 'gen-1',

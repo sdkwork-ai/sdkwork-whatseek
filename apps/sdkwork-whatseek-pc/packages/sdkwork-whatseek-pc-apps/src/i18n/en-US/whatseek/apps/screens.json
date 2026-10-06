@@ -72,7 +72,9 @@
     "modifyAction": "Apply",
     "publishAction": "Publish to My apps",
     "published": "Published! The app is saved under \"My apps\".",
-    "goMyApps": "Open My apps"
+    "goMyApps": "Open My apps",
+    "planPages": "Page plan",
+    "planDataModel": "Data model"
   },
   "my": {
     "title": "My apps",
@@ -85,7 +87,10 @@
     "createFirst": "Create your first app",
     "emptyCreatedTitle": "No apps created yet",
     "emptyCreatedDescription": "Use one sentence and let AI generate your first app",
-    "emptyFavoritesTitle": "No favorites yet"
+    "emptyFavoritesTitle": "No favorites yet",
+    "modify": "AI edit",
+    "modifyPlaceholder": "Refine it, e.g. add order management",
+    "modifyApply": "Apply"
   },
   "lifecycle": {
     "draft": "Draft",

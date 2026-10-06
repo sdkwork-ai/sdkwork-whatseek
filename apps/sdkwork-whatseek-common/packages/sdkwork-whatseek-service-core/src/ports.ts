@@ -40,7 +40,7 @@ export interface AppsPort {
   listMyApps(): Promise<CreatedApp[]>;
   getMyApp(appId: string): Promise<CreatedApp | null>;
   deleteMyApp(appId: string): Promise<void>;
-  draftCreationPlan(requirement: string): { title: string; modules: string[] };
+  draftCreationPlan(requirement: string): { title: string; modules: string[]; pages: string[]; dataModel: string[] };
   createAppFromPlan(requirement: string, modules: readonly string[]): Promise<CreatedApp>;
   modifyApp(appId: string, instruction: string): Promise<CreatedApp>;
   publishApp(appId: string): Promise<CreatedApp>;

@@ -183,13 +183,27 @@ void main() {
       await tester.enterText(find.byType(TextField).first, '帮我做一个库存管理系统');
       await tester.tap(find.text('生成方案'));
       await tester.pumpAndSettle();
+      // The plan step now lists 页面规划/数据模型规划 artifacts (PRD §3), so
+      // bring the generate action into view before tapping.
+      await tester.ensureVisible(find.text('直接生成'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('直接生成'));
+      await tester.pumpAndSettle();
+      // The preview renders below the longer plan inside the lazy ListView —
+      // scroll it into view before asserting (and before reaching the
+      // instruction field, which is not built while off-screen).
+      await tester.scrollUntilVisible(
+        find.textContaining('个模块'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.pumpAndSettle();
       expect(find.textContaining('5 个模块'), findsOneWidget);
 
-      // The instruction field is the second TextField; applying it bumps the
-      // module count and the version (H5 applyInstruction semantics).
-      await tester.enterText(find.byType(TextField).at(1), '增加订单管理');
+      // The instruction field is the only TextField still built once the
+      // lazy ListView scrolls past the requirement field; applying it bumps
+      // the module count and the version (H5 applyInstruction semantics).
+      await tester.enterText(find.byType(TextField).last, '增加订单管理');
       await tester.tap(find.text('修改'));
       await tester.pumpAndSettle();
 

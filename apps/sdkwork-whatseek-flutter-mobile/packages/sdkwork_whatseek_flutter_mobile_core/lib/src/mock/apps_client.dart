@@ -158,7 +158,8 @@ class MockAppsClient {
     _createdApps.removeWhere((app) => app.id == appId);
   }
 
-  ({List<String> modules, String title}) draftCreationPlan(String requirement) {
+  ({List<String> modules, List<String> pages, List<String> dataModel, String title})
+      draftCreationPlan(String requirement) {
     final lowered = requirement.toLowerCase();
     final modules = <String>[];
     void addAll(List<String> candidates) {
@@ -181,7 +182,34 @@ class MockAppsClient {
     if (modules.isEmpty) {
       addAll(['首页', '列表', '详情', '设置', '数据统计']);
     }
-    return (modules: modules, title: '「${requirement.trim()}」生成方案');
+    // PRD §3 plan chain: 页面规划 + 数据模型规划 artifacts (keyword-matched,
+    // mirroring the shared TS catalog derivations).
+    final pages = <String>[];
+    final dataModel = <String>[];
+    if (_containsAny(lowered, ['库存', '进销存', '仓库'])) {
+      pages.addAll(['入库工作台', '库存看板', '盘点流程页']);
+      dataModel.addAll(['商品 SKU', '入库单', '出库单', '盘点记录']);
+    }
+    if (_containsAny(lowered, ['客户', 'crm', '销售'])) {
+      pages.addAll(['客户 360 视图', '跟进时间线', '漏斗看板']);
+      dataModel.addAll(['客户', '联系人', '跟进记录', '商机']);
+    }
+    if (_containsAny(lowered, ['独立站', '商城', '电商', '店铺'])) {
+      pages.addAll(['商品详情页', '购物车抽屉', '结算页']);
+      dataModel.addAll(['商品', '购物车项', '订单', '优惠券']);
+    }
+    if (pages.isEmpty) {
+      pages.addAll(['首页', '列表页', '详情页']);
+    }
+    if (dataModel.isEmpty) {
+      dataModel.addAll(['用户', '主实体', '操作记录']);
+    }
+    return (
+      modules: modules,
+      pages: pages,
+      dataModel: dataModel,
+      title: '「${requirement.trim()}」生成方案',
+    );
   }
 
   Future<CreatedApp> createAppFromPlan(String requirement, List<String> modules) async {

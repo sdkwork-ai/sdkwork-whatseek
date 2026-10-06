@@ -5,6 +5,23 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-07 — Conformance backlog emptied: plan artifacts + 我的应用 edit/share
+
+- **Generation plan artifacts (PRD §3)**: `draftCreationPlan` returns
+  `{ modules, pages, dataModel }` (keyword-matched 页面规划/数据模型规划 in
+  the shared catalog + the Dart mock mirror); the creation-flow plan step and
+  the chat `app_plan` card render all three artifact groups on every surface.
+- **我的应用 edit/share (PRD §21/REQ-0003)**: "AI 修改" from 我的应用 on all
+  four surfaces (H5/PC inline instruction row, MP editable modal, Flutter
+  dialog) driving the port's version-bumping `modifyApp`; share completes on
+  MP (`wx.setClipboardData`) and Flutter (core `WhatseekHost.clipboard` port
+  locator) matching the H5/PC copy semantics.
+- REQ-2026-0005 conformance record: **0 P0 / 0 P1 / 0 P2 open** — the PRD
+  re-scan backlog is fully closed; the recommendation 功能差异/自定义 fields
+  remain tracked with the app-api data-model milestone.
+- Verification: `pnpm verify` green; mp 31 tests; Flutter analyze clean +
+  67 tests; H5 38 + PC 36 tests; standards gates + `pnpm check` green.
+
 ### 2026-10-07 — Final PRD P1 closes; five P2 conformance gaps shut
 
 - **Mini-program chrome i18n (last P1)**: every page's static strings are

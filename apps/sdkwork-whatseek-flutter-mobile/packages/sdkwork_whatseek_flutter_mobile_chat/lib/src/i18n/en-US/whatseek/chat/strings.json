@@ -36,7 +36,9 @@
       "supplier": "Supplier results (commerce preview)",
       "service": "Service results (commerce preview)"
     },
-    "aiCapability": "AI-powered"
+    "aiCapability": "AI-powered",
+    "planPages": "Page plan",
+    "planDataModel": "Data model"
   },
   "reply": {
     "searchAppFound": "I found apps that fit:",

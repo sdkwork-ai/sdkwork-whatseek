@@ -22,6 +22,10 @@ export function MyAppsScreen() {
   const initialTab = searchParams.get('tab') === 'favorites' ? 'favorites' : 'created';
   const [tab, setTab] = useState<MyAppsTab>(initialTab);
   const [shareCopied, setShareCopied] = useState(false);
+  // PRD §21 AI 修改: continue-modifying a created app from 我的应用
+  // (the mock bumps the patch version; app-api carries it end-to-end).
+  const [modifyTarget, setModifyTarget] = useState<CreatedApp | null>(null);
+  const [modifyInstruction, setModifyInstruction] = useState('');
   const [reloadToken, setReloadToken] = useState(0);
   const apps = getWhatseekClient('apps');
 
@@ -34,6 +38,21 @@ export function MyAppsScreen() {
   const switchTab = (next: MyAppsTab) => {
     setTab(next);
     setSearchParams(next === 'favorites' ? { tab: 'favorites' } : {});
+  };
+
+  const applyModify = (app: CreatedApp) => {
+    const instruction = modifyInstruction.trim();
+    if (instruction.length === 0) {
+      return;
+    }
+    void apps
+      .modifyApp(app.id, instruction)
+      .then(() => {
+        setModifyTarget(null);
+        setModifyInstruction('');
+        reloadCreated();
+      })
+      .catch(() => undefined);
   };
 
   const shareApp = (app: CreatedApp) => {
@@ -142,6 +161,17 @@ export function MyAppsScreen() {
                       </button>
                       <button
                         type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setModifyTarget(modifyTarget?.id === app.id ? null : app);
+                          setModifyInstruction('');
+                        }}
+                        className="rounded-full border border-border-subtle px-2 py-1 text-[0.625rem] text-secondary"
+                      >
+                        {t('whatseek.apps.my.modify')}
+                      </button>
+                      <button
+                        type="button"
                         aria-label={t('whatseek.apps.my.delete')}
                         onClick={(event) => {
                           event.stopPropagation();
@@ -154,6 +184,28 @@ export function MyAppsScreen() {
                     </span>
                   }
                 />
+                {modifyTarget?.id === app.id ? (
+                  <div className="flex items-center gap-2 border-t border-border-subtle px-4 py-2">
+                    <input
+                      value={modifyInstruction}
+                      onChange={(event) => {
+                        setModifyInstruction(event.target.value);
+                      }}
+                      placeholder={t('whatseek.apps.my.modifyPlaceholder')}
+                      aria-label={t('whatseek.apps.my.modifyPlaceholder')}
+                      className="min-w-0 flex-1 rounded-full border border-border-default bg-canvas px-3 py-1.5 text-xs text-primary outline-none placeholder:text-muted focus:border-brand"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        applyModify(app);
+                      }}
+                      className="shrink-0 rounded-full bg-brand px-3 py-1.5 text-xs font-semibold text-white"
+                    >
+                      {t('whatseek.apps.my.modifyApply')}
+                    </button>
+                  </div>
+                ) : null}
               </div>
             ))}
           </Card>

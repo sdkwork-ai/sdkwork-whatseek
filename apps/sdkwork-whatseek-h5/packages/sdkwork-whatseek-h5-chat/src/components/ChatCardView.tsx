@@ -93,6 +93,10 @@ export function ChatCardView({
                     </li>
                   ))}
                 </ul>
+                <p className="mt-2 text-[0.625rem] font-semibold text-secondary">{t('whatseek.chat.card.planPages')}</p>
+                <p className="mt-1 text-xs text-muted">{card.pages.join(' · ')}</p>
+                <p className="mt-2 text-[0.625rem] font-semibold text-secondary">{t('whatseek.chat.card.planDataModel')}</p>
+                <p className="mt-1 text-xs text-muted">{card.dataModel.join(' · ')}</p>
                 <div className="mt-3 flex gap-2">
                   <button
                     type="button"

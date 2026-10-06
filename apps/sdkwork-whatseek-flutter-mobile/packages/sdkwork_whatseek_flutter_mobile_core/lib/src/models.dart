@@ -345,6 +345,8 @@ class ChatCard {
     this.contacts = const [],
     this.planTitle = '',
     this.planModules = const [],
+    this.planPages = const [],
+    this.planDataModel = const [],
     this.planRequirement = '',
     this.contactId = '',
     this.contactName = '',
@@ -358,6 +360,8 @@ class ChatCard {
   final List<Contact> contacts;
   final String planTitle;
   final List<String> planModules;
+  final List<String> planPages;
+  final List<String> planDataModel;
   final String planRequirement;
   final String contactId;
   final String contactName;

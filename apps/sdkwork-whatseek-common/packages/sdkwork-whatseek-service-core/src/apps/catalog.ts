@@ -363,3 +363,65 @@ export function planModulesForRequirement(requirement: string): string[] {
   }
   return [...matched];
 }
+
+/** Keyword → page plan used by the AI creation flow (PRD §3 页面规划). */
+const CREATION_PAGE_PLANS: readonly { match: readonly string[]; pages: readonly string[] }[] = [
+  { match: ['库存', '进销存', '仓库'], pages: ['入库工作台', '库存看板', '盘点流程页'] },
+  { match: ['客户', 'crm', '销售'], pages: ['客户 360 视图', '跟进时间线', '漏斗看板'] },
+  { match: ['独立站', '商城', '卖', '电商', '店铺'], pages: ['商详情页', '购物车抽屉', '结算页'] },
+  { match: ['订单', 'order'], pages: ['订单流程页', '发货操作页'] },
+  { match: ['会员', 'member'], pages: ['会员中心页', '权益对比页'] },
+  { match: ['支付', 'pay'], pages: ['收银台页', '对账报表页'] },
+  { match: ['待办', '任务', 'todo'], pages: ['今日待办页', '任务详情抽屉'] },
+  { match: ['笔记', 'notes', '知识'], pages: ['笔记编辑页', '知识库首页'] },
+];
+
+export const DEFAULT_CREATION_PAGES: readonly string[] = ['首页', '列表页', '详情页'];
+
+/** Keyword → data-model plan used by the AI creation flow (PRD §3 数据模型规划). */
+const CREATION_DATA_PLANS: readonly { match: readonly string[]; entities: readonly string[] }[] = [
+  { match: ['库存', '进销存', '仓库'], entities: ['商品 SKU', '入库单', '出库单', '盘点记录'] },
+  { match: ['客户', 'crm', '销售'], entities: ['客户', '联系人', '跟进记录', '商机'] },
+  { match: ['独立站', '商城', '卖', '电商', '店铺'], entities: ['商品', '购物车项', '订单', '优惠券'] },
+  { match: ['订单', 'order'], entities: ['订单', '订单行', '物流单'] },
+  { match: ['会员', 'member'], entities: ['会员', '等级规则', '积分账本'] },
+  { match: ['支付', 'pay'], entities: ['支付单', '渠道配置', '对账单'] },
+  { match: ['待办', '任务', 'todo'], entities: ['任务', '提醒', '重复规则'] },
+  { match: ['笔记', 'notes', '知识'], entities: ['笔记', '标签', '引用关系'] },
+];
+
+export const DEFAULT_CREATION_DATA_MODEL: readonly string[] = ['用户', '主实体', '操作记录'];
+
+/** PRD §3 页面规划: keyword-matched page plan for the requirement. */
+export function planPagesForRequirement(requirement: string): string[] {
+  const lower = requirement.toLowerCase();
+  const matched = new Set<string>();
+  for (const plan of CREATION_PAGE_PLANS) {
+    if (plan.match.some((keyword) => lower.includes(keyword))) {
+      for (const page of plan.pages) {
+        matched.add(page);
+      }
+    }
+  }
+  if (matched.size === 0) {
+    return [...DEFAULT_CREATION_PAGES];
+  }
+  return [...matched];
+}
+
+/** PRD §3 数据模型规划: keyword-matched entity plan for the requirement. */
+export function planDataModelForRequirement(requirement: string): string[] {
+  const lower = requirement.toLowerCase();
+  const matched = new Set<string>();
+  for (const plan of CREATION_DATA_PLANS) {
+    if (plan.match.some((keyword) => lower.includes(keyword))) {
+      for (const entity of plan.entities) {
+        matched.add(entity);
+      }
+    }
+  }
+  if (matched.size === 0) {
+    return [...DEFAULT_CREATION_DATA_MODEL];
+  }
+  return [...matched];
+}

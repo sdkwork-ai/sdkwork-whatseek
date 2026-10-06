@@ -72,7 +72,9 @@
     "modifyAction": "修改",
     "publishAction": "发布到我的应用",
     "published": "已发布！应用已保存到「我的应用」。",
-    "goMyApps": "查看我的应用"
+    "goMyApps": "查看我的应用",
+    "planPages": "页面规划",
+    "planDataModel": "数据模型规划"
   },
   "my": {
     "title": "我的应用",
@@ -85,7 +87,10 @@
     "createFirst": "去创建第一个应用",
     "emptyCreatedTitle": "还没有创建应用",
     "emptyCreatedDescription": "用一句自然语言，让 AI 帮你生成第一个应用",
-    "emptyFavoritesTitle": "还没有收藏应用"
+    "emptyFavoritesTitle": "还没有收藏应用",
+    "modify": "AI 修改",
+    "modifyPlaceholder": "继续修改，例如：增加订单管理",
+    "modifyApply": "应用修改"
   },
   "lifecycle": {
     "draft": "草稿",

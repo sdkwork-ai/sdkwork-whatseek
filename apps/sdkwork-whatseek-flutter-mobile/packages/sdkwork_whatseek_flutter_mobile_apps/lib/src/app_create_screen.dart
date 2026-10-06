@@ -19,7 +19,7 @@ class AppCreateScreen extends StatefulWidget {
 class _AppCreateScreenState extends State<AppCreateScreen> {
   final TextEditingController _requirement = TextEditingController();
   final TextEditingController _instruction = TextEditingController();
-  ({List<String> modules, String title})? _plan;
+  ({List<String> modules, List<String> pages, List<String> dataModel, String title})? _plan;
   CreatedApp? _created;
   bool _generating = false;
   bool _modifying = false;
@@ -119,6 +119,13 @@ class _AppCreateScreenState extends State<AppCreateScreen> {
             const SizedBox(height: 16),
             Text(_plan!.title, style: Theme.of(context).textTheme.titleMedium),
             for (final module in _plan!.modules) Text('✓ $module'),
+            // PRD §3 plan chain: 页面规划 + 数据模型规划 artifacts.
+            Text(WhatseekAppsStrings.of(context, 'create.planPages'),
+                style: Theme.of(context).textTheme.titleSmall),
+            for (final page in _plan!.pages) Text('✓ $page'),
+            Text(WhatseekAppsStrings.of(context, 'create.planDataModel'),
+                style: Theme.of(context).textTheme.titleSmall),
+            for (final entity in _plan!.dataModel) Text('✓ $entity'),
             const SizedBox(height: 12),
             FilledButton(
               onPressed: _generating ? null : _generate,

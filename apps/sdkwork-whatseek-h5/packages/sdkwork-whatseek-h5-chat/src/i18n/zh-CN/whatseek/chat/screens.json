@@ -46,7 +46,9 @@
       "service": "服务结果（商业生态预览）"
     },
     "commerceNote": "Phase 2 将接入完整供需网络与询价",
-    "aiCapability": "AI 能力"
+    "aiCapability": "AI 能力",
+    "planPages": "页面规划",
+    "planDataModel": "数据模型规划"
   },
   "reply": {
     "searchApp": {

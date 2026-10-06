@@ -365,6 +365,12 @@ class _ChatScreenState extends State<ChatScreen> {
               Text(card.planTitle, style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 4),
               for (final module in card.planModules) Text('✓ $module'),
+              Text(WhatseekChatStrings.of(context, 'card.planPages'),
+                  style: Theme.of(context).textTheme.labelSmall),
+              for (final page in card.planPages) Text('✓ $page'),
+              Text(WhatseekChatStrings.of(context, 'card.planDataModel'),
+                  style: Theme.of(context).textTheme.labelSmall),
+              for (final entity in card.planDataModel) Text('✓ $entity'),
               const SizedBox(height: 8),
               FilledButton(
                 onPressed: _sending ? null : () => _runAction(context, card),

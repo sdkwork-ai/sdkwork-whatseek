@@ -82,6 +82,41 @@ Page({
     appApi.shell.navigate(`/detail/apps-runner/index?appId=${appId}`);
   },
 
+  // PRD §21 AI 修改: continue-modifying from 我的应用 — the editable modal
+  // collects the instruction; the port bumps the created app's version.
+  onModify(event) {
+    const appId = event.currentTarget.dataset.id;
+    wx.showModal({
+      title: 'AI 修改',
+      editable: true,
+      placeholderText: '继续修改，例如：增加订单管理',
+      success: async (res) => {
+        if (!res.confirm) return;
+        const instruction = (res.content || '').trim();
+        if (instruction.length === 0) {
+          appApi.shell.toast('请输入修改内容');
+          return;
+        }
+        try {
+          await appApi.apps.modify(appId, instruction);
+          appApi.shell.toast('已更新');
+          this.load({ silent: true });
+        } catch (error) {
+          appApi.shell.toast('修改失败，请重试');
+        }
+      },
+    });
+  },
+
+  onShare(event) {
+    const { id, name } = event.currentTarget.dataset;
+    wx.setClipboardData({
+      data: `${name} · WhatSeek 问寻`,
+      success: () => appApi.shell.toast('已复制到剪贴板'),
+    });
+    void id;
+  },
+
   async onPublish(event) {
     const appId = event.currentTarget.dataset.id;
     try {

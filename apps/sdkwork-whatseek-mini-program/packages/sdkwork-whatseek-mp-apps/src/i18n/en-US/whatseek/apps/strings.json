@@ -68,7 +68,9 @@
     "deletedToast": "Deleted",
     "deleteFailedToast": "Delete failed. Please retry.",
     "publishedToast": "Published to the app store",
-    "publishFailedToast": "Publish failed. Please retry."
+    "publishFailedToast": "Publish failed. Please retry.",
+    "modify": "AI edit",
+    "share": "Share"
   },
   "lifecycle": {
     "draft": "Draft",

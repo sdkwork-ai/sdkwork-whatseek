@@ -8,7 +8,7 @@
 import type { AppChartId, AppHomeFeed, AppCollection, AppRecommendation, CreatedApp, WhatseekApp } from '../types.js';
 import type { AppsPort } from '../ports.js';
 
-import { WHATSEEK_CATALOG, WHATSEEK_CATEGORIES, planModulesForRequirement } from './catalog.js';
+import { WHATSEEK_CATALOG, WHATSEEK_CATEGORIES, planModulesForRequirement, planPagesForRequirement, planDataModelForRequirement } from './catalog.js';
 import {
   buildWhatseekHomeFeed,
   findWhatseekCollection,
@@ -166,7 +166,12 @@ export function createMockAppsClient(options: MockAppsClientOptions = {}): AppsP
     draftCreationPlan(requirement) {
       const trimmed = requirement.trim();
       const title = trimmed.length > 0 ? trimmed : '新应用';
-      return { title: `「${title}」生成方案`, modules: planModulesForRequirement(trimmed) };
+      return {
+        title: `「${title}」生成方案`,
+        modules: planModulesForRequirement(trimmed),
+        pages: planPagesForRequirement(trimmed),
+        dataModel: planDataModelForRequirement(trimmed),
+      };
     },
     async createAppFromPlan(requirement, modules) {
       const stamp = now();

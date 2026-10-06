@@ -157,6 +157,8 @@ export function createMockChatClient(deps: MockChatClientDeps, options: MockChat
             type: 'app_plan',
             title: plan.title,
             modules: plan.modules,
+            pages: plan.pages,
+            dataModel: plan.dataModel,
             requirement: text.trim(),
           });
           return {
@@ -170,6 +172,8 @@ export function createMockChatClient(deps: MockChatClientDeps, options: MockChat
             type: 'app_plan',
             title: plan.title,
             modules: plan.modules,
+            pages: plan.pages,
+            dataModel: plan.dataModel,
             requirement: text.trim(),
           });
           return { contentKey: 'whatseek.chat.reply.createApp.plan', cards };

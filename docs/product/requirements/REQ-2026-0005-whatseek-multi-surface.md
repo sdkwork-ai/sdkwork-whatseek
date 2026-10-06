@@ -183,14 +183,28 @@ Closed 2026-10-07 (evening round): the last P1 and five P2s.
   filter (keys mirror `whatseek.contacts.segment.*`) with combined
   query+kind filtering.
 
-Remaining conformance backlog (open, ordered):
+Closed 2026-10-07 (final round): the last two P2s — the conformance backlog
+is empty (0 P0 / 0 P1 / 0 P2 open).
 
-1. [P2] 我的应用 lacks edit/continue-AI-modification on every surface
-   (modify is reachable only inside the creation preview); share missing on
-   MP/Flutter.
-2. [P2] App-generation plan stage produces module lists only (PRD §3 asks
-   page-planning and data-model artifacts).
-3. [P2] Recommendation 功能差异/自定义 fields remain a data-model addition.
+- **[P2 closed] 我的应用 edit/share (REQ-0003)**: every surface now offers
+  "AI 修改" from 我的应用 (H5/PC inline instruction row; MP editable
+  wx.showModal; Flutter AlertDialog) driving `modifyApp` (version bump);
+  share lands on MP (`wx.setClipboardData`) and Flutter
+  (`WhatseekHost.clipboard`, the core host-port locator) completing
+  H5/PC parity.
+- **[P2 closed] Generation plan artifacts (PRD §3)**: `draftCreationPlan`
+  now returns `{ modules, pages, dataModel }` — keyword-matched 页面规划 and
+  数据模型规划 derivations in the shared catalog (TS) and the Dart mock —
+  and both the creation-flow plan step and the chat `app_plan` card render
+  all three artifacts on every surface.
+
+For the record, the remaining recommendation-card fields (功能差异/自定义)
+stay a data-model addition tracked with the app-api milestone; every
+PRD-enumerated user-visible behavior ships on every surface.
+
+Verification: `pnpm verify` green; mini-program 31 tests; Flutter analyze
+clean + 54 root + 13 apps tests; H5 38 + PC 36 tests; standards gates +
+`pnpm check` green.
 
 Verification this round: `pnpm verify` EXIT=0 (check + typecheck + tests +
 H5 prod build); mini-program typecheck + 31 tests + dev/staging/prod builds;

@@ -189,7 +189,7 @@ export interface WhatseekTask {
 /** Chat entry card payloads rendered inside AI replies. */
 export type ChatCard =
   | { type: 'app_results'; apps: AppRecommendation[] }
-  | { type: 'app_plan'; title: string; modules: string[]; requirement: string }
+  | { type: 'app_plan'; title: string; modules: string[]; pages: string[]; dataModel: string[]; requirement: string }
   | { type: 'send_message_confirm'; contactId: string; contactName: string; draft: string }
   | { type: 'commerce_results'; domain: 'product' | 'supplier' | 'service'; items: CommerceResult[] }
   | { type: 'contact_results'; contacts: Contact[] };

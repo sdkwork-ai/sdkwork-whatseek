@@ -68,7 +68,9 @@
     "deletedToast": "已删除",
     "deleteFailedToast": "删除失败，请重试",
     "publishedToast": "已发布到应用市场",
-    "publishFailedToast": "发布失败，请重试"
+    "publishFailedToast": "发布失败，请重试",
+    "modify": "AI 修改",
+    "share": "分享"
   },
   "lifecycle": {
     "draft": "草稿",
