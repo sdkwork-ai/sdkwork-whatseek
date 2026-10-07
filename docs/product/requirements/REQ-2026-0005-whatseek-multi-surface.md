@@ -213,6 +213,32 @@ PC prod build PASS (36 tests) + Tauri `cargo check` green; packaging
 preflight `flutter build apk --debug` blocked by the environment (no Android
 SDK) — recorded as the release-milestone boundary.
 
+## Commercial Readiness Certificate (2026-10-07)
+
+Consolidated statement over the ten delivery rounds
+(`1f8dad8 → 0fe9089`, plus `7002608`/`520be9d` docs+tests):
+
+| Capability | H5 | PC | Mini-program | Flutter | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| 15-route identity contract | ✓ | ✓ | ✓ (15 pages) | ✓ (declared mirror + alignment test) | per-surface route-alignment tests |
+| Five tabs, real implementations | ✓ | ✓ | ✓ | ✓ | rendered acceptance + behavior suites |
+| sdkwork-im messages/contacts (gateway-ready) | ✓ | ✓ | ✓ (wx transports) | ✓ (Dart family) | adapter tests per surface; runbook §9 activation |
+| Task loop incl. waiting_confirmation + deep link | ✓ | ✓ | ✓ | ✓ | ui-states suites + behavior tests |
+| Appstore home feed (编辑流) + charts/collection | ✓ | ✓ | ✓ | ✓ | rendered acceptance (390×844 / 1440×900) |
+| 我的应用 create/edit/share/favorite/version | ✓ | ✓ | ✓ | ✓ | behavior tests + rendered acceptance |
+| zh/en + dark mode | ✓ | ✓ | ✓ (incl. chrome) | ✓ | fragment-parity guards per surface |
+| Desktop self-contained shell | — | ✓ (5.2 MB exe, launch smoke) | — | — | cargo release + launch smoke |
+
+Quality gates at certificate time: `pnpm verify` EXIT=0; ~220 assertions
+green across H5 38 / PC 36 / common 52 / mini-program 34 / Flutter 67;
+12 repository standard checks + 6 SDK/architecture gates + packaging
+workflow standard green.
+
+Known boundaries (documented, deployment-machine scope): IM gateway +
+PostgreSQL topology, IAM login runtime wiring (§4 factory, seam ready),
+`flutter build apk` preflight (no Android SDK here). The recommendation
+功能差异/自定义 fields ride the app-api data-model milestone.
+
 ## Verification
 
 ```bash

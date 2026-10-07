@@ -125,6 +125,13 @@ surface live:
    conversations and the social address book; the mini-program bundle stamps
    the profile (`pnpm test` builds first); Flutter `flutter test` covers the
    adapter mapping.
+4. Gateway bring-up pointer: the sdkwork-im repo's own `bin/dev.sh` boots a
+   standalone development gateway WITHOUT PostgreSQL (the embedded plane
+   wires in-memory adapters by default; `--postgres` opts into the
+   normalized authority). A full production bring-up still requires the
+   PostgreSQL deployment plus the IAM runtime, because the gateway rejects
+   unauthenticated calls — mount the gateway and the IAM runtime together
+   (step 4 above).
 4. Session tokens: the composed client shares one TokenManager per surface;
    tokens are fed by the IAM login runtime (APP_SDK_INTEGRATION_SPEC.md §4).
    Until that lands, the gateway rejects unauthenticated calls — mount the
