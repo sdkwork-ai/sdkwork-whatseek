@@ -80,6 +80,11 @@ function createFakeGateway(items: ConversationInboxEntry[] = []): FakeGateway {
       eventId: 'e-2',
       deliveryStatus: 'applied' as const,
     })),
+    bindDirectChat: vi.fn(async () => ({
+      conversationId: 'conv-direct-9',
+      eventId: 'e-2b',
+      deliveryStatus: 'applied' as const,
+    })),
     getSummary: vi.fn(async () => ({
       tenantId: 't1',
       conversationId: 'conv-direct-9',
@@ -221,15 +226,17 @@ describe('im messages client (sdkwork-im adapter)', () => {
     expect(await client.getUnreadTotal()).toBe(7);
   });
 
-  it('opens_direct_conversations_idempotently_by_client_request_key', async () => {
+  it('opens_direct_conversations_by_actor_pair_binding', async () => {
     const gateway = createFakeGateway();
     const client = createClient(gateway);
 
     const conversation = await client.openDirectConversation('lisi');
-    expect(gateway.conversations.create).toHaveBeenCalledWith({
-      conversationType: 'direct',
-      memberUserIds: ['lisi'],
-      clientRequestKey: 'whatseek-direct-lisi',
+    expect(gateway.conversations.create).not.toHaveBeenCalled();
+    expect(gateway.conversations.bindDirectChat).toHaveBeenCalledWith({
+      leftActorId: 'zhangsan',
+      leftActorKind: 'user',
+      rightActorId: 'lisi',
+      rightActorKind: 'user',
     });
     expect(conversation).toMatchObject({ id: 'conv-direct-9', kind: 'direct', unread: 0 });
   });

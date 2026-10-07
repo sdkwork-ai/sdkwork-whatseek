@@ -18,6 +18,8 @@
   },
   "card": {
     "generateNow": "直接生成",
+    "planPages": "页面规划",
+    "planDataModel": "数据模型规划",
     "sendToPrefix": "发送给",
     "sendToSuffix": "：",
     "confirmSend": "确认发送",

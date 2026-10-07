@@ -70,6 +70,12 @@
     "publishedToast": "已发布到应用市场",
     "publishFailedToast": "发布失败，请重试",
     "modify": "AI 修改",
+    "modifyPlaceholder": "继续修改，例如：增加订单管理",
+    "modifyApply": "应用修改",
+    "modifyEmptyToast": "请输入修改内容",
+    "modifiedToast": "已更新",
+    "modifyFailedToast": "修改失败，请重试",
+    "shared": "已复制",
     "share": "分享"
   },
   "lifecycle": {
@@ -89,6 +95,8 @@
     "planTitle": "创建方案",
     "appNameLabel": "应用名称",
     "modulesLabel": "功能模块",
+    "planPages": "页面规划",
+    "planDataModel": "数据模型规划",
     "creating": "创建中…",
     "createAction": "创建应用",
     "redescribe": "重新描述",

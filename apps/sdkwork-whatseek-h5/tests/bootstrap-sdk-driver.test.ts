@@ -85,6 +85,38 @@ describe('im sdk client construction (bootstrap composition root)', () => {
       vi.resetModules();
     }
   });
+
+  it('seeds_the_token_manager_from_the_bootstrap_runtime_env_bridge', async () => {
+    const setTokens = vi.fn();
+    vi.doMock('@sdkwork/sdk-common', () => ({ createTokenManager: () => ({ setTokens }) }));
+    vi.doMock('@sdkwork/im-sdk', () => ({
+      ImSdkClient: class {
+        conversations = {};
+
+        social = {};
+
+        connect = vi.fn();
+      },
+    }));
+    vi.resetModules();
+    try {
+      const { createImSdkClient: fresh } = await import('../src/bootstrap/sdkClients.js');
+      fresh({
+        ...imEnv,
+        sdkworkImBootstrapAccessToken: 'access-jwt',
+        sdkworkImBootstrapAuthToken: 'auth-jwt',
+      });
+      expect(setTokens).toHaveBeenCalledTimes(1);
+      expect(setTokens).toHaveBeenCalledWith({ accessToken: 'access-jwt', authToken: 'auth-jwt' });
+      // An empty bridge (every committed profile) keeps the session empty.
+      fresh(imEnv);
+      expect(setTokens).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.doUnmock('@sdkwork/sdk-common');
+      vi.doUnmock('@sdkwork/im-sdk');
+      vi.resetModules();
+    }
+  });
 });
 
 describe('port driver selection (bootstrap composition root)', () => {

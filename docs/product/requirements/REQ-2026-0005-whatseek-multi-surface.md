@@ -229,15 +229,59 @@ Consolidated statement over the ten delivery rounds
 | zh/en + dark mode | ✓ | ✓ | ✓ (incl. chrome) | ✓ | fragment-parity guards per surface |
 | Desktop self-contained shell | — | ✓ (5.2 MB exe, launch smoke) | — | — | cargo release + launch smoke |
 
-Quality gates at certificate time: `pnpm verify` EXIT=0; ~220 assertions
-green across H5 38 / PC 36 / common 52 / mini-program 34 / Flutter 67;
-12 repository standard checks + 6 SDK/architecture gates + packaging
-workflow standard green.
+Quality gates at certificate time (re-measured 2026-10-08 after the
+live-gateway round): `pnpm verify` EXIT=0; 382 executed assertions green —
+vitest 270 (common + H5 + PC), mini-program 36, Flutter 76 (54 root +
+9 messages + 13 apps packages); 13 repository standard checks under
+`pnpm check`; packaging workflow standard green. (The earlier snapshot
+undercounted H5/PC by counting only root-suite files and labeled the
+standard checks "12" — corrected here.)
 
-Known boundaries (documented, deployment-machine scope): IM gateway +
-PostgreSQL topology, IAM login runtime wiring (§4 factory, seam ready),
-`flutter build apk` preflight (no Android SDK here). The recommendation
-功能差异/自定义 fields ride the app-api data-model milestone.
+Known boundaries (documented, deployment-machine scope): production IM
+gateway + PostgreSQL topology (a development gateway IS bring-up-able on
+any machine with local Postgres + Redis — see the live acceptance below),
+IAM login runtime wiring (§4 factory seam ready; operator bootstrap-token
+bridge documented in each surface's etc/config README), `flutter build apk`
+preflight (no Android SDK here). The recommendation 功能差异/自定义 fields
+ride the app-api data-model milestone.
+
+## Live-Gateway Acceptance (2026-10-08)
+
+The sdkwork-im standalone gateway was brought up on this machine
+(`pnpm gateway:run:standalone` in the sdkwork-im repo; local PostgreSQL
+authority + Redis realtime plane; `/healthz` ok, `/readyz` ready) and the
+whole messages/contacts chain was verified against it end to end:
+
+1. **Real IAM sessions** — bootstrap Access-Token header + `POST
+   /app/v3/api/auth/sessions`: phone_code registration consumed the dev
+   fixed verification code (`654321`) and password grant login both returned
+   real dual-token sessions.
+2. **Real social graph** — friend request created by user 1, accepted by
+   user 2 through the composed `@sdkwork/im-sdk` client;
+   `social.contacts.list` returns the accepted contact.
+3. **Real direct conversation** — `conversations.bindDirectChat` bound an
+   idempotent actor-pair conversation with both members enrolled. This
+   exposed and fixed a real integration defect: the surfaces' adapters used
+   `conversations.create({conversationType:'direct', memberUserIds:[…]})`,
+   which the gateway rejects (`memberUserIds are only supported for group
+   conversations`) — all four surfaces now bind direct chats by actor pair.
+4. **Real messages** — three seeded messages posted through the SDK; the
+   WhatSeek H5 app (built dist + local runtime-env carrying the gateway URL
+   and the operator bootstrap tokens) rendered the real inbox with the real
+   unread badge, opened the real thread, sent a new message from the UI
+   composer, and the message was read back from the gateway through the
+   peer's session. Read-cursor persistence cleared the unread badge.
+5. **Title fallback fix** — direct inbox entries carry no conversation-level
+   display name; the surfaces rendered the misleading system-notice fallback.
+   All four adapters now fall back to the peer's display name, then the peer
+   principal id.
+
+Remaining known gaps observed live (documented, not hidden): the gateway's
+inbox `peer` view does not join `iam_user.display_name`, so contact rows
+render the principal id until the backend enriches the contact record; the
+UI self/echo distinction still keys off the Phase-1 mock session identity
+(`visitor`) rather than the IAM principal, so sent messages render an echo
+bubble — both close with the Phase-2 IAM session binding.
 
 ## Verification
 

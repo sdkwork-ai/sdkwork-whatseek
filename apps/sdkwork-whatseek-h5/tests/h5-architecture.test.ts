@@ -145,8 +145,18 @@ describe('browser build contract (PNPM_SCRIPT_SPEC §4.2)', () => {
     expect(sources.length).toBeGreaterThanOrEqual(4);
     for (const file of sources) {
       const content = readFileSync(path.join(appRoot, file), 'utf8');
-      expect(content).not.toMatch(/token|secret|password|apikey|api_key/iu);
       const parsed = JSON.parse(content) as Record<string, unknown>;
+      // Secret-free at the value level: the sdkwork-im bootstrap session keys
+      // declare the bridge by name, but committed sources never carry a
+      // minted credential — credential-bearing keys must be empty strings and
+      // no other value may carry secret-looking content.
+      for (const [key, value] of Object.entries(parsed)) {
+        if (/token|secret|password|apikey|api_key/iu.test(key)) {
+          expect(value, `${file}:${key} must stay empty in committed sources`).toBe('');
+        } else if (typeof value === 'string') {
+          expect(value).not.toMatch(/token|secret|password|apikey|api_key/iu);
+        }
+      }
       expect(parsed.runtimeTarget).toBe('browser');
       expect(parsed.browserOriginMode).toBe('same-origin');
       expect(parsed.profileId).toBe(`standalone.${String(parsed.environment)}`);

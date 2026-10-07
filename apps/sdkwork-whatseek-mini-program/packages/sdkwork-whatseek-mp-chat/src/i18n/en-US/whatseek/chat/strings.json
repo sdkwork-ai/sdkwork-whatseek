@@ -18,6 +18,8 @@
   },
   "card": {
     "generateNow": "Generate now",
+    "planPages": "Page plan",
+    "planDataModel": "Data model",
     "sendToPrefix": "Send to",
     "sendToSuffix": ":",
     "confirmSend": "Confirm send",

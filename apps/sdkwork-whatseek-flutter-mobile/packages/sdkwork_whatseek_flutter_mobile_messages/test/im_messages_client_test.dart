@@ -13,6 +13,8 @@ class _FakeGateway implements ImMessagesGateway {
   final List<Map<String, dynamic>> _inbox;
   final List<Map<String, dynamic>> createBodies = <Map<String, dynamic>>[];
   int createCalls = 0;
+  int bindCalls = 0;
+  final List<Map<String, dynamic>> bindBodies = <Map<String, dynamic>>[];
   int systemChannelCalls = 0;
   final List<(String, String)> posted = [];
 
@@ -87,6 +89,17 @@ class _FakeGateway implements ImMessagesGateway {
     });
   }
 
+  @override
+  Future<ConversationsDirectChatsBindingsCreateResponse201?> conversationsDirectChatsBindingsCreate(
+      BindDirectChatRequest body) async {
+    bindCalls += 1;
+    bindBodies.add(body.toJson());
+    return ConversationsDirectChatsBindingsCreateResponse201.fromJson(<String, dynamic>{
+      'code': 0,
+      'traceId': 't-1',
+      'data': <String, dynamic>{'conversationId': 'conv-direct-9', 'deliveryStatus': 'applied'},
+    });
+  }
   @override
   Future<ConversationsCreateResponse201?> conversationsCreate(CreateConversationRequest body) async {
     createCalls += 1;
@@ -229,14 +242,18 @@ void main() {
     expect(await client.unreadTotal(), 7);
   });
 
-  test('opens_direct_conversations_idempotently_by_client_request_key', () async {
+  test('opens_direct_conversations_by_actor_pair_binding', () async {
     final gateway = _FakeGateway();
     final client = ImMessagesClient(
       options: ImMessagesClientOptions(gateway: gateway, currentUserId: () => 'zhangsan'),
     );
 
     final conversation = await client.openDirectConversation('lisi');
-    expect(gateway.createCalls, 1);
+    expect(gateway.bindCalls, 1);
+    expect(gateway.createCalls, 0);
+    expect(gateway.bindBodies.single['leftActorId'], 'zhangsan');
+    expect(gateway.bindBodies.single['rightActorId'], 'lisi');
+    expect(gateway.bindBodies.single['leftActorKind'], 'user');
     expect(conversation.id, 'conv-direct-9');
     expect(conversation.kind, ConversationKind.direct);
     expect(conversation.unread, 0);

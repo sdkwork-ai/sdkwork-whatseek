@@ -86,23 +86,24 @@ Page({
   // collects the instruction; the port bumps the created app's version.
   onModify(event) {
     const appId = event.currentTarget.dataset.id;
+    const strings = appApi.apps.strings().my;
     wx.showModal({
-      title: 'AI 修改',
+      title: strings.modify,
       editable: true,
-      placeholderText: '继续修改，例如：增加订单管理',
+      placeholderText: strings.modifyPlaceholder,
       success: async (res) => {
         if (!res.confirm) return;
         const instruction = (res.content || '').trim();
         if (instruction.length === 0) {
-          appApi.shell.toast('请输入修改内容');
+          appApi.shell.toast(strings.modifyEmptyToast);
           return;
         }
         try {
           await appApi.apps.modify(appId, instruction);
-          appApi.shell.toast('已更新');
+          appApi.shell.toast(strings.modifiedToast);
           this.load({ silent: true });
         } catch (error) {
-          appApi.shell.toast('修改失败，请重试');
+          appApi.shell.toast(strings.modifyFailedToast);
         }
       },
     });
@@ -111,8 +112,8 @@ Page({
   onShare(event) {
     const { id, name } = event.currentTarget.dataset;
     wx.setClipboardData({
-      data: `${name} · WhatSeek 问寻`,
-      success: () => appApi.shell.toast('已复制到剪贴板'),
+      data: `${name} · WhatSeek`,
+      success: () => appApi.shell.toast(appApi.apps.strings().my.shared),
     });
     void id;
   },

@@ -141,6 +141,29 @@ test('runtime_bundle_exists_and_is_profile_stamped', () => {
   assert.match(env.profileId, /^(standalone|cloud)\.(development|test|staging|production)$/u);
 });
 
+test('runtime_config_profiles_carry_the_im_driver_keys_empty', () => {
+  // Every committed profile declares the full sdkwork-im driver key set with
+  // empty values: gateway base + websocket + the bootstrap IAM session bridge
+  // (tokens are only ever set in LOCAL uncommitted profile copies).
+  for (const profile of ['development', 'test', 'staging', 'production']) {
+    const config = JSON.parse(
+      readFileSync(
+        path.join(surfaceRoot, 'config', 'mini-program', `runtime-env.standalone.${profile}.json`),
+        'utf8',
+      ),
+    );
+    for (const key of [
+      'sdkworkImApiBaseUrl',
+      'sdkworkImWebSocketBaseUrl',
+      'sdkworkImBootstrapAccessToken',
+      'sdkworkImBootstrapAuthToken',
+    ]) {
+      assert.ok(key in config, `standalone.${profile} must declare ${key}`);
+      assert.equal(config[key], '', `standalone.${profile}.${key} must stay empty in committed profiles`);
+    }
+  }
+});
+
 test('capability_packages_never_call_wx_directly_(host_adapter_boundary)', () => {
   const packagesRoot = path.join(surfaceRoot, 'packages');
   const offenders = [];

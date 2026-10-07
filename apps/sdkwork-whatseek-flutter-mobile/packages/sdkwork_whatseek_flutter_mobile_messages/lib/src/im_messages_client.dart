@@ -40,6 +40,9 @@ abstract class ImMessagesGateway {
     UpdateConversationPreferencesRequest body,
   );
   Future<ConversationsCreateResponse201?> conversationsCreate(CreateConversationRequest body);
+  Future<ConversationsDirectChatsBindingsCreateResponse201?> conversationsDirectChatsBindingsCreate(
+      BindDirectChatRequest body,
+  );
   Future<ConversationsSystemChannelsCreateResponse201?> conversationsSystemChannelsCreate(
     CreateSystemChannelRequest body,
   );
@@ -91,6 +94,12 @@ class ImChatApiGateway implements ImMessagesGateway {
   @override
   Future<ConversationsCreateResponse201?> conversationsCreate(CreateConversationRequest body) =>
       _chat.conversationsCreate(body);
+
+  @override
+  Future<ConversationsDirectChatsBindingsCreateResponse201?> conversationsDirectChatsBindingsCreate(
+    BindDirectChatRequest body,
+  ) =>
+      _chat.conversationsDirectChatsBindingsCreate(body);
 
   @override
   Future<ConversationsSystemChannelsCreateResponse201?> conversationsSystemChannelsCreate(
@@ -189,7 +198,10 @@ class ImMessagesClient implements MessagesClient {
   Conversation _mapConversation(ConversationInboxEntry entry) => Conversation(
         id: entry.conversationId,
         kind: _mapConversationKind(entry.conversationType),
-        title: entry.displayName,
+        // Direct conversations have no conversation-level display name; fall
+        // back to the peer principal id so the row never renders a misleading
+        // default title (peer profile names arrive via the contacts port).
+        title: entry.displayName ?? entry.peer?.displayName ?? entry.peer?.principalId,
         unread: entry.unreadCount,
         updatedAt: DateTime.tryParse(entry.lastActivityAt),
         lastMessagePreview: entry.lastSummary,
@@ -253,13 +265,16 @@ class ImMessagesClient implements MessagesClient {
 
   @override
   Future<Conversation> openDirectConversation(String contactId) async {
-    // Idempotent by clientRequestKey; conversationType/memberUserIds are the
-    // app-api direct-conversation shape.
-    final result = await _gateway.conversationsCreate(
-      CreateConversationRequest(
-        conversationType: 'direct',
-        memberUserIds: <String>[contactId],
-        clientRequestKey: 'whatseek-direct-$contactId',
+    // Direct chats bind by actor pair: the gateway derives the idempotent
+    // pair conversation and enrolls both members (the app API rejects
+    // `memberUserIds` outside group conversations).
+    final me = _selfId;
+    final result = await _gateway.conversationsDirectChatsBindingsCreate(
+      BindDirectChatRequest(
+        leftActorId: me,
+        leftActorKind: 'user',
+        rightActorId: contactId,
+        rightActorKind: 'user',
       ),
     );
     final data = result?.data;

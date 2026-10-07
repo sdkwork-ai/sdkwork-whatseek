@@ -11,6 +11,8 @@ class WhatseekRuntimeEnvironment {
     required this.runtimeTarget,
     this.sdkworkImApiBaseUrl,
     this.sdkworkImWebSocketBaseUrl,
+    this.sdkworkImBootstrapAccessToken,
+    this.sdkworkImBootstrapAuthToken,
   });
 
   final String environment;
@@ -26,6 +28,17 @@ class WhatseekRuntimeEnvironment {
 
   /// Explicit CCP websocket base (`wss://…`); derived by the SDK when absent.
   final String? sdkworkImWebSocketBaseUrl;
+
+  /// Pre-minted IAM session for the composed IM client's shared TokenManager
+  /// (dual-token `Access-Token`/`Auth-Token` headers). Dev/operator bridge
+  /// until the IAM login runtime lands on this surface: tokens come from the
+  /// gateway's own IAM credential-entry surface (`POST /app/v3/api/auth/sessions`).
+  /// Null (all committed env profiles) starts the session empty — the gateway
+  /// rejects unauthenticated calls.
+  final String? sdkworkImBootstrapAccessToken;
+
+  /// Dual-token auth half paired with [sdkworkImBootstrapAccessToken].
+  final String? sdkworkImBootstrapAuthToken;
 
   static const WhatseekRuntimeEnvironment fallback = WhatseekRuntimeEnvironment(
     environment: 'development',
@@ -46,6 +59,8 @@ class WhatseekRuntimeEnvironment {
     // normalized to null when empty.
     const imApiBaseUrl = String.fromEnvironment('SDKWORK_IM_API_BASE_URL');
     const imWebSocketBaseUrl = String.fromEnvironment('SDKWORK_IM_WEB_SOCKET_BASE_URL');
+    const imBootstrapAccessToken = String.fromEnvironment('SDKWORK_IM_BOOTSTRAP_ACCESS_TOKEN');
+    const imBootstrapAuthToken = String.fromEnvironment('SDKWORK_IM_BOOTSTRAP_AUTH_TOKEN');
     if (profileId.isEmpty) {
       return fallback;
     }
@@ -56,6 +71,8 @@ class WhatseekRuntimeEnvironment {
       runtimeTarget: runtimeTarget,
       sdkworkImApiBaseUrl: imApiBaseUrl.isEmpty ? null : imApiBaseUrl,
       sdkworkImWebSocketBaseUrl: imWebSocketBaseUrl.isEmpty ? null : imWebSocketBaseUrl,
+      sdkworkImBootstrapAccessToken: imBootstrapAccessToken.isEmpty ? null : imBootstrapAccessToken,
+      sdkworkImBootstrapAuthToken: imBootstrapAuthToken.isEmpty ? null : imBootstrapAuthToken,
     );
   }
 }

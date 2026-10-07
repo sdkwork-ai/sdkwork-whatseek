@@ -44,12 +44,22 @@ class WhatseekImClients {
     // Credential note (APP_SDK_INTEGRATION_SPEC.md §3 open-api rule): the
     // dual-token branch shares the application login TokenManager. The Dart
     // generated family takes static credentials on `SdkConfig` today; the
-    // Phase-2 IAM runtime feeds the session tokens here. The standalone
-    // milestone starts credential-less, so the driver only activates when a
-    // gateway is actually mounted.
+    // Phase-2 IAM runtime feeds the session tokens here, while the
+    // operator-declared `SDKWORK_IM_BOOTSTRAP_*` dart-define bridge (minted by
+    // the gateway's own IAM credential-entry surface) carries them until it
+    // lands. Null keeps the client credential-less — the gateway rejects
+    // unauthenticated calls, so the driver only activates when a gateway is
+    // actually mounted.
     final websocketBaseUrl = env.sdkworkImWebSocketBaseUrl?.trim() ?? '';
+    final bootstrapAccessToken = env.sdkworkImBootstrapAccessToken?.trim() ?? '';
+    final bootstrapAuthToken = env.sdkworkImBootstrapAuthToken?.trim() ?? '';
     final transport = SdkworkImClient(
-      config: SdkConfig(baseUrl: apiBaseUrl, timeout: 15000),
+      config: SdkConfig(
+        baseUrl: apiBaseUrl,
+        timeout: 15000,
+        accessToken: bootstrapAccessToken.isEmpty ? null : bootstrapAccessToken,
+        authToken: bootstrapAuthToken.isEmpty ? null : bootstrapAuthToken,
+      ),
     );
     final client = ImSdkComposedClient(
       transport: transport,

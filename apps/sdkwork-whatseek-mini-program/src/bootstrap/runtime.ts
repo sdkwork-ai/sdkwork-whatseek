@@ -165,10 +165,20 @@ function createMiniProgramImSdkClient(env: MiniProgramRuntimeConfig): ImSdkClien
     return null;
   }
   // TokenManager closure rule (APP_SDK_INTEGRATION_SPEC.md: one manager per
-  // authenticated session context). Tokens are fed by the Phase-2 IAM runtime;
-  // the standalone milestone starts empty and the driver only activates when
-  // a gateway is actually mounted.
+  // authenticated session context). Tokens come from the IAM login runtime
+  // (Phase 2) or, until that lands, from the operator-declared
+  // `sdkworkImBootstrap*` runtime-config bridge (minted by the gateway's own
+  // IAM credential-entry surface); empty starts the session empty and the
+  // driver only activates when a gateway is actually mounted.
   const tokenManager = createTokenManager();
+  const bootstrapAccessToken = env.sdkworkImBootstrapAccessToken?.trim() ?? '';
+  const bootstrapAuthToken = env.sdkworkImBootstrapAuthToken?.trim() ?? '';
+  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
+    tokenManager.setTokens({
+      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
+      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
+    });
+  }
   const websocketBaseUrl = env.sdkworkImWebSocketBaseUrl?.trim() ?? '';
   const options: ImSdkClientOptions = {
     apiBaseUrl,

@@ -70,6 +70,12 @@
     "publishedToast": "Published to the app store",
     "publishFailedToast": "Publish failed. Please retry.",
     "modify": "AI edit",
+    "modifyPlaceholder": "Refine it, e.g. add order management",
+    "modifyApply": "Apply",
+    "modifyEmptyToast": "Enter a modification first",
+    "modifiedToast": "Updated",
+    "modifyFailedToast": "Modify failed. Please retry.",
+    "shared": "Copied",
     "share": "Share"
   },
   "lifecycle": {
@@ -89,6 +95,8 @@
     "planTitle": "Creation plan",
     "appNameLabel": "App name",
     "modulesLabel": "Modules",
+    "planPages": "Page plan",
+    "planDataModel": "Data model",
     "creating": "Creating…",
     "createAction": "Create app",
     "redescribe": "Rephrase",

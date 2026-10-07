@@ -45,7 +45,8 @@ export interface ImMessagesGateway {
     | 'postText'
     | 'updatePreferences'
     | 'updateReadCursor'
-  >;
+  > &
+    Pick<ImSdkClient['conversations'], 'bindDirectChat'>;
   connect(options: ImConnectOptions): Promise<ImLiveConnection>;
 }
 
@@ -182,7 +183,10 @@ export function createImMessagesClient(options: ImMessagesClientOptions): Messag
   const mapInboxEntry = (entry: ConversationInboxEntry): Conversation => ({
     id: entry.conversationId,
     kind: mapConversationKind(entry.conversationType),
-    ...(entry.displayName ? { title: entry.displayName } : {}),
+    // Direct conversations have no conversation-level display name; fall
+    // back to the peer principal id so the row never renders the misleading
+    // system-notice title (peer profile names arrive via the contacts port).
+    ...(entry.displayName ? { title: entry.displayName } : entry.peer?.displayName ? { title: entry.peer.displayName } : entry.peer?.principalId ? { title: entry.peer.principalId } : {}),
     unread: entry.unreadCount,
     updatedAt: entry.lastActivityAt,
     ...(entry.lastSummary ? { lastMessagePreview: entry.lastSummary } : {}),
@@ -240,12 +244,15 @@ export function createImMessagesClient(options: ImMessagesClientOptions): Messag
     },
 
     async openDirectConversation(contactId: string): Promise<Conversation> {
-      // Idempotent by clientRequestKey; conversationType/memberUserIds are the
-      // app-api direct-conversation shape.
-      const result = await gateway.conversations.create({
-        conversationType: 'direct',
-        memberUserIds: [contactId],
-        clientRequestKey: `whatseek-direct-${contactId}`,
+      // Direct chats bind by actor pair: the gateway derives the idempotent
+      // pair conversation and enrolls both members (the app API rejects
+      // `memberUserIds` outside group conversations).
+      const me = currentUserId();
+      const result = await gateway.conversations.bindDirectChat({
+        leftActorId: me,
+        leftActorKind: 'user',
+        rightActorId: contactId,
+        rightActorKind: 'user',
       });
       const summary = await gateway.conversations.getSummary(result.conversationId);
       emitChanged(result.conversationId);

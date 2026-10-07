@@ -25,3 +25,4 @@
 .composer { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 16rpx; padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom)); background: var(--sdk-color-surface-panel); border-top: 1rpx solid var(--sdk-color-border-subtle); }
 .composer-input { flex: 1; background: var(--sdk-color-surface-canvas); border-radius: 999rpx; padding: 16rpx 28rpx; font-size: 28rpx; }
 .composer-send { background: var(--sdk-color-brand); color: #fff; border-radius: 999rpx; font-size: 26rpx; padding: 0 32rpx; }
+.card-plan-label { font-size: 22rpx; font-weight: 600; color: var(--sdk-color-brand); margin-top: 8rpx; }

@@ -125,17 +125,32 @@ surface live:
    conversations and the social address book; the mini-program bundle stamps
    the profile (`pnpm test` builds first); Flutter `flutter test` covers the
    adapter mapping.
-4. Gateway bring-up pointer: the sdkwork-im repo's own `bin/dev.sh` boots a
-   standalone development gateway WITHOUT PostgreSQL (the embedded plane
-   wires in-memory adapters by default; `--postgres` opts into the
-   normalized authority). A full production bring-up still requires the
-   PostgreSQL deployment plus the IAM runtime, because the gateway rejects
-   unauthenticated calls — mount the gateway and the IAM runtime together
-   (step 4 above).
 4. Session tokens: the composed client shares one TokenManager per surface;
-   tokens are fed by the IAM login runtime (APP_SDK_INTEGRATION_SPEC.md §4).
-   Until that lands, the gateway rejects unauthenticated calls — mount the
-   gateway and the IAM runtime together.
+   tokens are fed by the IAM login runtime (APP_SDK_INTEGRATION_SPEC.md §4)
+   once it lands. Until then every surface accepts an operator-declared
+   bootstrap session through its runtime source —
+   `sdkworkImBootstrapAccessToken` / `sdkworkImBootstrapAuthToken` on H5, PC,
+   and the mini-program; `SDKWORK_IM_BOOTSTRAP_ACCESS_TOKEN` /
+   `SDKWORK_IM_BOOTSTRAP_AUTH_TOKEN` dart-defines on Flutter. Mint a real
+   dual-token session from the gateway's own IAM credential-entry surface
+   (`POST /app/v3/api/auth/sessions`; registration consumes the dev fixed
+   verification code, later logins use the password grant) and set both
+   values in a LOCAL, uncommitted profile copy — committed profiles keep the
+   keys empty and the secret-free architecture tests pin that.
+5. Gateway bring-up (proven on a workstation, 2026-10-08): the canonical
+   entrypoint is `pnpm gateway:run:standalone` in the sdkwork-im repo. The
+   standalone gateway REQUIRES its PostgreSQL authority
+   (`SDKWORK_DATABASE_*`, schema bootstraps itself on first boot) and pairs
+   Redis for the realtime plane — put the Redis password inside
+   `SDKWORK_IM_REDIS_URL` (`redis://:PASSWORD@host:6379/0`; no separate
+   password variable is read). Readiness is observable: `/healthz` liveness
+   plus `/readyz` composing database, Redis, agents runtime, worker, and
+   realtime plane. With the gateway on `127.0.0.1:18089`, the full chain was
+   verified live end to end (real IAM registration/login, friend request →
+   contact, `bindDirectChat` conversation, SDK-posted and UI-posted messages,
+   gateway read-back) — see REQ-2026-0005 "Live-Gateway Acceptance". Direct
+   chats MUST go through `conversations.bindDirectChat` (actor pair); the
+   app API rejects `memberUserIds` outside group conversations.
 
 ## 8. Escalation
 

@@ -63,6 +63,17 @@ export interface MiniProgramRuntimeConfig {
   sdkworkImApiBaseUrl?: string;
   /** Explicit CCP websocket base URL; derived by the SDK when absent. */
   sdkworkImWebSocketBaseUrl?: string;
+  /**
+   * Pre-minted IAM session for the composed IM client's shared TokenManager
+   * (dual-token headers `Access-Token`/`Auth-Token`). Dev/operator bridge
+   * until the IAM login runtime lands on this surface: tokens come from the
+   * gateway's own IAM credential-entry surface (`POST /app/v3/api/auth/sessions`).
+   * Empty (all committed profiles) starts the session empty — the gateway
+   * rejects unauthenticated calls.
+   */
+  sdkworkImBootstrapAccessToken?: string;
+  /** Dual-token auth half paired with `sdkworkImBootstrapAccessToken`. */
+  sdkworkImBootstrapAuthToken?: string;
 }
 
 let runtimeConfig: MiniProgramRuntimeConfig | null = null;

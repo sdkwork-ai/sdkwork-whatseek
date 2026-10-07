@@ -18,6 +18,17 @@ export interface WhatseekRuntimeEnvironment {
   sdkworkImApiBaseUrl?: string;
   /** Explicit CCP websocket base URL; derived by the SDK when absent. */
   sdkworkImWebSocketBaseUrl?: string;
+  /**
+   * Pre-minted IAM session for the composed IM client's shared TokenManager
+   * (dual-token headers `Access-Token`/`Auth-Token`). Dev/operator bridge
+   * until the IAM login runtime lands on this surface (APP_SDK_INTEGRATION_SPEC.md
+   * §4): tokens come from the gateway's own IAM credential-entry surface
+   * (`POST /app/v3/api/auth/sessions`). Empty (all committed profiles) starts
+   * the session empty — the gateway rejects unauthenticated calls.
+   */
+  sdkworkImBootstrapAccessToken?: string;
+  /** Dual-token auth half paired with `sdkworkImBootstrapAccessToken`. */
+  sdkworkImBootstrapAuthToken?: string;
 }
 
 export const FALLBACK_RUNTIME_ENVIRONMENT: WhatseekRuntimeEnvironment = {
@@ -44,7 +55,9 @@ function isRuntimeEnvironment(value: unknown): value is WhatseekRuntimeEnvironme
     candidate.runtimeTarget === 'browser' &&
     (candidate.browserOriginMode === 'same-origin' || candidate.browserOriginMode === 'cross-origin') &&
     isOptionalString(candidate.sdkworkImApiBaseUrl) &&
-    isOptionalString(candidate.sdkworkImWebSocketBaseUrl)
+    isOptionalString(candidate.sdkworkImWebSocketBaseUrl) &&
+    isOptionalString(candidate.sdkworkImBootstrapAccessToken) &&
+    isOptionalString(candidate.sdkworkImBootstrapAuthToken)
   );
 }
 

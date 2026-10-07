@@ -5,6 +5,52 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-08 — Live-gateway acceptance: real IM end to end + operator token bridge
+
+- **Mini-program plan artifacts now render (PRD §3 blocker)**: the create
+  plan step and the chat `app_plan` card carried `pages`/`dataModel` in data
+  but never rendered them — both WXML views now bind the 页面规划/数据模型
+  规划 sections (zh/en fragment keys added), with a WXML-binding pin test so
+  the artifacts cannot regress to title+modules-only, and a runtime-config
+  contract test pinning the full sdkwork-im driver key set empty across all
+  four committed profiles. Mini-program suite 34 → 36.
+- **Share-text drift closed**: the mini-program 我的应用 share copies
+  `${name} · WhatSeek` (was `· WhatSeek 问寻`), matching H5/PC/Flutter; the
+  hardcoded zh modify/share strings move into the localized `my` fragment
+  (`modifyPlaceholder`/`modifyApply`/toasts/`shared`).
+- **Direct conversations bind by actor pair**: the gateway rejects
+  `memberUserIds` outside group conversations, so the surfaces'
+  `openDirectConversation` switches from `conversations.create` to
+  `conversations.bindDirectChat` (H5/PC/mini-program TS slices + Flutter
+  Dart gateway), with adapter tests pinning the actor-pair body.
+- **Direct-row title fallback**: real inbox entries carry no
+  conversation-level display name, which rendered the misleading
+  system-notice fallback — all four adapters fall back to the peer's display
+  name, then the peer principal id.
+- **Operator bootstrap-token bridge (IAM Phase-2 seam)**: every surface's
+  runtime source declares `sdkworkImBootstrapAccessToken`/`…AuthToken`
+  (empty in committed profiles; secret-free architecture tests now check at
+  the value level and pin credential-bearing keys empty). Tokens mint from
+  the gateway's own IAM credential-entry surface; the seam mechanism is
+  exactly the TokenManager the Phase-2 login runtime will feed.
+- **Live acceptance (REQ-2026-0005 "Live-Gateway Acceptance")**: the
+  sdkwork-im standalone gateway was brought up locally (PostgreSQL
+  authority + Redis realtime plane, `/readyz` ready); real IAM registration
+  (dev fixed code) + password login, friend request → contact,
+  `bindDirectChat` conversation, SDK-posted messages, and a browser session
+  on the built H5 dist rendering the real inbox (real unread badge, real
+  thread) and sending a message from the UI composer that read back from
+  the gateway through the peer's session. Runbook §9 rewritten with the
+  proven bring-up recipe (Redis password lives inside `SDKWORK_IM_REDIS_URL`)
+  and the token bridge.
+- **Certificate re-measured**: 382 executed assertions green (vitest 270 +
+  mini-program 36 + Flutter 76), 13 standard checks; the earlier "H5 38 /
+  PC 36 / ~220 / 12 checks" snapshot undercounted and is corrected in
+  REQ-2026-0005.
+- Verification: `pnpm check` + `pnpm typecheck` + workspace tests EXIT=0;
+  mini-program typecheck/build/test 36/36; Flutter analyze clean + 54 root
+  + 9 messages + 13 apps; H5/PC prod builds EXIT=0.
+
 ### 2026-10-07 — Parity polish: Flutter 收藏 deep link + mini-program plan types
 
 - **Flutter 收藏 quick link** now opens 我的应用 on the favorites segment
@@ -186,7 +232,6 @@ The 编辑流 home feed (hero carousel → 今日精选 → 编辑精选 → 为
   mall typecheck + build + 146 tests green; appbase navbar unit tests added
   (title/back/right/className) to run under the appbase vitest workspace.
 
-### 2026-10-03 — Tab-bar icon states: filled selected / outline unselected, codified in sdkwork-specs
 ### 2026-10-03 — Tab-bar icon states: filled selected / outline unselected, codified in sdkwork-specs
 
 - **Norm first**: `APP_MOBILE_REACT_UI_SPEC` §5, `APP_MINI_PROGRAM_UI_SPEC` §7,

@@ -7,5 +7,7 @@
   "appApiBaseUrl": "/",
   "sdkBaseUrl": "/",
   "sdkworkImApiBaseUrl": "",
-  "sdkworkImWebSocketBaseUrl": ""
+  "sdkworkImWebSocketBaseUrl": "",
+  "sdkworkImBootstrapAccessToken": "",
+  "sdkworkImBootstrapAuthToken": ""
 }

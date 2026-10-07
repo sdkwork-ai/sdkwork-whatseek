@@ -14,7 +14,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-import { cpSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 import process from 'node:process';
@@ -412,6 +412,31 @@ test('create_plan_step_surfaces_page_and_data_model_artifacts', async () => {
   assert.equal(page.data.app.lifecycle, 'preview');
 });
 
+test('plan_artifact_sections_are_bound_in_wxml_and_localized', () => {
+  // PRD §3: the plan artifacts must be RENDERED, not just carried in data —
+  // pin the wxml bindings so the create step and the chat app_plan card
+  // cannot regress to title+modules-only (data assertions cannot see that).
+  const readSrc = (...parts) => readFileSync(path.join(surfaceRoot, ...parts), 'utf8');
+  const createWxml = readSrc('src', 'detail', 'apps-create', 'index.wxml');
+  assert.match(createWxml, /\{\{t\.create\.planPages\}\}/u, 'create step must bind the 页面规划 label');
+  assert.match(createWxml, /wx:for="\{\{plan\.pages\}\}"/u, 'create step must render plan.pages');
+  assert.match(createWxml, /\{\{t\.create\.planDataModel\}\}/u, 'create step must bind the 数据模型规划 label');
+  assert.match(createWxml, /wx:for="\{\{plan\.dataModel\}\}"/u, 'create step must render plan.dataModel');
+  const chatWxml = readSrc('src', 'pages', 'chat', 'index.wxml');
+  assert.match(chatWxml, /\{\{t\.card\.planPages\}\}/u, 'app_plan card must bind the 页面规划 label');
+  assert.match(chatWxml, /wx:for="\{\{item\.cards\.plan\.pages\}\}"/u, 'app_plan card must render plan.pages');
+  assert.match(chatWxml, /\{\{t\.card\.planDataModel\}\}/u, 'app_plan card must bind the 数据模型规划 label');
+  assert.match(chatWxml, /wx:for="\{\{item\.cards\.plan\.dataModel\}\}"/u, 'app_plan card must render plan.dataModel');
+  for (const locale of ['zh-CN', 'en-US']) {
+    const apps = JSON.parse(readSrc('packages', 'sdkwork-whatseek-mp-apps', 'src', 'i18n', locale, 'whatseek', 'apps', 'strings.json'));
+    assert.ok(apps.create.planPages.length > 0, `${locale} apps fragment must localize create.planPages`);
+    assert.ok(apps.create.planDataModel.length > 0, `${locale} apps fragment must localize create.planDataModel`);
+    const chat = JSON.parse(readSrc('packages', 'sdkwork-whatseek-mp-chat', 'src', 'i18n', locale, 'whatseek', 'chat', 'strings.json'));
+    assert.ok(chat.card.planPages.length > 0, `${locale} chat fragment must localize card.planPages`);
+    assert.ok(chat.card.planDataModel.length > 0, `${locale} chat fragment must localize card.planDataModel`);
+  }
+});
+
 test('my_apps_modify_bumps_the_app_and_share_copies_the_card', async () => {
   const page = loadPage('detail/apps-my');
   await settle(page.onShow());
@@ -436,7 +461,8 @@ test('my_apps_modify_bumps_the_app_and_share_copies_the_card', async () => {
   assert.match(updated.versionLabel, /v0\.1\.[1-9]/u, 'modifyApp must bump the patch version');
   assert.ok(versionBefore !== updated.versionLabel, 'version must change');
 
-  // PRD §21 share: copy the app card through the clipboard host.
+  // PRD §21 share: copy the app card through the clipboard host. Share text
+  // mirrors H5/PC/Flutter (`${name} · WhatSeek`) — no zh suffix drift.
   const clipboard = [];
   const previousClipboard = globalThis.wx.setClipboardData;
   globalThis.wx.setClipboardData = (options) => {
@@ -448,8 +474,8 @@ test('my_apps_modify_bumps_the_app_and_share_copies_the_card', async () => {
   } finally {
     globalThis.wx.setClipboardData = previousClipboard;
   }
-  assert.deepEqual(clipboard, [`${updated.name} · WhatSeek 问寻`]);
-  assert.equal(hostCalls.toasts.at(-1), '已复制到剪贴板');
+  assert.deepEqual(clipboard, [`${updated.name} · WhatSeek`]);
+  assert.equal(hostCalls.toasts.at(-1), '已复制');
 });
 
 test('contacts_segments_filter_the_directory_by_kind', async () => {

@@ -22,6 +22,18 @@
         <view wx:for="{{plan.modules}}" wx:key="*this" class="chip">{{item}}</view>
       </view>
     </view>
+    <view class="row plan-modules-row">
+      <view class="row-title">{{t.create.planPages}}</view>
+      <view class="plan-modules">
+        <view wx:for="{{plan.pages}}" wx:key="*this" class="chip">{{item}}</view>
+      </view>
+    </view>
+    <view class="row plan-modules-row">
+      <view class="row-title">{{t.create.planDataModel}}</view>
+      <view class="plan-modules">
+        <view wx:for="{{plan.dataModel}}" wx:key="*this" class="chip">{{item}}</view>
+      </view>
+    </view>
   </view>
   <view wx:if="{{error}}" class="state-desc create-error">{{error}}</view>
   <view class="create-actions">

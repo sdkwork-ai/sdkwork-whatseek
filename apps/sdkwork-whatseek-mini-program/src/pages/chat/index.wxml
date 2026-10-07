@@ -35,6 +35,14 @@
         <view class="plan-modules">
           <view wx:for="{{item.cards.plan.modules}}" wx:for-item="mod" wx:key="*this" class="plan-module">✓ {{mod}}</view>
         </view>
+        <view class="row-title card-plan-label">{{t.card.planPages}}</view>
+        <view class="plan-modules">
+          <view wx:for="{{item.cards.plan.pages}}" wx:for-item="pageName" wx:key="*this" class="plan-module">✓ {{pageName}}</view>
+        </view>
+        <view class="row-title card-plan-label">{{t.card.planDataModel}}</view>
+        <view class="plan-modules">
+          <view wx:for="{{item.cards.plan.dataModel}}" wx:for-item="entity" wx:key="*this" class="plan-module">✓ {{entity}}</view>
+        </view>
         <button class="btn-brand" data-kind="generate" data-entryindex="{{entryIndex}}" bindtap="onAction">{{t.card.generateNow}}</button>
       </view>
 
