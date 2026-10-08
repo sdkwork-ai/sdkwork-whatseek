@@ -74,6 +74,14 @@ export async function getApp(appId: string): Promise<WhatseekApp | null> {
   return appsPort().getApp(appId);
 }
 
+export async function listTrendingSearches(): Promise<string[]> {
+  return appsPort().listTrendingSearches();
+}
+
+export async function listSearchSuggestions(query: string): Promise<string[]> {
+  return appsPort().listSearchSuggestions(query);
+}
+
 export async function getAppDetail(appId: string): Promise<WhatseekApp | null> {
   return appsPort().getAppDetail(appId);
 }

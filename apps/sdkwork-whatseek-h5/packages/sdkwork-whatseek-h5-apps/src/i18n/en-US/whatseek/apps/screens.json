@@ -37,7 +37,8 @@
     "emptyDescription": "That's fine — tell WhatSeek what you need and AI can create one for you.",
     "createFallback": "Nothing fits?",
     "createFallbackAction": "Let AI create one",
-    "aiCapability": "AI-powered"
+    "aiCapability": "AI-powered",
+    "trending": "Trending searches"
   },
   "detail": {
     "title": "App details",

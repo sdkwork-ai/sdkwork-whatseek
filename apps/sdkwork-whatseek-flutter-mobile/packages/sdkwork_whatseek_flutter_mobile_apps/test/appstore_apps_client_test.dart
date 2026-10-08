@@ -137,6 +137,32 @@ class _FakeGateway implements AppstoreCatalogGateway {
       );
 
   @override
+  Future<SdkWorkListResponse?> listTrendingSearchTerms({int? pageSize}) async =>
+      SdkWorkListResponse(
+        code: 0,
+        data: _envelope({
+          'items': [
+            {'term': 'AI 剪辑'},
+            {'keyword': '智能客服'},
+            {'term': ''},
+          ],
+        }),
+      );
+
+  @override
+  Future<SdkWorkListResponse?> listSearchSuggestions(String q) async =>
+      SdkWorkListResponse(
+        code: 0,
+        data: _envelope({
+          'items': [
+            {'term': '$q 助手'},
+            {'suggestion': q},
+            {'term': q},
+          ],
+        }),
+      );
+
+  @override
   Future<ListingResponse?> getListing(String listingId) async => ListingResponse(
         code: 0,
         data: _envelope({
@@ -293,6 +319,19 @@ void main() {
     // AI-created apps stay whatseek-local (never store listings).
     final plan = client.draftCreationPlan('团队周报助手');
     expect(plan.title, isNotEmpty);
+  });
+
+  test('trending_and_suggestions_read_terms_from_the_search_endpoints', () async {
+    final gateway = _FakeGateway({});
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    final trending = await client.listTrendingSearches();
+    expect(trending, ['AI 剪辑', '智能客服']);
+
+    // Suggestions dedupe against the raw query and drop empty rows.
+    final suggestions = await client.listSearchSuggestions('剪辑');
+    expect(suggestions, ['剪辑 助手']);
+    expect(await client.listSearchSuggestions('  '), isEmpty);
   });
 
   test('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', () async {

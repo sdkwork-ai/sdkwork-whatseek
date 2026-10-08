@@ -2,3 +2,26 @@
 .row-reason { margin-top: 6rpx; font-size: 22rpx; color: var(--sdk-color-brand); }
 
 .row-meta { font-size: 20rpx; color: var(--sdk-color-text-muted); margin-top: 2rpx; }
+
+/* 热门搜索 chips + 联想列表（appstore 搜索发现组件集成） */
+.section-title {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  margin-bottom: 12rpx;
+}
+
+.trending-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.trending-chips .badge {
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  border: 1rpx solid var(--border-subtle, #eee);
+  background: var(--bg-panel, #fff);
+  font-size: 24rpx;
+  color: var(--text-secondary, #666);
+}

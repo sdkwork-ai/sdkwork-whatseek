@@ -23,6 +23,13 @@ import type {
 
 export interface AppsPort {
   searchApps(query: string): Promise<AppRecommendation[]>;
+  /**
+   * Trending search terms for the empty-query state; empty on drivers without
+   * a server-side source (the mock driver seeds catalog names).
+   */
+  listTrendingSearches(): Promise<string[]>;
+  /** Server-side search suggestions for the typed query prefix. */
+  listSearchSuggestions(query: string): Promise<string[]>;
   /** Appstore-style home feed: heroes, stories, collections, chart previews. */
   listHomeFeed(): Promise<AppHomeFeed>;
   getCollection(collectionId: string): Promise<AppCollection | null>;

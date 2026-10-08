@@ -37,6 +37,8 @@ abstract class AppstoreCatalogGateway {
     int? pageSize,
   });
   Future<SdkWorkListResponse?> listRecommendations({int? pageSize});
+  Future<SdkWorkListResponse?> listTrendingSearchTerms({int? pageSize});
+  Future<SdkWorkListResponse?> listSearchSuggestions(String q);
   Future<CategoryListResponse?> listCategories({int? pageSize});
   Future<ListingResponse?> getListing(String listingId);
   Future<ListingMediaListResponse?> listListingMedia(String listingId);
@@ -76,6 +78,14 @@ class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
       _client.catalog.appstoreCatalogRecommendationsList(null, null, null, pageSize);
 
   @override
+  Future<SdkWorkListResponse?> listTrendingSearchTerms({int? pageSize}) =>
+      _client.catalog.appstoreCatalogSearchTrendingList('zh-CN', pageSize);
+
+  @override
+  Future<SdkWorkListResponse?> listSearchSuggestions(String q) =>
+      _client.catalog.appstoreCatalogSearchSuggestionsList(q);
+
+  @override
   Future<CategoryListResponse?> listCategories({int? pageSize}) =>
       _client.catalog.appstoreCatalogCategoriesList(null, pageSize, null);
 
@@ -113,6 +123,11 @@ Future<Map<String, dynamic>?> _safeData(Future<Object?> future) async {
   } catch (_) {
     return null;
   }
+}
+
+/// Search-suggestion/trending rows carry the term under one of these fields.
+String _readSearchTerm(Map<String, dynamic> row) {
+  return _string(row['term']) ?? _string(row['keyword']) ?? _string(row['suggestion']) ?? '';
 }
 
 /// whatseek chart tabs mapped onto appstore chart snapshot codes.
@@ -272,6 +287,30 @@ class AppstoreAppsClient implements AppsClient {
       for (final row in _asList(_asMap(page?.data)?['items']))
         AppRecommendation(app: _mapSummary(row), reason: 'appstore'),
     ];
+  }
+
+  @override
+  Future<List<String>> listTrendingSearches() async {
+    // Server-side store terms, zh-CN first (sdkwork-appstore reference rule).
+    final page = await _gateway.listTrendingSearchTerms(pageSize: 10);
+    return _asList(_asMap(page?.data)?['items'])
+        .map(_readSearchTerm)
+        .where((term) => term.isNotEmpty)
+        .toList();
+  }
+
+  @override
+  Future<List<String>> listSearchSuggestions(String query) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
+      return const [];
+    }
+    final page = await _gateway.listSearchSuggestions(trimmed);
+    final terms = _asList(_asMap(page?.data)?['items'])
+        .map(_readSearchTerm)
+        .where((term) => term.isNotEmpty && term != trimmed)
+        .toList();
+    return terms.toSet().toList();
   }
 
   @override

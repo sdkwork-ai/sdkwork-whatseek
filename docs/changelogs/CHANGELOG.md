@@ -5,6 +5,29 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — Search discovery integrates the appstore suggestions + trending endpoints on all four surfaces
+
+- **`AppsPort.listTrendingSearches` / `listSearchSuggestions`**: store drivers
+  serve them from `catalog/search/trending` (zh-CN first, top 10) and
+  `catalog/search/suggestions` (per typed prefix, deduped against the raw
+  query, empty-row filtered — the sdkwork-appstore reference search page's
+  `term/keyword/suggestion` row reading). The mock driver seeds trending from
+  the local catalog names and filters catalog names for suggestions, so the
+  standalone demo shows the feature with local data.
+- **Four search screens consume the discovery components**: H5/PC
+  `AppSearchScreen` render 热门搜索 chips on the empty-query state and a
+  debounced (250ms, ≥2 chars) suggestion list under the input that submits on
+  tap; the Flutter search screen gains a controlled text field with the same
+  debounce plus ActionChip trending (mock fallback hides both when lists are
+  empty); the mini-program search page adds timer-based suggestion debounce
+  and trending chips with WXML bindings and page styles.
+- **i18n**: one new key per surface apps fragment (`search.trending` =
+  热门搜索 / Trending searches) — H5/PC/mp JSON fragments and the Flutter
+  zh/en JSON + Dart flat map (parity-tested).
+- **Tests**: service-core adapter pins term-row reading (`term`/`keyword`
+  fallback, dedupe, empty-row drop); the Dart adapter suite gains the same
+  case; chat-capability port stubs updated for the two new port methods.
+
 ### 2026-10-09 — One session TokenManager shared by every SDK driver (§4 conformance)
 
 - **§4 closure fix**: APP_SDK_INTEGRATION_SPEC.md §4 mandates exactly one

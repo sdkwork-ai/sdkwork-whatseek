@@ -54,6 +54,8 @@ export type AppstoreCatalogGateway = Pick<
   | 'listCategories'
   | 'listCollections'
   | 'listRecommendations'
+  | 'listTrendingSearchTerms'
+  | 'listSearchSuggestions'
   | 'searchListings'
 > &
   Pick<AppStoreClient['listings'], 'get' | 'listMedia'> &
@@ -111,6 +113,11 @@ function ratingValue(averageRating: string | undefined): number {
 
 function readString(value: unknown): string | null {
   return typeof value === 'string' && value.length > 0 ? value : null;
+}
+
+/** Search-suggestion/trending rows carry the term under one of these fields. */
+function readSearchTerm(row: Record<string, unknown>): string {
+  return readString(row.term) ?? readString(row.keyword) ?? readString(row.suggestion) ?? '';
 }
 
 /** Typed summaries and weak-typed page rows (`SdkWorkPageData`) share this shape. */
@@ -226,6 +233,26 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
         const app = mapSummary(summary);
         return { app, reason: app.category };
       });
+    },
+
+    async listTrendingSearches(): Promise<string[]> {
+      // Server-side store terms, zh-CN first (sdkwork-appstore reference rule).
+      const page = await gateway.listTrendingSearchTerms({ locale: 'zh-CN', limit: 10 });
+      return (page.items as unknown as Record<string, unknown>[])
+        .map(readSearchTerm)
+        .filter((term) => term.length > 0);
+    },
+
+    async listSearchSuggestions(query): Promise<string[]> {
+      const trimmed = query.trim();
+      if (trimmed.length === 0) {
+        return [];
+      }
+      const page = await gateway.listSearchSuggestions({ q: trimmed });
+      const terms = (page.items as unknown as Record<string, unknown>[])
+        .map(readSearchTerm)
+        .filter((term) => term.length > 0 && term !== trimmed);
+      return [...new Set(terms)];
     },
 
     async listHomeFeed(): Promise<AppHomeFeed> {

@@ -3,6 +3,20 @@
   <button class="search-btn" size="mini" bindtap="onSearch">{{t.home.search}}</button>
 </view>
 
+<view wx:if="{{suggestions.length > 0}}" class="panel">
+  <view wx:for="{{suggestions}}" wx:key="*this" class="row" data-term="{{item}}" bindtap="onSuggestionTap">
+    <view class="row-glyph">🔍</view>
+    <view class="result-main"><view class="row-title">{{item}}</view></view>
+  </view>
+</view>
+
+<view wx:if="{{!searched && trending.length > 0}}" class="panel">
+  <view class="section-title">{{t.search.trending}}</view>
+  <view class="trending-chips">
+    <view wx:for="{{trending}}" wx:key="*this" class="badge" data-term="{{item}}" bindtap="onTrendingTap">{{item}}</view>
+  </view>
+</view>
+
 <view wx:if="{{loading}}" class="state">{{t.search.searching}}</view>
 
 <view wx:elif="{{error}}" class="state">

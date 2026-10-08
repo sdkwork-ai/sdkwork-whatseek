@@ -47,6 +47,23 @@ class MockAppsClient implements AppsClient {
   }
 
   @override
+  @override
+  Future<List<String>> listTrendingSearches() async =>
+      _catalog.take(6).map((app) => app.name).toList();
+
+  @override
+  Future<List<String>> listSearchSuggestions(String query) async {
+    final trimmed = query.trim().toLowerCase();
+    if (trimmed.isEmpty) {
+      return const [];
+    }
+    return [
+      for (final app in _catalog)
+        if (app.name.toLowerCase().contains(trimmed)) app.name,
+    ].take(5).toList();
+  }
+
+  @override
   Future<List<WhatseekApp>> listRecommended() async =>
       _catalog.where((app) => app.aiCapability).take(6).toList();
 

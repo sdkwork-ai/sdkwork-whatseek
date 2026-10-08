@@ -35,6 +35,11 @@ abstract class MessagesClient {
 /// stays whatseek-local on every driver.
 abstract class AppsClient {
   Future<List<AppRecommendation>> searchApps(String query);
+  /// Trending search terms for the empty-query state (catalog-seeded on the
+  /// mock driver, server-side on the appstore driver).
+  Future<List<String>> listTrendingSearches();
+  /// Server-side search suggestions for the typed query prefix.
+  Future<List<String>> listSearchSuggestions(String query);
   Future<List<WhatseekApp>> listRecommended();
   Future<List<WhatseekApp>> listHot();
   Future<AppHomeFeed> listHomeFeed();

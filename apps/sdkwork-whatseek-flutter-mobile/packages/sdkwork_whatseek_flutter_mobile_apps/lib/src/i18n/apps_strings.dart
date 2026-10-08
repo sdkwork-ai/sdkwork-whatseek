@@ -35,6 +35,7 @@ const Map<String, Map<String, String>> whatseekAppsStrings = {
     'search.resultCount': '找到 {{count}} 个应用',
     'search.matchedOn': '匹配 {{keyword}}',
     'search.aiCapability': 'AI 能力',
+    'search.trending': '热门搜索',
     'search.emptyTitle': '没有找到合适的应用',
     'search.emptyDescription': '没关系——告诉问寻你想做什么，AI 可以直接帮你创建一个。',
     'search.createFallback': '没有合适的？',
@@ -133,6 +134,7 @@ const Map<String, Map<String, String>> whatseekAppsStrings = {
     'search.resultCount': '{{count}} apps found',
     'search.matchedOn': 'matches {{keyword}}',
     'search.aiCapability': 'AI-powered',
+    'search.trending': 'Trending searches',
     'search.emptyTitle': 'No suitable app found',
     'search.emptyDescription':
         "That's fine — tell WhatSeek what you need and AI can create one for you.",

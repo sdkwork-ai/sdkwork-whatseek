@@ -10,6 +10,8 @@ Page({
     searched: false,
     loading: false,
     error: '',
+    trending: [],
+    suggestions: [],
     t: {},
     c: {},
   },
@@ -19,6 +21,17 @@ Page({
     this.setData({ query });
     if (query.trim().length > 0) {
       this.search(query.trim());
+    } else {
+      // Trending terms feed the empty-query state (appstore driver; empty
+      // list hides the section on the mock driver).
+      appApi.apps
+        .trending()
+        .then((trending) => {
+          this.setData({ trending });
+        })
+        .catch(() => {
+          this.setData({ trending: [] });
+        });
     }
   },
 
@@ -31,7 +44,41 @@ Page({
   },
 
   onQueryInput(event) {
-    this.setData({ query: event.detail.value });
+    const draft = event.detail.value;
+    this.setData({ query: draft });
+    // Debounced server suggestions for the typed prefix (≥2 chars).
+    if (this.suggestionTimer) {
+      clearTimeout(this.suggestionTimer);
+    }
+    const trimmed = draft.trim();
+    if (trimmed.length < 2 || trimmed === this.data.query.trim()) {
+      if (this.data.suggestions.length > 0) {
+        this.setData({ suggestions: [] });
+      }
+      return;
+    }
+    this.suggestionTimer = setTimeout(() => {
+      appApi.apps
+        .suggestions(trimmed)
+        .then((suggestions) => {
+          this.setData({ suggestions });
+        })
+        .catch(() => {
+          this.setData({ suggestions: [] });
+        });
+    }, 250);
+  },
+
+  onSuggestionTap(event) {
+    const term = event.currentTarget.dataset.term;
+    this.setData({ query: term, suggestions: [] });
+    this.search(term);
+  },
+
+  onTrendingTap(event) {
+    const term = event.currentTarget.dataset.term;
+    this.setData({ query: term, suggestions: [] });
+    this.search(term);
   },
 
   onSearch() {
@@ -41,7 +88,10 @@ Page({
   },
 
   async search(query) {
-    this.setData({ loading: true, error: '' });
+    if (this.suggestionTimer) {
+      clearTimeout(this.suggestionTimer);
+    }
+    this.setData({ loading: true, error: '', suggestions: [] });
     try {
       const results = await appApi.apps.search(query);
       this.setData({ results, searched: true, loading: false });

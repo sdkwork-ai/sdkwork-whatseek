@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -16,12 +16,49 @@ export function AppSearchScreen() {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') ?? '';
   const [draft, setDraft] = useState(query);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const apps = getWhatseekClient('apps');
 
   const results = useAsyncData(
     () => (query.trim().length === 0 ? Promise.resolve([]) : apps.searchApps(query)),
     [apps, query],
   );
+
+  // Trending terms feed the empty-query state; hidden when the store driver
+  // has no server-side source (empty list) — mirroring the sdkwork-appstore
+  // reference search page.
+  const trending = useAsyncData(
+    () => (query.trim().length > 0 ? Promise.resolve([]) : apps.listTrendingSearches()),
+    [apps, query],
+  );
+
+  // Debounced server suggestions for the typed prefix (≥2 chars).
+  useEffect(() => {
+    const trimmed = draft.trim();
+    if (trimmed.length < 2) {
+      setSuggestions([]);
+      return undefined;
+    }
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      apps
+        .listSearchSuggestions(trimmed)
+        .then((terms) => {
+          if (!cancelled) {
+            setSuggestions(terms);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setSuggestions([]);
+          }
+        });
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [apps, draft]);
 
   return (
     <div className="pb-6">
@@ -52,6 +89,48 @@ export function AppSearchScreen() {
           />
         </form>
       </div>
+
+      {suggestions.length > 0 && draft.trim() !== query.trim() ? (
+        <div className="px-4 pt-2">
+          <Card>
+            {suggestions.map((term) => (
+              <button
+                key={term}
+                type="button"
+                onClick={() => {
+                  setDraft(term);
+                  setSearchParams({ q: term });
+                }}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-secondary hover:bg-panel-muted"
+              >
+                <span aria-hidden="true">🔍</span>
+                <span className="truncate">{term}</span>
+              </button>
+            ))}
+          </Card>
+        </div>
+      ) : null}
+
+      {query.trim().length === 0 && trending.state === 'ready' && trending.data.length > 0 ? (
+        <div className="px-4 pt-3">
+          <p className="text-xs font-semibold text-secondary">{t('whatseek.apps.search.trending')}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {trending.data.map((term) => (
+              <button
+                key={term}
+                type="button"
+                onClick={() => {
+                  setDraft(term);
+                  setSearchParams({ q: term });
+                }}
+                className="rounded-full border border-border-subtle bg-panel px-3 py-1.5 text-xs text-secondary hover:bg-panel-muted"
+              >
+                {term}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <ScreenState
         state={results.state === 'loading' ? 'loading' : results.state === 'error' ? 'error' : results.data.length === 0 ? 'empty' : 'success'}

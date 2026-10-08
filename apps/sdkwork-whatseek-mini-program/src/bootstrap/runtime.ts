@@ -66,6 +66,10 @@ export interface PageApi {
   };
   apps: {
     search(query: string): Promise<unknown[]>;
+    /** Trending search terms for the empty-query state (appstore driver). */
+    trending(): Promise<unknown[]>;
+    /** Server-side search suggestions for the typed prefix (appstore driver). */
+    suggestions(query: string): Promise<unknown[]>;
     recommended(): Promise<unknown[]>;
     categories(): Promise<unknown[]>;
     /** Home feed 编辑流 (PRD §4.2.1): heroes/stories/collections/charts. */
@@ -242,6 +246,8 @@ export function bootstrapRuntime(): PageApi {
     },
     apps: {
       search: (query) => apps.searchApps(query),
+      trending: () => apps.listTrendingSearches(),
+      suggestions: (query) => apps.listSearchSuggestions(query),
       recommended: () => apps.listRecommended(),
       categories: () => apps.listCategories(),
       homeFeed: () => apps.listHomeFeed(),

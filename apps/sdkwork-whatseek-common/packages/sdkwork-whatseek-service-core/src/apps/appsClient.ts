@@ -106,6 +106,22 @@ export function createMockAppsClient(options: MockAppsClientOptions = {}): AppsP
       // router level (Create as Default); search itself returns what exists.
       return recommendations;
     },
+    // Mock driver: trending seeds from the local catalog; suggestions filter
+    // catalog names by prefix/contains (the store driver serves both
+    // server-side from the appstore search endpoints).
+    async listTrendingSearches(): Promise<string[]> {
+      return WHATSEEK_CATALOG.slice(0, 6).map((app) => app.name);
+    },
+    async listSearchSuggestions(query: string): Promise<string[]> {
+      const trimmed = query.trim().toLowerCase();
+      if (trimmed.length === 0) {
+        return [];
+      }
+      return WHATSEEK_CATALOG
+        .map((app) => app.name)
+        .filter((name) => name.toLowerCase().includes(trimmed))
+        .slice(0, 5);
+    },
     async listHomeFeed(): Promise<AppHomeFeed> {
       return buildWhatseekHomeFeed(WHATSEEK_CATALOG);
     },

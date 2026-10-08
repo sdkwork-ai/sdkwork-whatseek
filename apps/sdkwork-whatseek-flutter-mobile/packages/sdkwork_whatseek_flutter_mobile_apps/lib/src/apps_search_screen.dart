@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import "package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart";
@@ -20,12 +22,30 @@ class AppsSearchScreen extends StatefulWidget {
 class _AppsSearchScreenState extends State<AppsSearchScreen> {
   late String _query;
   late Future<List<AppRecommendation>> _results;
+  final TextEditingController _draft = TextEditingController();
+  Timer? _suggestionDebounce;
+  List<String> _suggestions = const [];
+  late Future<List<String>> _trending;
 
   @override
   void initState() {
     super.initState();
     _query = widget.initialQuery.trim();
+    _draft.text = _query;
     _results = _search(_query);
+    // Trending terms feed the empty-query state; hidden when the store
+    // driver has no server-side source (empty list) — sdkwork-appstore
+    // reference search parity.
+    _trending = _query.isEmpty
+        ? WhatseekRuntime.instance.apps.listTrendingSearches()
+        : Future.value(const []);
+  }
+
+  @override
+  void dispose() {
+    _suggestionDebounce?.cancel();
+    _draft.dispose();
+    super.dispose();
   }
 
   Future<List<AppRecommendation>> _search(String query) async {
@@ -38,9 +58,31 @@ class _AppsSearchScreenState extends State<AppsSearchScreen> {
 
   void _submit(String draft) {
     final query = draft.trim();
+    _suggestionDebounce?.cancel();
     setState(() {
       _query = query;
+      _suggestions = const [];
       _results = _search(query);
+    });
+  }
+
+  /// Debounced server suggestions for the typed prefix (≥2 chars).
+  void _onChanged(String draft) {
+    _suggestionDebounce?.cancel();
+    final trimmed = draft.trim();
+    if (trimmed.length < 2 || trimmed == _query) {
+      if (_suggestions.isNotEmpty) {
+        setState(() => _suggestions = const []);
+      }
+      return;
+    }
+    _suggestionDebounce = Timer(const Duration(milliseconds: 250), () async {
+      final terms = await WhatseekRuntime.instance.apps
+          .listSearchSuggestions(trimmed)
+          .catchError((_) => <String>[]);
+      if (mounted) {
+        setState(() => _suggestions = terms);
+      }
     });
   }
 
@@ -62,9 +104,67 @@ class _AppsSearchScreenState extends State<AppsSearchScreen> {
                     borderRadius: BorderRadius.all(Radius.circular(24))),
                 isDense: true,
               ),
+              controller: _draft,
+              onChanged: _onChanged,
               onSubmitted: _submit,
             ),
           ),
+          if (_suggestions.isNotEmpty)
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 180),
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final term in _suggestions)
+                    ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.search, size: 16),
+                      title: Text(term),
+                      onTap: () {
+                        _draft.text = term;
+                        _submit(term);
+                      },
+                    ),
+                ],
+              ),
+            ),
+          if (_query.isEmpty)
+            FutureBuilder<List<String>>(
+              future: _trending,
+              builder: (context, snapshot) {
+                final terms = snapshot.data ?? const <String>[];
+                if (terms.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(WhatseekAppsStrings.of(context, 'search.trending'),
+                            style: Theme.of(context).textTheme.labelSmall),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            for (final term in terms)
+                              ActionChip(
+                                label: Text(term),
+                                onPressed: () {
+                                  _draft.text = term;
+                                  _submit(term);
+                                },
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           Expanded(
             child: FutureBuilder<List<AppRecommendation>>(
               future: _results,

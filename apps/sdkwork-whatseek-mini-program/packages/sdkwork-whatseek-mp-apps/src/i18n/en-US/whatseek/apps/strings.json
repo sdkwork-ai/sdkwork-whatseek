@@ -48,7 +48,8 @@
     "failedDesc": "Search failed. Check your network and try again.",
     "emptyTitle": "No matching apps",
     "emptyDesc": "Try another keyword, or describe what you need in Chat",
-    "matchedPrefix": "Matches: "
+    "matchedPrefix": "Matches: ",
+    "trending": "Trending searches"
   },
   "my": {
     "title": "My apps",

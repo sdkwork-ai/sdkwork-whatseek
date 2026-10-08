@@ -74,6 +74,22 @@ function fakeGateway(
       items: params?.ids === undefined ? [listing('app-search')] : resolve(params.ids),
       pageInfo: { mode: 'cursor' as const, nextCursor: null, hasMore: false },
     })),
+    listTrendingSearchTerms: vi.fn(async () => ({
+      items: [
+        { term: 'AI 剪辑' },
+        { keyword: '智能客服' },
+        { term: '' },
+      ],
+      pageInfo: { mode: 'cursor', hasMore: false },
+    })),
+    listSearchSuggestions: vi.fn(async (params?: { q?: string }) => ({
+      items: [
+        { term: params?.q + ' 助手' },
+        { suggestion: params?.q },
+        { term: params?.q },
+      ],
+      pageInfo: { mode: 'cursor', hasMore: false },
+    })),
     listItems: vi.fn(async () => ({ items: [...wishlist], pageInfo: { mode: 'cursor', hasMore: false } })),
     addItem: vi.fn(async (listingId: string) => {
       wishlist.push({ id: `w-${wishlist.length + 1}`, listingId, wishlistStatus: 'ACTIVE', createdAt: '' });
@@ -208,6 +224,18 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
     });
   });
 
+  it('trending_and_suggestions_read_terms_from_the_search_endpoints', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    const client = createAppstoreAppsClient({ gateway });
+
+    const trending = await client.listTrendingSearches();
+    expect(trending).toEqual(['AI 剪辑', '智能客服']);
+
+    // Suggestions dedupe against the raw query and drop empty rows.
+    const suggestions = await client.listSearchSuggestions('剪辑');
+    expect(suggestions).toEqual(['剪辑 助手']);
+    expect(await client.listSearchSuggestions('  ')).toEqual([]);
+  });
   it('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', async () => {
     const gateway = fakeGateway(HOME_FEED);
     const client = createAppstoreAppsClient({ gateway });
