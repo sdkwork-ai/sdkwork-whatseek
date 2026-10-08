@@ -9,5 +9,8 @@
   "sdkworkImApiBaseUrl": "",
   "sdkworkImWebSocketBaseUrl": "",
   "sdkworkImBootstrapAccessToken": "",
-  "sdkworkImBootstrapAuthToken": ""
+  "sdkworkImBootstrapAuthToken": "",
+  "sdkworkAppstoreApiBaseUrl": "",
+  "sdkworkAppstoreBootstrapAccessToken": "",
+  "sdkworkAppstoreBootstrapAuthToken": ""
 }

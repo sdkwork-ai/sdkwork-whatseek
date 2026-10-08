@@ -242,6 +242,15 @@ importers:
 
   .: {}
 
+  ../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript:
+    dependencies:
+      '@sdkwork/sdk-common':
+        specifier: workspace:*
+        version: link:../../../../sdkwork-sdk-commons/sdkwork-sdk-common-typescript
+      '@sdkwork/utils':
+        specifier: workspace:*
+        version: link:../../../../sdkwork-utils/packages/sdkwork-utils-typescript
+
   ../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript:
     dependencies:
       '@sdkwork/sdk-common':
@@ -321,6 +330,9 @@ importers:
 
   apps/sdkwork-whatseek-h5:
     dependencies:
+      '@sdkwork/appstore-app-sdk':
+        specifier: workspace:*
+        version: link:../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript
       '@sdkwork/im-sdk':
         specifier: workspace:*
         version: link:../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
@@ -412,6 +424,9 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-apps:
     dependencies:
+      '@sdkwork/appstore-app-sdk':
+        specifier: workspace:*
+        version: link:../../../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript
       '@sdkwork/shell-mobile-react':
         specifier: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
         version: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
@@ -844,6 +859,9 @@ importers:
 
   apps/sdkwork-whatseek-pc:
     dependencies:
+      '@sdkwork/appstore-app-sdk':
+        specifier: workspace:*
+        version: link:../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript
       '@sdkwork/im-sdk':
         specifier: workspace:*
         version: link:../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
@@ -938,6 +956,9 @@ importers:
 
   apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-apps:
     dependencies:
+      '@sdkwork/appstore-app-sdk':
+        specifier: workspace:*
+        version: link:../../../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript
       '@sdkwork/whatseek-pc-commons':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-pc-commons

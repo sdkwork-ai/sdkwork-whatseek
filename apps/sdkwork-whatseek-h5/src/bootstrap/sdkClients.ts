@@ -8,13 +8,19 @@
  * etc/browser runtime-env sources), one composed `@sdkwork/im-sdk` client is
  * constructed with one session TokenManager and injected into both port
  * adapters; otherwise both ports stay on the Phase-1 mock clients (standalone
- * milestone default). All other ports stay on mock clients until their SDK
- * families land.
+ * milestone default).
+ *
+ * sdkwork-appstore driver (apps capability): same activation rule over
+ * `sdkworkAppstoreApiBaseUrl` — one composed `@sdkwork/appstore-app-sdk`
+ * client feeds the AppsPort home feed / catalog; whatseek-local user scope
+ * (recent, favorites, 我的应用) stays on the mock client inside the adapter.
+ * Remaining ports stay on mock clients until their SDK families land.
  */
 
 import { createTokenManager } from '@sdkwork/sdk-common';
+import { createAppStoreClient, type AppStoreClient } from '@sdkwork/appstore-app-sdk';
 import { ImSdkClient, type ImSdkClientOptions } from '@sdkwork/im-sdk';
-import { createMockAppsClient } from '@sdkwork/whatseek-h5-apps';
+import { createAppstoreAppsClient, createMockAppsClient } from '@sdkwork/whatseek-h5-apps';
 import { createMockChatClient, createMockTasksClient } from '@sdkwork/whatseek-h5-chat';
 import {
   createImContactsClient,
@@ -23,6 +29,7 @@ import {
 import {
   getCurrentUser,
   registerWhatseekClient,
+  type AppsPort,
   type ContactsPort,
   type MessagesPort,
   type WhatseekRuntimeEnvironment,
@@ -97,13 +104,50 @@ export function createContactsClient(im: ImSdkClient | null): ContactsPort {
   });
 }
 
+/**
+ * Construct the composed appstore client for the resolved runtime environment,
+ * or `null` when no appstore gateway is declared (mock-driver standalone
+ * milestone). Same TokenManager closure rule as the IM driver; tokens come
+ * from the operator-declared `sdkworkAppstoreBootstrap*` runtime-env bridge
+ * until the IAM login runtime lands (APP_SDK_INTEGRATION_SPEC.md §4).
+ * Exported for bootstrap tests; production code goes through
+ * `bootstrapSdkClients`.
+ */
+export function createAppstoreSdkClient(env: WhatseekRuntimeEnvironment): AppStoreClient | null {
+  const apiBaseUrl = env.sdkworkAppstoreApiBaseUrl?.trim() ?? '';
+  if (apiBaseUrl.length === 0) {
+    return null;
+  }
+  const tokenManager = createTokenManager();
+  const bootstrapAccessToken = env.sdkworkAppstoreBootstrapAccessToken?.trim() ?? '';
+  const bootstrapAuthToken = env.sdkworkAppstoreBootstrapAuthToken?.trim() ?? '';
+  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
+    tokenManager.setTokens({
+      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
+      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
+    });
+  }
+  return createAppStoreClient({ baseUrl: apiBaseUrl, tokenManager, platform: 'h5' });
+}
+
+/**
+ * Build the apps port. `appstore === null` selects the mock driver.
+ */
+export function createAppsClient(appstore: AppStoreClient | null): AppsPort {
+  if (appstore === null) {
+    return createMockAppsClient();
+  }
+  return createAppstoreAppsClient({ gateway: appstore.catalog });
+}
+
 export function bootstrapSdkClients(): void {
   // bootstrapSdkClients runs after bootstrapEnvironment() in main.tsx, so the
   // environment cache is populated; test runtimes without an environment
   // bootstrap land on the standalone.development fallback.
   const env = currentRuntimeEnvironment();
   const im = createImSdkClient(env);
-  const apps = createMockAppsClient();
+  const appstore = createAppstoreSdkClient(env);
+  const apps = createAppsClient(appstore);
   const contacts = createContactsClient(im);
   const messages = createMessagesClient(im);
   const tasks = createMockTasksClient();

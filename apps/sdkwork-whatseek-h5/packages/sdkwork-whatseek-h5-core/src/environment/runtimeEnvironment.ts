@@ -29,6 +29,22 @@ export interface WhatseekRuntimeEnvironment {
   sdkworkImBootstrapAccessToken?: string;
   /** Dual-token auth half paired with `sdkworkImBootstrapAccessToken`. */
   sdkworkImBootstrapAuthToken?: string;
+  /**
+   * sdkwork-appstore driver (apps capability home feed / catalog): same-origin
+   * `/app/v3/api` path when an appstore gateway is mounted, absolute URL for
+   * explicit topology overrides. Empty/absent keeps the mock apps client
+   * (standalone milestone default).
+   */
+  sdkworkAppstoreApiBaseUrl?: string;
+  /**
+   * Pre-minted IAM session for the composed appstore client's TokenManager
+   * (dual-token headers), same operator bridge semantics as the IM driver:
+   * empty (all committed profiles) starts the session empty and the appstore
+   * app-api rejects unauthenticated calls.
+   */
+  sdkworkAppstoreBootstrapAccessToken?: string;
+  /** Dual-token auth half paired with `sdkworkAppstoreBootstrapAccessToken`. */
+  sdkworkAppstoreBootstrapAuthToken?: string;
 }
 
 export const FALLBACK_RUNTIME_ENVIRONMENT: WhatseekRuntimeEnvironment = {
@@ -57,7 +73,10 @@ function isRuntimeEnvironment(value: unknown): value is WhatseekRuntimeEnvironme
     isOptionalString(candidate.sdkworkImApiBaseUrl) &&
     isOptionalString(candidate.sdkworkImWebSocketBaseUrl) &&
     isOptionalString(candidate.sdkworkImBootstrapAccessToken) &&
-    isOptionalString(candidate.sdkworkImBootstrapAuthToken)
+    isOptionalString(candidate.sdkworkImBootstrapAuthToken) &&
+    isOptionalString(candidate.sdkworkAppstoreApiBaseUrl) &&
+    isOptionalString(candidate.sdkworkAppstoreBootstrapAccessToken) &&
+    isOptionalString(candidate.sdkworkAppstoreBootstrapAuthToken)
   );
 }
 

@@ -10,6 +10,7 @@ packages:
   # Sibling SDKWork source dependencies (PNPM_WORKSPACE_DEPENDENCY_SPEC.md §2):
   # declared exactly once here, consumed via `workspace:*`.
   - ../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
+  - ../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript
   - ../sdkwork-sdk-commons/sdkwork-sdk-common-typescript
   - ../sdkwork-utils/packages/sdkwork-utils-typescript
 

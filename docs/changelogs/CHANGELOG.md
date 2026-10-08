@@ -5,6 +5,35 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-08 — App center home integrates the sdkwork-appstore catalog (Phase-2 platform wiring)
+
+- **The 应用 tab home no longer re-implements the appstore home feed**: the
+  apps capability gains a second `AppsPort` driver, `createAppstoreAppsClient`,
+  over the composed `@sdkwork/appstore-app-sdk` consumer package
+  (`/app/v3/api`; sdkwork-appstore PRD §4.2.1 首页编辑流). Heroes resolve from
+  `catalog.home` featured slots, curated collections from `catalog.collections`
+  (localized, cover apps batch-resolved through one listing search), 榜单速览
+  from chart snapshots (`top`→热门, `free`→免费, `new`→新品), search from
+  `catalog.listings.search`, recommendations/categories likewise — the same
+  consume-through-SDK rule the sdkwork-appstore surfaces follow. Whatseek-local
+  user scope (最近使用, 收藏, 我的应用, AI 创建 lifecycle) stays on the mock
+  client until the appstore user-library family lands.
+- **Same integration pattern as the sdkwork-im driver**: composed client
+  constructed exactly once at each bootstrap (`createAppstoreSdkClient`, one
+  session TokenManager, `sdkworkAppstoreBootstrap{AccessToken,AuthToken}`
+  operator bridge), activated per surface by the `sdkworkAppstoreApiBaseUrl`
+  runtime-env source key (declared empty across all eight committed H5/PC
+  profiles, so standalone profiles keep the mock home feed). Spec declarations
+  follow suit: `sdkDependencies` gains
+  `sdkwork-appstore-app-sdk/app-api/authenticated-app-api` at each surface
+  core, `sdkClients` gains `@sdkwork/appstore-app-sdk` at each apps package.
+- **Upstream SDK strictness fix**: the appstore composed facade
+  (`composed/client.ts`) now passes `exactOptionalPropertyTypes` consumers —
+  undefined query params are stripped (`omitUndefined`) instead of assigned,
+  behavior unchanged. Adapter + bootstrap driver tests pin feed assembly
+  (single batched listing resolution), chart-code mapping, local-scope
+  delegation, and token-bridge seeding on both H5 and PC.
+
 ### 2026-10-08 — Live-gateway acceptance: real IM end to end + operator token bridge
 
 - **Mini-program plan artifacts now render (PRD §3 blocker)**: the create

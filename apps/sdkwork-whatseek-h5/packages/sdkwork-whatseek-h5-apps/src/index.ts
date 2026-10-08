@@ -5,6 +5,11 @@
 export { appsRouteContributions } from './routes/routeContributions.js';
 export { appsI18nResources } from './i18n/index.js';
 export { createMockAppsClient } from './services/appsClient.js';
+export {
+  createAppstoreAppsClient,
+  type AppstoreAppsClientOptions,
+  type AppstoreCatalogGateway,
+} from './services/appstoreAppsClient.js';
 export { extractSearchKeywords, scoreAppForKeywords } from './services/search.js';
 export { AppsHomeScreen } from './screens/AppsHomeScreen.js';
 export { AppSearchScreen } from './screens/AppSearchScreen.js';
