@@ -3,7 +3,7 @@ import { SdkworkMobileNavBar } from '@sdkwork/shell-mobile-react/navbar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Star } from 'lucide-react';
 
-import { Avatar, Card, ScreenState } from '@sdkwork/whatseek-h5-commons';
+import { Avatar, Card, ListRow, ScreenState } from '@sdkwork/whatseek-h5-commons';
 import { getWhatseekClient } from '@sdkwork/whatseek-h5-core';
 import { useState } from 'react';
 
@@ -20,6 +20,8 @@ export function AppDetailScreen() {
   // Detail-enriched fetch: store drivers hydrate whatsNew/currentVersion/
   // screenshots from the appstore listing detail + media.
   const detail = useAsyncData(() => apps.getAppDetail(appId), [apps, appId]);
+  // Similar store listings rail (hidden when the driver returns none).
+  const similar = useAsyncData(() => apps.listSimilarApps(appId), [apps, appId]);
 
   if (detail.state === 'loading') {
     return <ScreenState state="loading" />;
@@ -128,6 +130,29 @@ export function AppDetailScreen() {
           <p className="mt-1 text-sm text-muted">{t('whatseek.apps.detail.noPermissions')}</p>
         )}
       </Card>
+
+      {similar.state === 'ready' && similar.data.length > 0 ? (
+        <Card className="mt-3 p-4">
+          <h2 className="text-sm font-semibold text-primary">{t('whatseek.apps.detail.similar')}</h2>
+          <div className="mt-2">
+            {similar.data.map((app) => (
+              <ListRow
+                key={app.id}
+                leading={<Avatar glyph={app.icon} />}
+                title={app.name}
+                description={
+                  <span className="block truncate text-xs text-muted">
+                    ⭐ {app.rating.toFixed(1)} · {app.priceLabel}
+                  </span>
+                }
+                onClick={() => {
+                  navigate(`/apps/detail/${app.id}`);
+                }}
+              />
+            ))}
+          </div>
+        </Card>
+      ) : null}
 
       <div className="fixed inset-x-0 bottom-16 mx-auto flex w-full max-w-[42rem] gap-2 border-t border-border-subtle bg-panel px-4 py-3">
         <button

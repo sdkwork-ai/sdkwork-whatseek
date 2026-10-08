@@ -82,6 +82,10 @@ export async function listSearchSuggestions(query: string): Promise<string[]> {
   return appsPort().listSearchSuggestions(query);
 }
 
+export async function listSimilarApps(appId: string): Promise<WhatseekApp[]> {
+  return appsPort().listSimilarApps(appId);
+}
+
 export async function getAppDetail(appId: string): Promise<WhatseekApp | null> {
   return appsPort().getAppDetail(appId);
 }

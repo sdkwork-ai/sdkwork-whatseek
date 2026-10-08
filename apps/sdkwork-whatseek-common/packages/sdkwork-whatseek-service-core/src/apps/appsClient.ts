@@ -149,6 +149,10 @@ export function createMockAppsClient(options: MockAppsClientOptions = {}): AppsP
     async getApp(appId) {
       return findCatalogApp(appId) ?? toCatalogShape(createdApps.find((app) => app.id === appId));
     },
+    // The mock catalog carries no similar-apps source — the UI hides the rail.
+    async listSimilarApps(): Promise<WhatseekApp[]> {
+      return [];
+    },
     // The mock catalog carries no extra detail surface — same shape as getApp.
     async getAppDetail(appId) {
       return findCatalogApp(appId) ?? toCatalogShape(createdApps.find((app) => app.id === appId));

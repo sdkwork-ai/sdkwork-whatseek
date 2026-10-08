@@ -180,6 +180,7 @@ export function createAppsClient(appstore: AppStoreClient | null): AppsPort {
       ...appstore.catalog,
       get: appstore.listings.get,
       listMedia: appstore.listings.listMedia,
+      listSimilar: appstore.listings.listSimilar,
       listItems: appstore.wishlist.listItems,
       addItem: appstore.wishlist.addItem,
       removeItem: appstore.wishlist.removeItem,

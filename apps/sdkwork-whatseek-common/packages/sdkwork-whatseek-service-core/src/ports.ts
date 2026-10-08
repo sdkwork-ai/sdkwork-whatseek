@@ -46,6 +46,8 @@ export interface AppsPort {
    * and media; the mock driver returns the same shape as `getApp`.
    */
   getAppDetail(appId: string): Promise<WhatseekApp | null>;
+  /** Similar store listings for the detail screen (empty on the mock driver). */
+  listSimilarApps(appId: string): Promise<WhatseekApp[]>;
   listRecent(): Promise<WhatseekApp[]>;
   recordRecent(appId: string): Promise<void>;
   listFavorites(): Promise<WhatseekApp[]>;

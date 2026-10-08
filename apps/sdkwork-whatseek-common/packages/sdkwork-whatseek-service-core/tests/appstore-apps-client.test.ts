@@ -100,6 +100,10 @@ function fakeGateway(
       if (index >= 0) wishlist.splice(index, 1);
       return undefined;
     }),
+    listSimilar: vi.fn(async () => ({
+      items: [listing('app-similar-1'), listing('app-similar-2')],
+      pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
+    })),
     get: vi.fn(async (listingId: string) => ({
       id: listingId,
       displayName: `应用 ${listingId}`,
@@ -255,6 +259,14 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
     expect(gateway.listMedia).toHaveBeenCalledWith('app-a');
   });
 
+  it('listSimilarApps_resolves_store_listings_from_the_similar_endpoint', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    const client = createAppstoreAppsClient({ gateway });
+
+    const similar = await client.listSimilarApps('app-a');
+    expect(gateway.listSimilar).toHaveBeenCalledWith('app-a', { limit: 6 });
+    expect(similar.map((app) => app.id)).toEqual(['app-similar-1', 'app-similar-2']);
+  });
   it('getAppDetail_falls_back_to_the_local_client_for_created_apps', async () => {
     const gateway = fakeGateway(HOME_FEED);
     const local: AppsPort = createMockAppsClient({ storage: null });

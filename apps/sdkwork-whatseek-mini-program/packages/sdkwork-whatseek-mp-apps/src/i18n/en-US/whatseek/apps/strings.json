@@ -28,6 +28,7 @@
     "inUse": "users"
   },
   "detail": {
+    "similar": "Similar apps",
     "use": "Use now",
     "openFailedTitle": "Cannot open this app",
     "notFound": "This app does not exist or has been removed.",

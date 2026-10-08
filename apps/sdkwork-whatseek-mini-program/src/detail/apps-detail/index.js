@@ -5,6 +5,7 @@ const { appApi } = require('../../runtime/app.js');
 
 Page({
   data: {
+    similar: [],
     app: null,
     loading: true,
     error: '',
@@ -30,8 +31,9 @@ Page({
   async load() {
     this.setData({ loading: true, error: '' });
     try {
-      const [app, favorites] = await Promise.all([
+      const [app, similarApps, favorites] = await Promise.all([
         appApi.apps.detail(this.appId),
+        appApi.apps.similarApps(this.appId),
         appApi.apps.favorites(),
       ]);
       if (app === null) {
@@ -40,6 +42,7 @@ Page({
       }
       this.setData({
         app,
+        similar: similarApps,
         favorite: favorites.some((favorite) => favorite.id === app.id),
         loading: false,
       });
@@ -49,6 +52,13 @@ Page({
   },
 
   onRetry() {
+    this.load();
+  },
+
+  onSimilarTap(event) {
+    const appId = event.currentTarget.dataset.id;
+    this.setData({ similar: [] });
+    this.appId = appId;
     this.load();
   },
 

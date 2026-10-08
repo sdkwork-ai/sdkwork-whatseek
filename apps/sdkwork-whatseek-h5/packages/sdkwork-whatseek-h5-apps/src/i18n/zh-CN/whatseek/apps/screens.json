@@ -42,6 +42,7 @@
   },
   "detail": {
     "title": "应用详情",
+    "similar": "相似应用",
     "notFound": "应用不存在",
     "aiCapability": "AI 能力",
     "priceTitle": "价格",

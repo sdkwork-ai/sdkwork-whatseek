@@ -58,7 +58,7 @@ export type AppstoreCatalogGateway = Pick<
   | 'listSearchSuggestions'
   | 'searchListings'
 > &
-  Pick<AppStoreClient['listings'], 'get' | 'listMedia'> &
+  Pick<AppStoreClient['listings'], 'get' | 'listMedia' | 'listSimilar'> &
   Pick<AppStoreClient['wishlist'], 'addItem' | 'listItems' | 'removeItem'>;
 
 export interface AppstoreAppsClientOptions {
@@ -253,6 +253,11 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
         .map(readSearchTerm)
         .filter((term) => term.length > 0 && term !== trimmed);
       return [...new Set(terms)];
+    },
+
+    async listSimilarApps(appId): Promise<WhatseekApp[]> {
+      const page = await gateway.listSimilar(appId, { limit: 6 });
+      return page.items.map(mapSummary);
     },
 
     async listHomeFeed(): Promise<AppHomeFeed> {

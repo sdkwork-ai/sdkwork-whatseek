@@ -42,6 +42,7 @@
   },
   "detail": {
     "title": "App details",
+    "similar": "Similar apps",
     "notFound": "App not found",
     "aiCapability": "AI capability",
     "priceTitle": "Price",

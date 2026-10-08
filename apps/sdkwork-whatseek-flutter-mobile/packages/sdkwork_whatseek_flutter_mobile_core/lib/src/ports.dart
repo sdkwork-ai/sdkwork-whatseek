@@ -51,6 +51,8 @@ abstract class AppsClient {
   /// Detail-enriched variant for the detail screen (store drivers hydrate
   /// whatsNew / currentVersion / screenshots; mock returns the getApp shape).
   Future<WhatseekApp?> getAppDetail(String appId);
+  /// Similar store listings for the detail screen (empty on the mock driver).
+  Future<List<WhatseekApp>> listSimilarApps(String appId);
   Future<WhatseekApp?> openApp(String appId, {bool isVisitor = false});
   Future<void> recordRecent(String appId);
   Future<List<WhatseekApp>> listRecent();

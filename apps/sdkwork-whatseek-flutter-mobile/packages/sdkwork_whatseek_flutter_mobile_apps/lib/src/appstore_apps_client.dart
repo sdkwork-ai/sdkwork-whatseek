@@ -42,6 +42,7 @@ abstract class AppstoreCatalogGateway {
   Future<CategoryListResponse?> listCategories({int? pageSize});
   Future<ListingResponse?> getListing(String listingId);
   Future<ListingMediaListResponse?> listListingMedia(String listingId);
+  Future<SdkWorkListResponse?> listSimilar(String listingId);
   Future<WishlistItemListResponse?> listWishlist({int? pageSize});
   Future<WishlistItemResponse?> addWishlistItem(String listingId);
   Future<void> removeWishlistItem(String listingId);
@@ -96,6 +97,10 @@ class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
   @override
   Future<ListingMediaListResponse?> listListingMedia(String listingId) =>
       _client.listings.appstoreListingsMediaList(listingId);
+
+  @override
+  Future<SdkWorkListResponse?> listSimilar(String listingId) =>
+      _client.listings.appstoreListingsSimilarList(listingId);
 
   @override
   Future<WishlistItemListResponse?> listWishlist({int? pageSize}) =>
@@ -442,6 +447,12 @@ class AppstoreAppsClient implements AppsClient {
           icon: '📦',
         ),
     ];
+  }
+
+  @override
+  Future<List<WhatseekApp>> listSimilarApps(String appId) async {
+    final page = await _gateway.listSimilar(appId);
+    return _asList(_asMap(page?.data)?['items']).map(_mapSummary).toList();
   }
 
   @override

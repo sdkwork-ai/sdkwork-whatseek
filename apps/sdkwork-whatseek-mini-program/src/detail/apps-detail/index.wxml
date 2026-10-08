@@ -34,6 +34,14 @@
     <view class="detail-section-title">{{t.detail.permissions}}</view>
     <view wx:if="{{app.permissions.length === 0}}" class="row-desc">{{t.detail.noPermissions}}</view>
     <view wx:for="{{app.permissions}}" wx:key="*this" class="row-desc">· {{item}}</view>
+    <view wx:if="{{similar.length > 0}}" class="detail-section-title">{{t.detail.similar}}</view>
+    <view wx:for="{{similar}}" wx:key="id" class="row" data-id="{{item.id}}" bindtap="onSimilarTap">
+      <view class="row-glyph">{{item.icon}}</view>
+      <view class="result-main">
+        <view class="row-title">{{item.name}}</view>
+        <view class="row-desc">⭐ {{item.rating}} · {{item.priceLabel}}</view>
+      </view>
+    </view>
   </view>
   <button class="btn-brand detail-btn" bindtap="onUse">{{t.detail.use}}</button>
   <button class="detail-fav {{favorite ? 'detail-fav-active' : ''}}" disabled="{{favoriting}}" bindtap="onFavorite">

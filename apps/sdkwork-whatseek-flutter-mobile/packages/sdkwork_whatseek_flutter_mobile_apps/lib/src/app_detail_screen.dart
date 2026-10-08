@@ -17,6 +17,7 @@ class AppDetailScreen extends StatefulWidget {
 
 class _AppDetailScreenState extends State<AppDetailScreen> {
   late Future<WhatseekApp?> _app;
+  late Future<List<WhatseekApp>> _similar;
   late Future<bool> _favorite;
 
   @override
@@ -25,6 +26,8 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
     // Detail-enriched fetch: store drivers hydrate whatsNew/currentVersion/
     // screenshots from the appstore listing detail + media.
     _app = WhatseekRuntime.instance.apps.getAppDetail(widget.appId);
+    // Similar store listings rail (hidden when the driver returns none).
+    _similar = WhatseekRuntime.instance.apps.listSimilarApps(widget.appId);
     _favorite = _loadFavorite();
   }
 
@@ -155,6 +158,38 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                 for (final permission in app.permissions)
                   Text('· $permission',
                       style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(height: 16),
+              // Similar store listings rail (sdkwork-appstore listings/{id}/similar).
+              FutureBuilder<List<WhatseekApp>>(
+                future: _similar,
+                builder: (context, snapshot) {
+                  final similar = snapshot.data ?? const <WhatseekApp>[];
+                  if (similar.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(WhatseekAppsStrings.of(context, 'detail.similar'),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(height: 4),
+                      for (final item in similar)
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          leading: Text(item.icon,
+                              style: const TextStyle(fontSize: 24)),
+                          title: Text(item.name),
+                          subtitle: Text('⭐ ${item.rating.toStringAsFixed(1)} · ${item.priceLabel}'),
+                          onTap: () => Navigator.of(context).pushNamed(
+                            'app.whatseek.apps.detail',
+                            arguments: item.id,
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => Navigator.of(context).pushNamed(

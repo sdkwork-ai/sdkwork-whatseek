@@ -45,6 +45,7 @@
     "trending": "Trending searches"
   },
   "detail": {
+    "similar": "Similar apps",
     "title": "App details",
     "notFound": "App not found",
     "aiCapability": "AI capability",

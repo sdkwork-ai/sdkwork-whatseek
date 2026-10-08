@@ -45,6 +45,7 @@
     "trending": "热门搜索"
   },
   "detail": {
+    "similar": "相似应用",
     "title": "应用详情",
     "notFound": "应用不存在",
     "aiCapability": "AI 能力",

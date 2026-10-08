@@ -118,6 +118,10 @@ class MockAppsClient implements AppsClient {
     return null;
   }
 
+  /// The mock catalog carries no similar-apps source — the UI hides the rail.
+  @override
+  Future<List<WhatseekApp>> listSimilarApps(String appId) async => const [];
+
   /// The mock catalog carries no extra detail surface — same shape as getApp.
   @override
   Future<WhatseekApp?> getAppDetail(String appId) async {

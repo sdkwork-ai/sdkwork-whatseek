@@ -5,6 +5,23 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — Similar-apps rail integrates `listings/{id}/similar` on every detail screen
+
+- **`AppsPort.listSimilarApps`**: store drivers resolve the appstore similar
+  endpoint (top 6 listing summaries); the mock driver returns an empty list
+  and the UI hides the rail. The `createAppsClient` gateway assembly gains
+  the `listSimilar` slice from the one composed client; the Dart adapter
+  mirrors it over the generated family (envelope row navigation).
+- **Four detail screens render the rail**: H5/PC append a 相似应用 Card of
+  ListRows (icon, name, rating·price) below the detail card, tapping
+  navigating to that app's detail; Flutter renders ListTile rows with the
+  same navigation; the mini-program detail page loads the list in parallel
+  with the detail fetch and re-runs `load()` on tap.
+- **i18n**: one new key per surface apps fragment (`detail.similar` =
+  相似应用 / Similar apps), including the Flutter zh/en JSON + Dart flat map.
+- **Tests**: service-core and Dart adapter suites pin endpoint resolution
+  (limit 6, listing-id order).
+
 ### 2026-10-09 — Search discovery integrates the appstore suggestions + trending endpoints on all four surfaces
 
 - **`AppsPort.listTrendingSearches` / `listSearchSuggestions`**: store drivers
