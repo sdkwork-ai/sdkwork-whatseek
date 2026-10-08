@@ -167,6 +167,59 @@ surface live:
    sources (step 4) so committed rebuilds always reset to the mock
    driver.
 
+## 10. Activating the sdkwork-appstore driver (app center goes live)
+
+The apps port on every TS/Dart surface is gateway-ready: each surface
+constructs one composed sdkwork-appstore client when its runtime config
+declares an appstore API base URL, and keeps the mock clients otherwise.
+When mounted, the 应用 tab home feed (hero/合集/活动/榜单), search
+(results/联想/热搜/历史), categories, recommendations, wishlist favorites,
+and the detail screen (listing detail + media/相似/评论/星级提交/开发者
+其他应用) all come from the store catalog; 最近使用 and 我的应用
+(AI-created lifecycle) stay on the whatseek-local clients by design. To
+take a surface live:
+
+1. Mount the sdkwork-appstore gateway (Rust crates + PostgreSQL in the
+   sdkwork-appstore repo) behind the deployment topology. Unlike the IM
+   gateway (proven live 2026-10-08, §9 step 5), the appstore gateway
+   bring-up is still a deployment milestone — the driver is verified by
+   the adapter and driver tests until a gateway is available.
+2. Declare the base URL in the surface's runtime source, then rebuild:
+
+| Surface | Source file | Key | Notes |
+| --- | --- | --- | --- |
+| H5 | `apps/sdkwork-whatseek-h5/etc/browser/runtime-env.<profile>.json` | `sdkworkAppstoreApiBaseUrl` | same-origin `/app/v3/api` path or absolute URL |
+| PC | `apps/sdkwork-whatseek-pc/etc/browser/runtime-env.<profile>.json` | `sdkworkAppstoreApiBaseUrl` | identical mechanism to H5 |
+| Mini-program | `apps/sdkwork-whatseek-mini-program/config/mini-program/runtime-env.<profile>.json` | `sdkworkAppstoreApiBaseUrl` | absolute URL only; rebuild with `pnpm build` |
+| Flutter | `apps/sdkwork-whatseek-flutter-mobile/env/sdkwork.<profile>.json` | `SDKWORK_APPSTORE_API_BASE_URL` | dart-define sources; rebuild the app |
+
+3. Credentials: the composed client shares the surface's session
+   TokenManager with the IM driver (APP_SDK_INTEGRATION_SPEC.md §4, one
+   manager per session context). Until the IAM login runtime lands,
+   declare the dual-token bridge in a LOCAL, uncommitted profile copy —
+   `sdkworkAppstoreBootstrapAccessToken` /
+   `sdkworkAppstoreBootstrapAuthToken` on H5, PC, and the mini-program;
+   `SDKWORK_APPSTORE_BOOTSTRAP_ACCESS_TOKEN` /
+   `SDKWORK_APPSTORE_BOOTSTRAP_AUTH_TOKEN` dart-defines on Flutter —
+   minted from the gateway's IAM credential-entry surface. Committed
+   profiles keep every credential-bearing key empty; the secret-free
+   tests (H5/PC `runtime-env` checks, Flutter `env_profiles_test`, the
+   mini-program surface-contract pin) fail a commit that violates it.
+4. Verify activation per surface: H5/PC `pnpm build:<arch>:dev` plus the
+   driver and adapter tests; the mini-program `pnpm test` (builds the
+   stamped bundle first); Flutter `flutter test`. With a gateway mounted,
+   the 应用 tab serves the store catalog (events fold into the
+   collections rail), 收藏 toggles the server wishlist, and the detail
+   screen renders screenshots/reviews/相似/开发者应用 with the star
+   control upserting the session rating; recents and 我的应用 stay
+   whatseek-local.
+5. Same stale-artifact rule as §9 step 6: a build made while a
+   gateway-configured runtime source was in place keeps serving that URL
+   after the gateway stops — the home feed and search fall to the error
+   state. Diagnose via `dist/**/runtime-env.json` (a non-empty
+   `sdkworkAppstoreApiBaseUrl` with no listener) and recover by
+   rebuilding from the committed empty-key sources.
+
 ## 8. Escalation
 
 Verification evidence and acceptance criteria live in
