@@ -65,6 +65,9 @@ class WhatseekApp {
     required this.tags,
     required this.updatedAt,
     required this.permissions,
+    this.whatsNew,
+    this.currentVersion,
+    this.screenshots,
   });
 
   final String id;
@@ -81,6 +84,14 @@ class WhatseekApp {
   final List<String> tags;
   final String updatedAt;
   final List<String> permissions;
+
+  /// Detail enrichment served by `getAppDetail` (store apps only; the mock
+  /// driver and list endpoints leave these null).
+  final String? whatsNew;
+  final String? currentVersion;
+
+  /// Renderable screenshot URLs from the listing media; empty when unresolved.
+  final List<String>? screenshots;
 }
 
 class CreatedApp {

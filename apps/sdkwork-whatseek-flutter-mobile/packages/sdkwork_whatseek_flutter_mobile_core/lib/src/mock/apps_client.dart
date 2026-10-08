@@ -101,6 +101,12 @@ class MockAppsClient implements AppsClient {
     return null;
   }
 
+  /// The mock catalog carries no extra detail surface — same shape as getApp.
+  @override
+  Future<WhatseekApp?> getAppDetail(String appId) async {
+    return getApp(appId);
+  }
+
   /// Opens an app (PRD 应用调用): records it as recently used on success and
   /// throws [WhatseekPermissionDeniedException] for enterprise apps when the
   /// session is a visitor (H5 parity). Returns `null` when the app is unknown.

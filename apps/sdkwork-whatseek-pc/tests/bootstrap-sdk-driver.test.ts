@@ -219,6 +219,7 @@ describe('appstore sdk client construction (bootstrap composition root)', () => 
     const getHome = vi.fn(async () => ({ featuredSlots: [], collections: [], charts: [] }));
     const storePort = createAppsClient({
       catalog: { getHome },
+      listings: { get: vi.fn(), listMedia: vi.fn() },
       wishlist: { listItems: vi.fn(), addItem: vi.fn(), removeItem: vi.fn() },
     } as never);
     await storePort.listHomeFeed();

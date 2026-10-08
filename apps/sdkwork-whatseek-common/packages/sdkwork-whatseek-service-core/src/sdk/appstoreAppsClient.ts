@@ -42,7 +42,8 @@ import { extractSearchKeywords } from '../apps/search.js';
 
 /**
  * Narrow slice of the composed appstore client this adapter consumes: the
- * catalog facade for feed/search/browse and the wishlist facade for 收藏
+ * catalog facade for feed/search/browse, the listings facade for the detail
+ * enrichment (listing detail + media), and the wishlist facade for 收藏
  * (server-side store favorites; created apps stay whatseek-local).
  */
 export type AppstoreCatalogGateway = Pick<
@@ -55,6 +56,7 @@ export type AppstoreCatalogGateway = Pick<
   | 'listRecommendations'
   | 'searchListings'
 > &
+  Pick<AppStoreClient['listings'], 'get' | 'listMedia'> &
   Pick<AppStoreClient['wishlist'], 'addItem' | 'listItems' | 'removeItem'>;
 
 export interface AppstoreAppsClientOptions {
@@ -105,6 +107,10 @@ function appKind(appType: string | undefined): WhatseekApp['kind'] {
 function ratingValue(averageRating: string | undefined): number {
   const value = Number.parseFloat(averageRating ?? '');
   return Number.isFinite(value) ? value : 0;
+}
+
+function readString(value: unknown): string | null {
+  return typeof value === 'string' && value.length > 0 ? value : null;
 }
 
 /** Typed summaries and weak-typed page rows (`SdkWorkPageData`) share this shape. */
@@ -329,6 +335,44 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
       const page = await gateway.searchListings({ ids: [appId], limit: 1 });
       const storeApp = page.items[0];
       return storeApp === undefined ? local.getApp(appId) : mapSummary(storeApp);
+    },
+
+    async getAppDetail(appId): Promise<WhatseekApp | null> {
+      const page = await gateway.searchListings({ ids: [appId], limit: 1 });
+      const storeApp = page.items[0];
+      if (storeApp === undefined) {
+        return local.getAppDetail(appId);
+      }
+      // Detail + media hydrate best-effort: a failing listing/media call keeps
+      // the summary-shaped app (screenshots fall back to the UI placeholder).
+      const [detail, mediaPage] = await Promise.all([
+        gateway.get(appId).catch(() => null),
+        gateway.listMedia(appId).catch(() => null),
+      ]);
+      const app = mapSummary(storeApp);
+      const detailRow = detail as unknown as Record<string, unknown> | null;
+      if (detailRow !== null) {
+        const whatsNew = readString(detailRow.whatsNewSummary);
+        if (whatsNew !== null) {
+          app.whatsNew = whatsNew;
+        }
+        const currentVersion = readString(detailRow.currentVersion);
+        if (currentVersion !== null) {
+          app.currentVersion = currentVersion;
+        }
+        const description = readString(detailRow.description);
+        if (description !== null && description.length > app.summary.length) {
+          app.summary = description;
+        }
+      }
+      const mediaItems = (mediaPage?.items ?? []) as unknown as Record<string, unknown>[];
+      app.screenshots = mediaItems
+        .filter((item) => readString(item.mediaRole) === 'SCREENSHOT')
+        .sort((left, right) => Number(left.sortOrder ?? 0) - Number(right.sortOrder ?? 0))
+        .map((item) => readString(item.mediaUrl) ?? readString(item.url))
+        .filter((url): url is string => url !== null)
+        .slice(0, 6);
+      return app;
     },
 
     // Whatseek-local user scope, split by backing: 收藏 for store listings is

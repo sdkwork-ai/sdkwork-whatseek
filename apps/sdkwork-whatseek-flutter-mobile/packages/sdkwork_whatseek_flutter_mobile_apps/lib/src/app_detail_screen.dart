@@ -22,7 +22,9 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _app = WhatseekRuntime.instance.apps.getApp(widget.appId);
+    // Detail-enriched fetch: store drivers hydrate whatsNew/currentVersion/
+    // screenshots from the appstore listing detail + media.
+    _app = WhatseekRuntime.instance.apps.getAppDetail(widget.appId);
     _favorite = _loadFavorite();
   }
 
@@ -74,7 +76,8 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                         Text(
                           '⭐ ${app.rating.toStringAsFixed(1)} · '
                           '${WhatseekAppsStrings.of(context, 'detail.users', {'users': app.usersLabel})}'
-                          ' · ${app.updatedAt}',
+                          ' · ${app.updatedAt}'
+                          '${app.currentVersion == null ? '' : ' · v${app.currentVersion}'}',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -85,6 +88,11 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
               ),
               const SizedBox(height: 16),
               Text(app.summary),
+              if (app.whatsNew != null) ...[
+                const SizedBox(height: 4),
+                Text(app.whatsNew!,
+                    style: Theme.of(context).textTheme.bodySmall),
+              ],
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -95,24 +103,45 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              // PRD §16 screenshots field — Phase-1 placeholder strip.
+              // PRD §16 screenshots: appstore media URLs when the driver
+              // hydrates them; the placeholder strip remains the mock fallback.
               Text(WhatseekAppsStrings.of(context, 'detail.screenshots'),
                   style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
               SizedBox(
                 height: 112,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 3,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
-                  itemBuilder: (context, index) => Container(
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
+                child: (app.screenshots ?? const []).isNotEmpty
+                    ? ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: app.screenshots!.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) => ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            app.screenshots![index],
+                            width: 80,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              width: 80,
+                              color: Theme.of(context)
+                                  .colorScheme.surfaceContainerHighest,
+                            ),
+                          ),
+                        ),
+                      )
+                    : ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) => Container(
+                          width: 80,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
               ),
               const SizedBox(height: 16),
               // PRD §16 permissions field.

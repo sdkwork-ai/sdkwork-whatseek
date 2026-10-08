@@ -23,7 +23,8 @@ import 'package:sdkwork_appstore_app_sdk/sdkwork_appstore_app_sdk.dart';
 import 'package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart';
 
 /// Narrow slice of the composed appstore client this adapter consumes: the
-/// catalog API for feed/search/browse plus the wishlist API for 收藏
+/// catalog API for feed/search/browse, the listings API for the detail
+/// enrichment (listing detail + media), and the wishlist API for 收藏
 /// (server-side store favorites; created apps stay whatseek-local).
 abstract class AppstoreCatalogGateway {
   Future<HomeFeedResponse?> getHome();
@@ -37,6 +38,8 @@ abstract class AppstoreCatalogGateway {
   });
   Future<SdkWorkListResponse?> listRecommendations({int? pageSize});
   Future<CategoryListResponse?> listCategories({int? pageSize});
+  Future<ListingResponse?> getListing(String listingId);
+  Future<ListingMediaListResponse?> listListingMedia(String listingId);
   Future<WishlistItemListResponse?> listWishlist({int? pageSize});
   Future<WishlistItemResponse?> addWishlistItem(String listingId);
   Future<void> removeWishlistItem(String listingId);
@@ -77,6 +80,14 @@ class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
       _client.catalog.appstoreCatalogCategoriesList(null, pageSize, null);
 
   @override
+  Future<ListingResponse?> getListing(String listingId) =>
+      _client.listings.appstoreListingsRetrieve(listingId);
+
+  @override
+  Future<ListingMediaListResponse?> listListingMedia(String listingId) =>
+      _client.listings.appstoreListingsMediaList(listingId);
+
+  @override
   Future<WishlistItemListResponse?> listWishlist({int? pageSize}) =>
       _client.wishlist.appstoreWishlistItemsList(null, pageSize);
 
@@ -92,6 +103,17 @@ class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
 /// Client-generated idempotency key for the wishlist add command
 /// (API_SPEC §15 command pattern; unique per attempt).
 String _idempotencyKey() => 'whatseek-${DateTime.now().microsecondsSinceEpoch}';
+
+/// Await a response future and return its `data` envelope map, or `null` when
+/// the call fails or the payload is not a map (best-effort hydration).
+Future<Map<String, dynamic>?> _safeData(Future<Object?> future) async {
+  try {
+    final response = await future;
+    return _asMap((response as dynamic)?.data);
+  } catch (_) {
+    return null;
+  }
+}
 
 /// whatseek chart tabs mapped onto appstore chart snapshot codes.
 const Map<AppChartId, String> kAppstoreChartCodes = {
@@ -390,6 +412,51 @@ class AppstoreAppsClient implements AppsClient {
     return items.isEmpty ? _local.getApp(appId) : _mapSummary(items.first);
   }
 
+  @override
+  Future<WhatseekApp?> getAppDetail(String appId) async {
+    final page = await _gateway.searchListings(ids: appId, pageSize: 1);
+    final items = _asList(_asMap(page?.data)?['items']);
+    if (items.isEmpty) {
+      return _local.getAppDetail(appId);
+    }
+    final app = _mapSummary(items.first);
+    // Detail + media hydrate best-effort: a failing call keeps the
+    // summary-shaped app (screenshots fall back to the UI placeholder).
+    final envelopes = await Future.wait<Map<String, dynamic>?>([
+      _safeData(_gateway.getListing(appId)),
+      _safeData(_gateway.listListingMedia(appId)),
+    ]);
+    var whatsNew = app.whatsNew;
+    var currentVersion = app.currentVersion;
+    var summary = app.summary;
+    final detail = _asMap(envelopes[0]?['item']);
+    if (detail != null) {
+      final detailWhatsNew = _string(detail['whatsNewSummary']);
+      if (detailWhatsNew != null) {
+        whatsNew = detailWhatsNew;
+      }
+      final detailVersion = _string(detail['currentVersion']);
+      if (detailVersion != null) {
+        currentVersion = detailVersion;
+      }
+      final description = _string(detail['description']);
+      if (description != null && description.length > summary.length) {
+        summary = description;
+      }
+    }
+    final screenshots = _asList(envelopes[1]?['items'])
+        .where((item) => _string(item['mediaRole']) == 'SCREENSHOT')
+        .toList()
+      ..sort((left, right) =>
+          (left['sortOrder'] as num? ?? 0).compareTo(right['sortOrder'] as num? ?? 0));
+    final screenshotUrls = screenshots
+        .map((item) => _string(item['mediaUrl']) ?? _string(item['url']))
+        .whereType<String>()
+        .take(6)
+        .toList();
+    return _withDetail(app, whatsNew: whatsNew, currentVersion: currentVersion, summary: summary, screenshots: screenshotUrls);
+  }
+
   // Whatseek-local user scope, split by backing: 收藏 for store listings is
   // the appstore wishlist (server-side, per account); 最近使用 and the
   // AI-created 我的应用 lifecycle have no appstore app-api resource and stay
@@ -463,4 +530,33 @@ class AppstoreAppsClient implements AppsClient {
 
   @override
   Future<CreatedApp> publishApp(String appId) => _local.publishApp(appId);
+}
+
+/// Rebuild [app] with detail-enrichment fields (WhatseekApp fields are final).
+WhatseekApp _withDetail(
+  WhatseekApp app, {
+  String? whatsNew,
+  String? currentVersion,
+  String? summary,
+  List<String>? screenshots,
+}) {
+  return WhatseekApp(
+    id: app.id,
+    name: app.name,
+    summary: summary ?? app.summary,
+    developer: app.developer,
+    category: app.category,
+    kind: app.kind,
+    icon: app.icon,
+    rating: app.rating,
+    usersLabel: app.usersLabel,
+    priceLabel: app.priceLabel,
+    aiCapability: app.aiCapability,
+    tags: app.tags,
+    updatedAt: app.updatedAt,
+    permissions: app.permissions,
+    whatsNew: whatsNew,
+    currentVersion: currentVersion,
+    screenshots: screenshots,
+  );
 }

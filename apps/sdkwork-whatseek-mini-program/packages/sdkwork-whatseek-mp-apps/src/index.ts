@@ -74,6 +74,10 @@ export async function getApp(appId: string): Promise<WhatseekApp | null> {
   return appsPort().getApp(appId);
 }
 
+export async function getAppDetail(appId: string): Promise<WhatseekApp | null> {
+  return appsPort().getAppDetail(appId);
+}
+
 export async function listMyApps(): Promise<CreatedApp[]> {
   return appsPort().listMyApps();
 }

@@ -12,7 +12,7 @@
     <view>
       <view class="row-title">{{app.name}}</view>
       <view class="row-desc">{{app.developer}} · {{app.category}} · {{app.priceLabel}} · ⭐ {{app.rating}}</view>
-      <view class="row-desc">{{app.usersLabel}} {{t.detail.users}} · {{t.detail.updated}} {{app.updatedAt}}</view>
+      <view class="row-desc">{{app.usersLabel}} {{t.detail.users}} · {{t.detail.updated}} {{app.updatedAt}}<block wx:if="{{app.currentVersion}}"> · v{{app.currentVersion}}</block></view>
     </view>
   </view>
   <view class="detail-tags">
@@ -21,11 +21,15 @@
   </view>
   <view class="panel detail-card">
     <view class="detail-section-title">{{t.detail.screenshots}}</view>
-    <view class="detail-shots">
+    <view class="detail-shots" wx:if="{{app.screenshots.length > 0}}">
+      <image wx:for="{{app.screenshots}}" wx:key="*this" class="detail-shot" src="{{item}}" mode="aspectFill" lazy-load="{{true}}" />
+    </view>
+    <view class="detail-shots" wx:else>
       <view class="detail-shot"></view>
       <view class="detail-shot"></view>
       <view class="detail-shot"></view>
     </view>
+    <view wx:if="{{app.whatsNew}}" class="row-desc">{{app.whatsNew}}</view>
     <view class="detail-section-title">{{app.priceLabel}}</view>
     <view class="detail-section-title">{{t.detail.permissions}}</view>
     <view wx:if="{{app.permissions.length === 0}}" class="row-desc">{{t.detail.noPermissions}}</view>

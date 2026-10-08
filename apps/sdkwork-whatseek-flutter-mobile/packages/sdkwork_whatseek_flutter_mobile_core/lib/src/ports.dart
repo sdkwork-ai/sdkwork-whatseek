@@ -43,6 +43,9 @@ abstract class AppsClient {
   Future<List<WhatseekApp>> listChart(AppChartId chartId);
   Future<List<AppCategory>> listCategories();
   Future<WhatseekApp?> getApp(String appId);
+  /// Detail-enriched variant for the detail screen (store drivers hydrate
+  /// whatsNew / currentVersion / screenshots; mock returns the getApp shape).
+  Future<WhatseekApp?> getAppDetail(String appId);
   Future<WhatseekApp?> openApp(String appId, {bool isVisitor = false});
   Future<void> recordRecent(String appId);
   Future<List<WhatseekApp>> listRecent();

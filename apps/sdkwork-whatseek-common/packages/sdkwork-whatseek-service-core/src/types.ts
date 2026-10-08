@@ -33,6 +33,14 @@ export interface WhatseekApp {
   tags: string[];
   updatedAt: string;
   permissions: string[];
+  /**
+   * Detail enrichment served by `getAppDetail` (store apps only; the mock
+   * driver and list endpoints leave these undefined).
+   */
+  whatsNew?: string;
+  currentVersion?: string;
+  /** Renderable screenshot URLs from the listing media; empty when unresolved. */
+  screenshots?: string[];
 }
 
 /** PRD §20 lifecycle states for AI-generated apps. */

@@ -84,6 +84,21 @@ function fakeGateway(
       if (index >= 0) wishlist.splice(index, 1);
       return undefined;
     }),
+    get: vi.fn(async (listingId: string) => ({
+      id: listingId,
+      displayName: `应用 ${listingId}`,
+      whatsNewSummary: '新增深色模式与批量导出',
+      currentVersion: '2.1.0',
+      description: `${listingId} 的完整介绍，比摘要更长的描述文本内容。`,
+    })),
+    listMedia: vi.fn(async (listingId: string) => ({
+      items: [
+        { id: 'm-2', mediaRole: 'SCREENSHOT', mediaUrl: `https://cdn.example.com/${listingId}-shot2.png`, sortOrder: 2 },
+        { id: 'm-1', mediaRole: 'SCREENSHOT', mediaUrl: `https://cdn.example.com/${listingId}-shot1.png`, sortOrder: 1 },
+        { id: 'm-3', mediaRole: 'ICON', url: 'https://cdn.example.com/icon.png', sortOrder: 0 },
+      ],
+      pageInfo: { mode: 'cursor', hasMore: false },
+    })),
   } as unknown as AppstoreCatalogGateway & {
     searchListings: ReturnType<typeof vi.fn>;
     listItems: ReturnType<typeof vi.fn>;
@@ -191,6 +206,38 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
       rating: 4.5,
       updatedAt: '2026-09-01',
     });
+  });
+
+  it('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    const client = createAppstoreAppsClient({ gateway });
+
+    const app = await client.getAppDetail('app-a');
+    expect(app).not.toBeNull();
+    expect(app!.whatsNew).toBe('新增深色模式与批量导出');
+    expect(app!.currentVersion).toBe('2.1.0');
+    // The longer listing description replaces the summary preview.
+    expect(app!.summary).toContain('完整介绍');
+    // Only SCREENSHOT-role media with renderable URLs, sorted by sortOrder.
+    expect(app!.screenshots).toEqual([
+      'https://cdn.example.com/app-a-shot1.png',
+      'https://cdn.example.com/app-a-shot2.png',
+    ]);
+    expect(gateway.get).toHaveBeenCalledWith('app-a');
+    expect(gateway.listMedia).toHaveBeenCalledWith('app-a');
+  });
+
+  it('getAppDetail_falls_back_to_the_local_client_for_created_apps', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    const local: AppsPort = createMockAppsClient({ storage: null });
+    const client = createAppstoreAppsClient({ gateway, local });
+
+    const created = await local.createAppFromPlan('订单管理', ['订单']);
+    const detail = await client.getAppDetail(created.id);
+    expect(detail).not.toBeNull();
+    expect(detail!.id).toBe(created.id);
+    // The mock driver carries no extra detail surface.
+    expect(detail!.screenshots).toBeUndefined();
   });
 
   it('searches_through_the_catalog_and_keeps_local_fallback_for_created_apps', async () => {

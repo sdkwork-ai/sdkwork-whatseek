@@ -33,6 +33,12 @@ export interface AppsPort {
   listCategories(): Promise<AppCategory[]>;
   listByCategory(categoryId: string): Promise<WhatseekApp[]>;
   getApp(appId: string): Promise<WhatseekApp | null>;
+  /**
+   * Detail-enriched variant for the detail screen: store drivers hydrate
+   * whatsNew / currentVersion / screenshots from the appstore listing detail
+   * and media; the mock driver returns the same shape as `getApp`.
+   */
+  getAppDetail(appId: string): Promise<WhatseekApp | null>;
   listRecent(): Promise<WhatseekApp[]>;
   recordRecent(appId: string): Promise<void>;
   listFavorites(): Promise<WhatseekApp[]>;

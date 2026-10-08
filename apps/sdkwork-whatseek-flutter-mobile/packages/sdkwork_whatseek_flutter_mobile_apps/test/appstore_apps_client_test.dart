@@ -116,13 +116,14 @@ class _FakeGateway implements AppstoreCatalogGateway {
     if (ids != null) {
       searchedIds.addAll(ids.split(','));
     }
+    // Fixture convention: `app-*` ids are store listings; everything else
+    // (e.g. `gen-*` created apps) resolves to nothing.
+    final rows = ids == null
+        ? [_listingRow('app-search')]
+        : ids.split(',').where((id) => id.startsWith('app-')).map(_listingRow).toList();
     return ListingSummaryListResponse(
       code: 0,
-      data: _envelope({
-        'items': ids == null
-            ? [_listingRow('app-search')]
-            : ids.split(',').map(_listingRow).toList(),
-      }),
+      data: _envelope({'items': rows}),
     );
   }
 
@@ -132,6 +133,48 @@ class _FakeGateway implements AppstoreCatalogGateway {
         code: 0,
         data: _envelope({
           'items': [_listingRow('app-rec')],
+        }),
+      );
+
+  @override
+  Future<ListingResponse?> getListing(String listingId) async => ListingResponse(
+        code: 0,
+        data: _envelope({
+          'item': {
+            'id': listingId,
+            'displayName': '应用 $listingId',
+            'whatsNewSummary': '新增深色模式与批量导出',
+            'currentVersion': '2.1.0',
+            'description': '$listingId 的完整介绍，比摘要更长的描述文本内容。',
+          },
+        }),
+      );
+
+  @override
+  Future<ListingMediaListResponse?> listListingMedia(String listingId) async =>
+      ListingMediaListResponse(
+        code: 0,
+        data: _envelope({
+          'items': [
+            {
+              'id': 'm-2',
+              'mediaRole': 'SCREENSHOT',
+              'mediaUrl': 'https://cdn.example.com/$listingId-shot2.png',
+              'sortOrder': 2,
+            },
+            {
+              'id': 'm-1',
+              'mediaRole': 'SCREENSHOT',
+              'mediaUrl': 'https://cdn.example.com/$listingId-shot1.png',
+              'sortOrder': 1,
+            },
+            {
+              'id': 'm-3',
+              'mediaRole': 'ICON',
+              'url': 'https://cdn.example.com/icon.png',
+              'sortOrder': 0,
+            },
+          ],
         }),
       );
 
@@ -250,5 +293,32 @@ void main() {
     // AI-created apps stay whatseek-local (never store listings).
     final plan = client.draftCreationPlan('团队周报助手');
     expect(plan.title, isNotEmpty);
+  });
+
+  test('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', () async {
+    final gateway = _FakeGateway({});
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    final app = await client.getAppDetail('app-a');
+    expect(app, isNotNull);
+    expect(app!.whatsNew, '新增深色模式与批量导出');
+    expect(app.currentVersion, '2.1.0');
+    // The longer listing description replaces the summary preview.
+    expect(app.summary, contains('完整介绍'));
+    // Only SCREENSHOT-role media with renderable URLs, sorted by sortOrder.
+    expect(app.screenshots, [
+      'https://cdn.example.com/app-a-shot1.png',
+      'https://cdn.example.com/app-a-shot2.png',
+    ]);
+  });
+
+  test('getAppDetail_falls_back_to_the_local_client_for_created_apps', () async {
+    final gateway = _FakeGateway({});
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    // gen-* ids never resolve as store listings — the local mock answers.
+    final plan = client.draftCreationPlan('订单管理');
+    expect(plan.title, isNotEmpty);
+    expect(await client.getAppDetail('gen-unknown'), isNull);
   });
 }

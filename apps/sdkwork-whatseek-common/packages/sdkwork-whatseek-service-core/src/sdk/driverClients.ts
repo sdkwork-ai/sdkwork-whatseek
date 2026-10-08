@@ -145,8 +145,9 @@ export function createContactsClient(im: ImSdkClient | null): ContactsPort {
 
 /**
  * Build the apps port. `appstore === null` selects the mock driver. The
- * adapter gateway assembles the catalog facade plus the wishlist slice
- * (server-side 收藏) from the one composed client.
+ * adapter gateway assembles the catalog facade, the listings slice (detail
+ * enrichment) and the wishlist slice (server-side 收藏) from the one composed
+ * client.
  */
 export function createAppsClient(appstore: AppStoreClient | null): AppsPort {
   if (appstore === null) {
@@ -155,6 +156,8 @@ export function createAppsClient(appstore: AppStoreClient | null): AppsPort {
   return createAppstoreAppsClient({
     gateway: {
       ...appstore.catalog,
+      get: appstore.listings.get,
+      listMedia: appstore.listings.listMedia,
       listItems: appstore.wishlist.listItems,
       addItem: appstore.wishlist.addItem,
       removeItem: appstore.wishlist.removeItem,

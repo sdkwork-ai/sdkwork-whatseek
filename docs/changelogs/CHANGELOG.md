@@ -5,6 +5,28 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — App detail integrates the appstore listing detail + media across all four surfaces
+
+- **`AppsPort.getAppDetail` closes the Phase-1 screenshot placeholder**: store
+  drivers hydrate the detail screen from `listings/{id}` (whatsNew, current
+  version, and the full description when longer than the search-preview
+  summary) plus `listings/{id}/media` (SCREENSHOT-role entries with
+  renderable URLs, sorted by sortOrder, capped at six — mirroring the
+  sdkwork-appstore reference detail page, which renders only media carrying
+  URLs). Created apps and the mock driver keep the summary shape, so the
+  placeholder strip remains the honest fallback. Port addition only — the
+  existing `getApp` stays for tiles/cards/runner.
+- **Four detail screens consume the enrichment**: H5/PC `AppDetailScreen`
+  render screenshot images with the placeholder strip as mock-driver
+  fallback, a keyless `v{version}` chip in the meta row, and the whatsNew
+  paragraph under the summary; the Flutter detail screen mirrors the same
+  (network images with error fallback); the mini-program detail page binds
+  `app.screenshots` / `app.currentVersion` / `app.whatsNew` in WXML with the
+  runtime `apps.detail` binding switched to `getAppDetail`.
+- **Tests**: service-core adapter tests pin detail hydration (role filter,
+  sort order, description upgrade, local fallback for created apps); the Dart
+  adapter suite gains the same two cases with envelope-shaped fakes.
+
 ### 2026-10-09 — Shared driver factories own composed-client construction; 收藏 rides the appstore wishlist
 
 - **Driver factories move to the common family**: `createImSdkClient` /

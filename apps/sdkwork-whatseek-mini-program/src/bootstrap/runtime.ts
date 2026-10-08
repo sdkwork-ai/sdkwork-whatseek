@@ -248,7 +248,7 @@ export function bootstrapRuntime(): PageApi {
       collection: (collectionId) => apps.getCollection(collectionId),
       collectionApps: (collectionId) => apps.listCollectionApps(collectionId),
       chart: (chartId) => apps.listChart(chartId as Parameters<typeof apps.listChart>[0]),
-      detail: (appId) => apps.getApp(appId),
+      detail: (appId) => apps.getAppDetail(appId),
       myApps: () => apps.listMyApps(),
       open: (appId) => apps.openApp(appId),
       generate: (requirement) => apps.generateApp(requirement),

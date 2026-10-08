@@ -129,6 +129,7 @@ describe('shared SDK driver factories (common family)', () => {
 
     const port = createAppsClient({
       catalog: { getHome, searchListings },
+      listings: { get: vi.fn(), listMedia: vi.fn() },
       wishlist: { listItems, addItem, removeItem },
     } as never);
 

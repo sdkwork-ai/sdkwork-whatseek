@@ -20,6 +20,7 @@ function fakeDeps(overrides: {
       listCategories: async () => [],
       listByCategory: async () => [],
       getApp: async () => null,
+      getAppDetail: async () => null,
       listRecent: async () => [],
       recordRecent: async () => undefined,
       listFavorites: async () => [],

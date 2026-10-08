@@ -17,7 +17,9 @@ export function AppDetailScreen() {
   const apps = getWhatseekClient('apps');
   const [favorite, setFavorite] = useState<boolean | null>(null);
 
-  const detail = useAsyncData(() => apps.getApp(appId), [apps, appId]);
+  // Detail-enriched fetch: store drivers hydrate whatsNew/currentVersion/
+  // screenshots from the appstore listing detail + media.
+  const detail = useAsyncData(() => apps.getAppDetail(appId), [apps, appId]);
 
   if (detail.state === 'loading') {
     return <ScreenState state="loading" />;
@@ -57,12 +59,19 @@ export function AppDetailScreen() {
             <span>{t('whatseek.apps.tile.users', { users: app.usersLabel })}</span>
             <span>·</span>
             <span>{app.updatedAt}</span>
+            {app.currentVersion ? (
+              <>
+                <span>·</span>
+                <span>v{app.currentVersion}</span>
+              </>
+            ) : null}
           </p>
         </div>
       </div>
 
       <Card className="mt-4 p-4">
         <p className="text-sm leading-relaxed text-secondary">{app.summary}</p>
+        {app.whatsNew ? <p className="mt-2 text-xs leading-relaxed text-muted">{app.whatsNew}</p> : null}
         <div className="mt-3 flex flex-wrap gap-1.5">
           {app.aiCapability ? (
             <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[0.625rem] text-brand">
@@ -82,16 +91,30 @@ export function AppDetailScreen() {
 
       <Card className="mt-3 p-4">
         <h2 className="text-sm font-semibold text-primary">{t('whatseek.apps.detail.screenshots')}</h2>
-        {/* PRD §16 screenshots field — Phase-1 placeholder strip. */}
-        <div className="mt-2 flex gap-2 overflow-hidden">
-          {[0, 1, 2].map((index) => (
-            <div
-              key={index}
-              aria-hidden="true"
-              className="h-28 w-20 shrink-0 rounded-lg border border-border-subtle bg-panel-muted"
-            />
-          ))}
-        </div>
+        {/* PRD §16 screenshots: appstore media URLs when the driver hydrates
+            them; the placeholder strip remains the mock-driver fallback. */}
+        {app.screenshots && app.screenshots.length > 0 ? (
+          <div className="mt-2 flex gap-2 overflow-x-auto">
+            {app.screenshots.map((url) => (
+              <img
+                key={url}
+                src={url}
+                alt=""
+                aria-hidden="true"
+                className="h-28 w-20 shrink-0 rounded-lg border border-border-subtle object-cover"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-2 flex gap-2 overflow-hidden" aria-hidden="true">
+            {[0, 1, 2].map((index) => (
+              <div
+                key={index}
+                className="h-28 w-20 shrink-0 rounded-lg border border-border-subtle bg-panel-muted"
+              />
+            ))}
+          </div>
+        )}
         <h2 className="mt-3 text-sm font-semibold text-primary">{t('whatseek.apps.detail.priceTitle')}</h2>
         <p className="mt-1 text-sm text-secondary">{app.priceLabel}</p>
         <h2 className="mt-3 text-sm font-semibold text-primary">{t('whatseek.apps.detail.permissionsTitle')}</h2>
