@@ -61,9 +61,15 @@ describe('shared SDK driver factories (common family)', () => {
 
   it('seeds_the_shared_token_manager_from_the_bootstrap_bridges', async () => {
     const setTokens = vi.fn();
+    let createdManager: object | null = null;
     vi.doMock('@sdkwork/sdk-common', async (importOriginal) => ({
       ...(await importOriginal<typeof import('@sdkwork/sdk-common')>()),
-      createTokenManager: () => ({ setTokens }),
+      // §4: exactly one TokenManager per session context — capture the single
+      // instance the factories share.
+      createTokenManager: () => {
+        createdManager = { setTokens };
+        return createdManager;
+      },
     }));
     vi.doMock('@sdkwork/im-sdk', () => ({
       ImSdkClient: class {
@@ -75,19 +81,31 @@ describe('shared SDK driver factories (common family)', () => {
       },
     }));
     vi.doMock('@sdkwork/appstore-app-sdk', () => ({
-      createAppStoreClient: () => ({ catalog: {} }),
+      createAppStoreClient: (config: { tokenManager?: unknown }) => ({
+        catalog: {},
+        configTokenManager: config.tokenManager,
+      }),
     }));
     vi.resetModules();
     try {
-      const { createAppstoreSdkClient: freshAppstore } = await import('../src/sdk/driverClients.js');
-      freshAppstore(
+      const { createAppstoreSdkClient: freshAppstore, createImSdkClient: freshIm } = await import(
+        '../src/sdk/driverClients.js'
+      );
+      freshIm(
         {
-          ...appstoreEnv,
-          sdkworkAppstoreBootstrapAccessToken: 'access-jwt',
-          sdkworkAppstoreBootstrapAuthToken: 'auth-jwt',
+          sdkworkImApiBaseUrl: '/im/v3/api',
+          sdkworkImBootstrapAccessToken: 'access-jwt',
+          sdkworkImBootstrapAuthToken: 'auth-jwt',
         },
         { platform: 'pc' },
       );
+      const appstoreClient = freshAppstore(
+        { sdkworkAppstoreApiBaseUrl: '/app/v3/api' },
+        { platform: 'pc' },
+      ) as { configTokenManager?: unknown };
+      // The appstore driver receives the SAME manager instance the IM driver
+      // created and seeded — one session context, one TokenManager.
+      expect(appstoreClient.configTokenManager).toBe(createdManager);
       expect(setTokens).toHaveBeenCalledWith({ accessToken: 'access-jwt', authToken: 'auth-jwt' });
     } finally {
       vi.doUnmock('@sdkwork/sdk-common');

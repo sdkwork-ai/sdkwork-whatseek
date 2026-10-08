@@ -35,6 +35,36 @@ export interface WhatseekSdkDriverEnv {
   sdkworkAppstoreBootstrapAuthToken?: string;
 }
 
+/**
+ * Session-scoped TokenManager (APP_SDK_INTEGRATION_SPEC.md §4: exactly one
+ * global TokenManager per authenticated session context, shared by every SDK
+ * client). The IM and appstore drivers carry the same session, so both
+ * factories share this module-scoped manager, created lazily on first driver
+ * activation. Whichever bridge seeds first (both carry the same session's
+ * dual tokens) feeds every driver; the Phase-2 IAM login runtime will own it.
+ */
+let sessionTokenManager: ReturnType<typeof createTokenManager> | null = null;
+
+function sharedTokenManager(): ReturnType<typeof createTokenManager> {
+  if (sessionTokenManager === null) {
+    sessionTokenManager = createTokenManager();
+  }
+  return sessionTokenManager;
+}
+
+function seedTokenManager(
+  tokenManager: ReturnType<typeof createTokenManager>,
+  bootstrapAccessToken: string,
+  bootstrapAuthToken: string,
+): void {
+  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
+    tokenManager.setTokens({
+      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
+      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
+    });
+  }
+}
+
 export interface ImSdkDriverOptions {
   /** Surface identity stamped on the composed IM client. */
   platform: 'h5' | 'pc' | 'mini-program';
@@ -45,12 +75,10 @@ export interface ImSdkDriverOptions {
 /**
  * Construct the composed IM client for the resolved runtime environment, or
  * `null` when no IM gateway is declared (mock-driver standalone milestone).
- * TokenManager closure rule (APP_SDK_INTEGRATION_SPEC.md: one manager per
- * authenticated session context, shared by every SDK client). Tokens come
- * from the IAM login runtime (Phase 2) or, until that lands, from the
- * operator-declared `sdkworkImBootstrap*` runtime-env bridge (minted by the
- * gateway's own IAM credential-entry surface); empty starts the session empty
- * and the IM gateway rejects unauthenticated calls, so the driver only
+ * Tokens come from the IAM login runtime (Phase 2) or, until that lands, from
+ * the operator-declared `sdkworkImBootstrap*` runtime-env bridge (minted by
+ * the gateway's own IAM credential-entry surface); empty starts the session
+ * empty and the IM gateway rejects unauthenticated calls, so the driver only
  * activates when a gateway is actually mounted.
  */
 export function createImSdkClient(env: WhatseekSdkDriverEnv, options: ImSdkDriverOptions): ImSdkClient | null {
@@ -58,15 +86,12 @@ export function createImSdkClient(env: WhatseekSdkDriverEnv, options: ImSdkDrive
   if (apiBaseUrl.length === 0) {
     return null;
   }
-  const tokenManager = createTokenManager();
-  const bootstrapAccessToken = env.sdkworkImBootstrapAccessToken?.trim() ?? '';
-  const bootstrapAuthToken = env.sdkworkImBootstrapAuthToken?.trim() ?? '';
-  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
-    tokenManager.setTokens({
-      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
-      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
-    });
-  }
+  const tokenManager = sharedTokenManager();
+  seedTokenManager(
+    tokenManager,
+    env.sdkworkImBootstrapAccessToken?.trim() ?? '',
+    env.sdkworkImBootstrapAuthToken?.trim() ?? '',
+  );
   const websocketBaseUrl = env.sdkworkImWebSocketBaseUrl?.trim() ?? '';
   const clientOptions: ImSdkClientOptions = {
     apiBaseUrl,
@@ -86,7 +111,7 @@ export interface AppstoreSdkDriverOptions {
 /**
  * Construct the composed appstore client for the resolved runtime environment,
  * or `null` when no appstore gateway is declared (mock-driver standalone
- * milestone). Same TokenManager closure rule as the IM driver; tokens come
+ * milestone). Shares the session TokenManager with the IM driver; tokens come
  * from the operator-declared `sdkworkAppstoreBootstrap*` runtime-env bridge
  * until the IAM login runtime lands (APP_SDK_INTEGRATION_SPEC.md §4).
  */
@@ -98,15 +123,12 @@ export function createAppstoreSdkClient(
   if (apiBaseUrl.length === 0) {
     return null;
   }
-  const tokenManager = createTokenManager();
-  const bootstrapAccessToken = env.sdkworkAppstoreBootstrapAccessToken?.trim() ?? '';
-  const bootstrapAuthToken = env.sdkworkAppstoreBootstrapAuthToken?.trim() ?? '';
-  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
-    tokenManager.setTokens({
-      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
-      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
-    });
-  }
+  const tokenManager = sharedTokenManager();
+  seedTokenManager(
+    tokenManager,
+    env.sdkworkAppstoreBootstrapAccessToken?.trim() ?? '',
+    env.sdkworkAppstoreBootstrapAuthToken?.trim() ?? '',
+  );
   return createAppStoreClient({ baseUrl: apiBaseUrl, tokenManager, platform: options.platform });
 }
 

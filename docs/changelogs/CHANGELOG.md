@@ -5,6 +5,20 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — One session TokenManager shared by every SDK driver (§4 conformance)
+
+- **§4 closure fix**: APP_SDK_INTEGRATION_SPEC.md §4 mandates exactly one
+  global TokenManager per authenticated session context, shared by every SDK
+  client — but the IM and appstore driver factories each constructed their
+  own, which could also diverge the two drivers' session credentials. Both
+  factories now share one module-scoped session manager
+  (`sdk/driverClients`), created lazily on first driver activation; whichever
+  operator bridge seeds first feeds every driver, and a driver-factory test
+  pins the instance identity across drivers. The high-level IAM auth runtime
+  factories remain unavailable for these architectures (no appbase wrapper
+  exists yet), so the operator bootstrap bridge stays the documented §4
+  interim.
+
 ### 2026-10-09 — App detail integrates the appstore listing detail + media across all four surfaces
 
 - **`AppsPort.getAppDetail` closes the Phase-1 screenshot placeholder**: store
