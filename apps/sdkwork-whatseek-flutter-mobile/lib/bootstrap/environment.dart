@@ -13,6 +13,9 @@ class WhatseekRuntimeEnvironment {
     this.sdkworkImWebSocketBaseUrl,
     this.sdkworkImBootstrapAccessToken,
     this.sdkworkImBootstrapAuthToken,
+    this.sdkworkAppstoreApiBaseUrl,
+    this.sdkworkAppstoreBootstrapAccessToken,
+    this.sdkworkAppstoreBootstrapAuthToken,
   });
 
   final String environment;
@@ -40,6 +43,21 @@ class WhatseekRuntimeEnvironment {
   /// Dual-token auth half paired with [sdkworkImBootstrapAccessToken].
   final String? sdkworkImBootstrapAuthToken;
 
+  /// sdkwork-appstore driver (apps capability home feed / catalog): absolute
+  /// gateway base URL (`/app/v3/api` family). Empty/absent keeps the mock
+  /// apps client (standalone milestone default); the Flutter runtime has no
+  /// same-origin concept, so a relative path cannot resolve.
+  final String? sdkworkAppstoreApiBaseUrl;
+
+  /// Pre-minted IAM session for the composed appstore client (dual-token
+  /// headers), same operator bridge semantics as the IM driver. Null (all
+  /// committed env profiles) starts the session empty — the appstore app-api
+  /// rejects unauthenticated calls.
+  final String? sdkworkAppstoreBootstrapAccessToken;
+
+  /// Dual-token auth half paired with [sdkworkAppstoreBootstrapAccessToken].
+  final String? sdkworkAppstoreBootstrapAuthToken;
+
   static const WhatseekRuntimeEnvironment fallback = WhatseekRuntimeEnvironment(
     environment: 'development',
     deploymentProfile: 'standalone',
@@ -61,6 +79,9 @@ class WhatseekRuntimeEnvironment {
     const imWebSocketBaseUrl = String.fromEnvironment('SDKWORK_IM_WEB_SOCKET_BASE_URL');
     const imBootstrapAccessToken = String.fromEnvironment('SDKWORK_IM_BOOTSTRAP_ACCESS_TOKEN');
     const imBootstrapAuthToken = String.fromEnvironment('SDKWORK_IM_BOOTSTRAP_AUTH_TOKEN');
+    const appstoreApiBaseUrl = String.fromEnvironment('SDKWORK_APPSTORE_API_BASE_URL');
+    const appstoreBootstrapAccessToken = String.fromEnvironment('SDKWORK_APPSTORE_BOOTSTRAP_ACCESS_TOKEN');
+    const appstoreBootstrapAuthToken = String.fromEnvironment('SDKWORK_APPSTORE_BOOTSTRAP_AUTH_TOKEN');
     if (profileId.isEmpty) {
       return fallback;
     }
@@ -73,6 +94,11 @@ class WhatseekRuntimeEnvironment {
       sdkworkImWebSocketBaseUrl: imWebSocketBaseUrl.isEmpty ? null : imWebSocketBaseUrl,
       sdkworkImBootstrapAccessToken: imBootstrapAccessToken.isEmpty ? null : imBootstrapAccessToken,
       sdkworkImBootstrapAuthToken: imBootstrapAuthToken.isEmpty ? null : imBootstrapAuthToken,
+      sdkworkAppstoreApiBaseUrl: appstoreApiBaseUrl.isEmpty ? null : appstoreApiBaseUrl,
+      sdkworkAppstoreBootstrapAccessToken:
+          appstoreBootstrapAccessToken.isEmpty ? null : appstoreBootstrapAccessToken,
+      sdkworkAppstoreBootstrapAuthToken:
+          appstoreBootstrapAuthToken.isEmpty ? null : appstoreBootstrapAuthToken,
     );
   }
 }

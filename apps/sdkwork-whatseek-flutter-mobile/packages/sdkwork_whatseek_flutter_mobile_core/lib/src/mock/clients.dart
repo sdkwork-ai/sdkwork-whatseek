@@ -5,7 +5,6 @@ library;
 import '../intent.dart';
 import '../models.dart';
 import '../ports.dart';
-import 'apps_client.dart';
 
 class MockContactsClient implements ContactsClient {
   MockContactsClient({List<Contact>? seed}) : _contacts = seed ?? kDefaultContacts;
@@ -339,7 +338,7 @@ class MockChatClient {
 
   static const String _replyPrefix = 'whatseek.chat.reply.';
 
-  final MockAppsClient apps;
+  final AppsClient apps;
   final ContactsClient contacts;
   final MessagesClient messages;
   final MockTasksClient tasks;

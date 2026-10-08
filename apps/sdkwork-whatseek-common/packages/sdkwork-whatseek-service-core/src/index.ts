@@ -1,8 +1,9 @@
 /**
  * Public export boundary of `@sdkwork/whatseek-service-core` — the shared
- * WhatSeek domain model, SDK ports, client registry, and mock client
- * implementations (APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md: contracts and
- * service ports live in the common family; UI stays in the surfaces).
+ * WhatSeek domain model, SDK ports, SDK adapter boundaries, client registry,
+ * and mock client implementations (APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md:
+ * contracts, service ports, and SDK adapter boundaries live in the common
+ * family; UI stays in the surfaces).
  */
 
 export type {
@@ -79,3 +80,23 @@ export { conversationKindGlyph, createMockMessagesClient, type MockMessagesClien
 
 export { createMockChatClient, type MockChatClientDeps, type MockChatClientOptions, type Scheduler } from './chat/chatClient.js';
 export { createMockTasksClient, type MockTasksClientOptions } from './chat/tasksClient.js';
+
+// SDK adapter boundaries (APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md: the
+// common family owns the SDK adapter mapping; each surface's bootstrap
+// composition root constructs the composed SDK clients and injects gateway
+// slices). Surface capability packages re-export these under their own names.
+export {
+  createImMessagesClient,
+  type ImMessagesClientOptions,
+  type ImMessagesGateway,
+} from './sdk/imMessagesClient.js';
+export {
+  createImContactsClient,
+  type ImContactsClientOptions,
+  type ImContactsGateway,
+} from './sdk/imContactsClient.js';
+export {
+  createAppstoreAppsClient,
+  type AppstoreAppsClientOptions,
+  type AppstoreCatalogGateway,
+} from './sdk/appstoreAppsClient.js';

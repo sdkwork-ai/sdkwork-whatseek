@@ -57,6 +57,11 @@
         "workspace": "sdkwork-im-sdk",
         "surface": "open-api",
         "credentialMode": "protected-open-api-api-key-or-dual-token"
+      },
+      {
+        "workspace": "sdkwork-appstore-app-sdk",
+        "surface": "app-api",
+        "credentialMode": "authenticated-app-api"
       }
     ],
     "permissionComposition": {},

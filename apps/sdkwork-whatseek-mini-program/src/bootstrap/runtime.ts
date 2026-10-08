@@ -13,7 +13,9 @@
  */
 
 import { createTokenManager } from '@sdkwork/sdk-common';
+import { createAppStoreClient, type AppStoreClient } from '@sdkwork/appstore-app-sdk';
 import { ImSdkClient, type ImSdkClientOptions } from '@sdkwork/im-sdk';
+import { createAppstoreAppsClient } from '@sdkwork/whatseek-service-core';
 import {
   bindMiniProgramHost,
   bindRuntimeConfig,
@@ -190,6 +192,30 @@ function createMiniProgramImSdkClient(env: MiniProgramRuntimeConfig): ImSdkClien
   return new ImSdkClient(options);
 }
 
+/**
+ * Construct the composed appstore client for the resolved runtime config, or
+ * `null` when no appstore gateway is declared (mock-driver standalone
+ * milestone). Same TokenManager closure rule as the IM driver; tokens come
+ * from the operator-declared `sdkworkAppstoreBootstrap*` runtime-config bridge
+ * until the IAM login runtime lands (APP_SDK_INTEGRATION_SPEC.md §4).
+ */
+function createMiniProgramAppstoreSdkClient(env: MiniProgramRuntimeConfig): AppStoreClient | null {
+  const apiBaseUrl = env.sdkworkAppstoreApiBaseUrl?.trim() ?? '';
+  if (apiBaseUrl.length === 0) {
+    return null;
+  }
+  const tokenManager = createTokenManager();
+  const bootstrapAccessToken = env.sdkworkAppstoreBootstrapAccessToken?.trim() ?? '';
+  const bootstrapAuthToken = env.sdkworkAppstoreBootstrapAuthToken?.trim() ?? '';
+  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
+    tokenManager.setTokens({
+      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
+      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
+    });
+  }
+  return createAppStoreClient({ baseUrl: apiBaseUrl, tokenManager, platform: 'mini-program' });
+}
+
 export function bootstrapRuntime(): PageApi {
   bindRuntimeConfig(__SDKWORK_RUNTIME_ENV__);
   bindWxHost();
@@ -205,20 +231,35 @@ export function bootstrapRuntime(): PageApi {
   /* eslint-enable @typescript-eslint/no-require-imports */
 
   const im = createMiniProgramImSdkClient(__SDKWORK_RUNTIME_ENV__);
+  const appstore = createMiniProgramAppstoreSdkClient(__SDKWORK_RUNTIME_ENV__);
   bootstrapMiniProgramClients(
-    im === null
+    im === null && appstore === null
       ? {}
       : {
-          contacts: contacts.createImContactsClient({
-            gateway: { contacts: im.social.contacts },
-          }),
-          messages: messages.createImMessagesClient({
-            gateway: {
-              conversations: im.conversations,
-              connect: (options) => im.connect(options),
-            },
-            currentUserId: () => profile.getSessionUser().id,
-          }),
+          ...(appstore === null
+            ? {}
+            : {
+                // sdkwork-appstore driver: the home feed / catalog comes from
+                // the composed appstore client; whatseek-local user scope
+                // (recents, favorites, 我的应用) stays on the mock client
+                // inside the shared adapter until the appstore user-library
+                // family lands.
+                apps: createAppstoreAppsClient({ gateway: appstore.catalog }),
+              }),
+          ...(im === null
+            ? {}
+            : {
+                contacts: contacts.createImContactsClient({
+                  gateway: { contacts: im.social.contacts },
+                }),
+                messages: messages.createImMessagesClient({
+                  gateway: {
+                    conversations: im.conversations,
+                    connect: (options) => im.connect(options),
+                  },
+                  currentUserId: () => profile.getSessionUser().id,
+                }),
+              }),
         },
   );
 

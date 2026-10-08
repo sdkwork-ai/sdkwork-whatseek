@@ -5,8 +5,8 @@ import type {
   ConversationMessageEntry,
 } from '@sdkwork/im-sdk';
 
-import { createImMessagesClient } from '../src/services/imMessagesClient.js';
-import type { ImMessagesGateway } from '../src/services/imMessagesClient.js';
+import { createImMessagesClient } from '../src/sdk/imMessagesClient.js';
+import type { ImMessagesGateway } from '../src/sdk/imMessagesClient.js';
 import type { WhatseekTask } from '@sdkwork/whatseek-service-core';
 
 function inboxEntry(overrides: Partial<ConversationInboxEntry> = {}): ConversationInboxEntry {

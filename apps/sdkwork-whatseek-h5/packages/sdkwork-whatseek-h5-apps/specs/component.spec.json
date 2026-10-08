@@ -10,9 +10,13 @@
     "domain": "whatseek",
     "capability": "apps",
     "surface": "app",
-    "languages": ["typescript"],
+    "languages": [
+      "typescript"
+    ],
     "generated": false,
-    "manifests": ["package.json"]
+    "manifests": [
+      "package.json"
+    ]
   },
   "canonicalSpecs": [
     {
@@ -43,12 +47,26 @@
   ],
   "contracts": {
     "layerRole": "frontend-feature",
-    "publicExports": ["."],
-    "providedPorts": [{ "name": "appsPortFactory", "export": "." }],
-    "requiredPorts": [
-      { "name": "whatseekSdkInventory", "provider": "@sdkwork/whatseek-h5-core", "export": "." }
+    "publicExports": [
+      "."
     ],
-    "runtimeEntrypoints": ["package.json#scripts.typecheck", "package.json#scripts.test"],
+    "providedPorts": [
+      {
+        "name": "appsPortFactory",
+        "export": "."
+      }
+    ],
+    "requiredPorts": [
+      {
+        "name": "whatseekSdkInventory",
+        "provider": "@sdkwork/whatseek-h5-core",
+        "export": "."
+      }
+    ],
+    "runtimeEntrypoints": [
+      "package.json#scripts.typecheck",
+      "package.json#scripts.test"
+    ],
     "routeManifest": [
       "app.whatseek.apps.home",
       "app.whatseek.apps.search",
@@ -57,7 +75,7 @@
       "app.whatseek.apps.create",
       "app.whatseek.apps.my"
     ],
-    "sdkClients": ["@sdkwork/appstore-app-sdk"],
+    "sdkClients": [],
     "sdkDependencies": [],
     "permissionComposition": {},
     "dependencyApiExports": [],
@@ -66,6 +84,9 @@
     "configKeys": []
   },
   "verification": {
-    "commands": ["pnpm --filter @sdkwork/whatseek-h5-apps typecheck", "pnpm --filter @sdkwork/whatseek-h5-apps test"]
+    "commands": [
+      "pnpm --filter @sdkwork/whatseek-h5-apps typecheck",
+      "pnpm --filter @sdkwork/whatseek-h5-apps test"
+    ]
   }
 }

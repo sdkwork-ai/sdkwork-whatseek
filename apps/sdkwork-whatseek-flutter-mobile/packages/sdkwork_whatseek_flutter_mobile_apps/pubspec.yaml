@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  sdkwork_appstore_app_sdk:
+    path: ../../../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-dart
   sdkwork_whatseek_flutter_mobile_core:
     path: ../sdkwork_whatseek_flutter_mobile_core
   sdkwork_whatseek_flutter_mobile_commons:

@@ -3,6 +3,7 @@
 /// charts, collections, detail, runner, 我的应用, creation.
 library;
 
+export 'src/appstore_apps_client.dart';
 export 'src/apps_home_screen.dart';
 export 'src/apps_search_screen.dart';
 export 'src/app_detail_screen.dart';

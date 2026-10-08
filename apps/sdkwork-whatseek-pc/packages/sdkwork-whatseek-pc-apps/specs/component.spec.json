@@ -72,7 +72,7 @@
       "app.whatseek.apps.create",
       "app.whatseek.apps.my"
     ],
-    "sdkClients": ["@sdkwork/appstore-app-sdk"],
+    "sdkClients": [],
     "sdkDependencies": [],
     "permissionComposition": {},
     "dependencyApiExports": [],

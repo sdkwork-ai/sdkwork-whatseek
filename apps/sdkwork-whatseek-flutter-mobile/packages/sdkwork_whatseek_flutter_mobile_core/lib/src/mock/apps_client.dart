@@ -5,8 +5,9 @@
 library;
 
 import '../models.dart';
+import '../ports.dart';
 
-class MockAppsClient {
+class MockAppsClient implements AppsClient {
   final List<WhatseekApp> _catalog;
   final List<String> _recentIds = [];
   final Set<String> _favoriteIds = {};
@@ -14,6 +15,7 @@ class MockAppsClient {
 
   MockAppsClient({List<WhatseekApp>? catalog}) : _catalog = catalog ?? kDefaultCatalog;
 
+  @override
   Future<List<AppRecommendation>> searchApps(String query) async {
     final keywords = extractSearchKeywords(query);
     final results = <AppRecommendation>[];
@@ -44,25 +46,32 @@ class MockAppsClient {
     return results;
   }
 
+  @override
   Future<List<WhatseekApp>> listRecommended() async =>
       _catalog.where((app) => app.aiCapability).take(6).toList();
 
+  @override
   Future<List<WhatseekApp>> listHot() async => _catalog.take(8).toList();
 
   /// Appstore-style home feed (PRD §4.2.1 首页编辑流 / §5.1): hero banner
   /// carousel → editorial stories → curated collections → chart quick views
   /// (TS `buildWhatseekHomeFeed` port).
+  @override
   Future<AppHomeFeed> listHomeFeed() async => buildWhatseekHomeFeed(_catalog);
 
+  @override
   Future<AppCollection?> getCollection(String collectionId) async =>
       findWhatseekCollection(collectionId);
 
+  @override
   Future<List<WhatseekApp>> listCollectionApps(String collectionId) async =>
       listWhatseekCollectionApps(collectionId, _catalog);
 
+  @override
   Future<List<WhatseekApp>> listChart(AppChartId chartId) async =>
       listWhatseekChartApps(chartId, _catalog);
 
+  @override
   Future<List<AppCategory>> listCategories() async => const [
         AppCategory(id: 'efficiency', labelKey: 'whatseek.apps.category.efficiency', icon: '⚡'),
         AppCategory(id: 'office', labelKey: 'whatseek.apps.category.office', icon: '🗂️'),
@@ -82,6 +91,7 @@ class MockAppsClient {
         AppCategory(id: 'agent', labelKey: 'whatseek.apps.category.agent', icon: '🤖'),
       ];
 
+  @override
   Future<WhatseekApp?> getApp(String appId) async {
     for (final app in _catalog) {
       if (app.id == appId) {
@@ -94,6 +104,7 @@ class MockAppsClient {
   /// Opens an app (PRD 应用调用): records it as recently used on success and
   /// throws [WhatseekPermissionDeniedException] for enterprise apps when the
   /// session is a visitor (H5 parity). Returns `null` when the app is unknown.
+  @override
   Future<WhatseekApp?> openApp(String appId, {bool isVisitor = false}) async {
     final app = await getApp(appId);
     if (app == null) {
@@ -106,12 +117,14 @@ class MockAppsClient {
     return app;
   }
 
+  @override
   Future<void> recordRecent(String appId) async {
     _recentIds
       ..remove(appId)
       ..insert(0, appId);
   }
 
+  @override
   Future<List<WhatseekApp>> listRecent() async {
     final results = <WhatseekApp>[];
     for (final id in _recentIds.take(8)) {
@@ -123,6 +136,7 @@ class MockAppsClient {
     return results;
   }
 
+  @override
   Future<List<WhatseekApp>> listFavorites() async {
     final results = <WhatseekApp>[];
     for (final id in _favoriteIds) {
@@ -134,6 +148,7 @@ class MockAppsClient {
     return results;
   }
 
+  @override
   Future<bool> toggleFavorite(String appId) async {
     if (_favoriteIds.contains(appId)) {
       _favoriteIds.remove(appId);
@@ -143,8 +158,10 @@ class MockAppsClient {
     return true;
   }
 
+  @override
   Future<List<CreatedApp>> listMyApps() async => List.unmodifiable(_createdApps);
 
+  @override
   Future<CreatedApp?> getMyApp(String appId) async {
     for (final app in _createdApps) {
       if (app.id == appId) {
@@ -154,10 +171,12 @@ class MockAppsClient {
     return null;
   }
 
+  @override
   Future<void> deleteMyApp(String appId) async {
     _createdApps.removeWhere((app) => app.id == appId);
   }
 
+  @override
   ({List<String> modules, List<String> pages, List<String> dataModel, String title})
       draftCreationPlan(String requirement) {
     final lowered = requirement.toLowerCase();
@@ -212,6 +231,7 @@ class MockAppsClient {
     );
   }
 
+  @override
   Future<CreatedApp> createAppFromPlan(String requirement, List<String> modules) async {
     final now = DateTime.now();
     final created = CreatedApp(
@@ -229,6 +249,7 @@ class MockAppsClient {
     return created;
   }
 
+  @override
   Future<CreatedApp> modifyApp(String appId, String instruction) async {
     final index = _createdApps.indexWhere((app) => app.id == appId);
     if (index < 0) {
@@ -254,6 +275,7 @@ class MockAppsClient {
     return updated;
   }
 
+  @override
   Future<CreatedApp> publishApp(String appId) async {
     final index = _createdApps.indexWhere((app) => app.id == appId);
     if (index < 0) {

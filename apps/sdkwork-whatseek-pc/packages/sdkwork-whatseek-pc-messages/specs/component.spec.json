@@ -66,9 +66,7 @@
       "app.whatseek.messages.home",
       "app.whatseek.messages.conversation"
     ],
-    "sdkClients": [
-      "@sdkwork/im-sdk"
-    ],
+    "sdkClients": [],
     "sdkDependencies": [],
     "permissionComposition": {},
     "dependencyApiExports": [],

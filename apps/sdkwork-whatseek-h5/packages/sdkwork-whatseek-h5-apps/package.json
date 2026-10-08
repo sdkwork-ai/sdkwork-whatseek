@@ -18,7 +18,6 @@
     "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\""
   },
   "dependencies": {
-    "@sdkwork/appstore-app-sdk": "workspace:*",
     "@sdkwork/shell-mobile-react": "link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react",
     "@sdkwork/whatseek-h5-commons": "workspace:*",
     "@sdkwork/whatseek-h5-core": "workspace:*",

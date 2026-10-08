@@ -53,6 +53,10 @@
       {
         "name": "whatseekServiceMocks",
         "export": "."
+      },
+      {
+        "name": "whatseekSdkAdapters",
+        "export": "."
       }
     ],
     "requiredPorts": [],
@@ -61,8 +65,19 @@
       "package.json#scripts.test"
     ],
     "routeManifest": null,
-    "sdkClients": [],
-    "sdkDependencies": [],
+    "sdkClients": ["@sdkwork/im-sdk", "@sdkwork/appstore-app-sdk"],
+    "sdkDependencies": [
+      {
+        "workspace": "sdkwork-im-sdk",
+        "surface": "open-api",
+        "credentialMode": "protected-open-api-api-key-or-dual-token"
+      },
+      {
+        "workspace": "sdkwork-appstore-app-sdk",
+        "surface": "app-api",
+        "credentialMode": "authenticated-app-api"
+      }
+    ],
     "permissionComposition": {},
     "dependencyApiExports": [],
     "dependencyApiSurfaces": [],

@@ -15,6 +15,7 @@ import {
   createMockTasksClient,
   registerWhatseekClient,
   resetWhatseekClients,
+  type AppsPort,
   type ContactsPort,
   type MessagesPort,
 } from '@sdkwork/whatseek-service-core';
@@ -74,6 +75,22 @@ export interface MiniProgramRuntimeConfig {
   sdkworkImBootstrapAccessToken?: string;
   /** Dual-token auth half paired with `sdkworkImBootstrapAccessToken`. */
   sdkworkImBootstrapAuthToken?: string;
+  /**
+   * sdkwork-appstore driver (apps capability home feed / catalog): same-origin
+   * `/app/v3/api` path when an appstore gateway is mounted, absolute URL for
+   * explicit topology overrides. Empty/absent keeps the mock apps client
+   * (standalone milestone default).
+   */
+  sdkworkAppstoreApiBaseUrl?: string;
+  /**
+   * Pre-minted IAM session for the composed appstore client's TokenManager
+   * (dual-token headers), same operator bridge semantics as the IM driver:
+   * empty (all committed profiles) starts the session empty and the appstore
+   * app-api rejects unauthenticated calls.
+   */
+  sdkworkAppstoreBootstrapAccessToken?: string;
+  /** Dual-token auth half paired with `sdkworkAppstoreBootstrapAccessToken`. */
+  sdkworkAppstoreBootstrapAuthToken?: string;
 }
 
 let runtimeConfig: MiniProgramRuntimeConfig | null = null;
@@ -92,14 +109,15 @@ export function getRuntimeConfig(): MiniProgramRuntimeConfig {
 /**
  * Register the standalone client family once per runtime bundle. Without
  * overrides every port stays on the shared mock clients; the composition root
- * (`src/bootstrap/runtime.ts`) passes IM-backed ports when the runtime config
- * declares an sdkwork-im gateway — the ports stay identical.
+ * (`src/bootstrap/runtime.ts`) passes IM-backed messages/contacts ports and
+ * the appstore-backed apps port when the runtime config declares the
+ * respective gateways — the ports stay identical.
  */
 export function bootstrapMiniProgramClients(
-  overrides: { contacts?: ContactsPort; messages?: MessagesPort } = {},
+  overrides: { apps?: AppsPort; contacts?: ContactsPort; messages?: MessagesPort } = {},
 ): void {
   resetWhatseekClients();
-  const apps = createMockAppsClient();
+  const apps = overrides.apps ?? createMockAppsClient();
   const contacts = overrides.contacts ?? createMockContactsClient();
   const messages = overrides.messages ?? createMockMessagesClient();
   const tasks = createMockTasksClient();

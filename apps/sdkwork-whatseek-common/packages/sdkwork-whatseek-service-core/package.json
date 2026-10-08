@@ -18,6 +18,8 @@
     "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\""
   },
   "dependencies": {
+    "@sdkwork/appstore-app-sdk": "workspace:*",
+    "@sdkwork/im-sdk": "workspace:*",
     "@sdkwork/whatseek-intent-core": "workspace:*",
     "@sdkwork/whatseek-route-core": "workspace:*"
   },

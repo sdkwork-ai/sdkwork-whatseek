@@ -13,8 +13,7 @@
     }
   },
   "dependencies": {
-    "@sdkwork/im-sdk": "workspace:*",
-    "@sdkwork/whatseek-service-core": "workspace:*",
-    "@sdkwork/whatseek-mp-core": "workspace:*"
+    "@sdkwork/whatseek-mp-core": "workspace:*",
+    "@sdkwork/whatseek-service-core": "workspace:*"
   }
 }

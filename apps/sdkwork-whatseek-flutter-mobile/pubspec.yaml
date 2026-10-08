@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
   im_sdk_composed:
     path: ../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-flutter/composed/im_sdk_composed
+  sdkwork_appstore_app_sdk:
+    path: ../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-dart
   shared_preferences: ^2.5.5
   sdkwork_whatseek_flutter_mobile_apps:
     path: packages/sdkwork_whatseek_flutter_mobile_apps

@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { ContactView } from '@sdkwork/im-sdk';
 
-import { createImContactsClient } from '../src/services/imContactsClient.js';
-import type { ImContactsGateway } from '../src/services/imContactsClient.js';
+import { createImContactsClient } from '../src/sdk/imContactsClient.js';
+import type { ImContactsGateway } from '../src/sdk/imContactsClient.js';
 
 function contactView(overrides: Partial<ContactView> = {}): ContactView {
   return {

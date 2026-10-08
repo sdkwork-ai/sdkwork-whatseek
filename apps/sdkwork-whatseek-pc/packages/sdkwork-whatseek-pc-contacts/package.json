@@ -18,7 +18,6 @@
     "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\""
   },
   "dependencies": {
-    "@sdkwork/im-sdk": "workspace:*",
     "@sdkwork/whatseek-pc-commons": "workspace:*",
     "@sdkwork/whatseek-pc-core": "workspace:*",
     "@sdkwork/whatseek-service-core": "workspace:*",

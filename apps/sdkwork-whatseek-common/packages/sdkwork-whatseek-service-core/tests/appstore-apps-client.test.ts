@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ListingSummary } from '@sdkwork/appstore-app-sdk';
 import type { AppsPort } from '@sdkwork/whatseek-service-core';
 
-import { createAppstoreAppsClient, type AppstoreCatalogGateway } from '../src/services/appstoreAppsClient.js';
-import { createMockAppsClient } from '../src/services/appsClient.js';
+import { createAppstoreAppsClient, type AppstoreCatalogGateway } from '../src/sdk/appstoreAppsClient.js';
+import { createMockAppsClient } from '../src/apps/appsClient.js';
 
 function listing(id: string, overrides: Partial<ListingSummary> = {}): ListingSummary {
   return {

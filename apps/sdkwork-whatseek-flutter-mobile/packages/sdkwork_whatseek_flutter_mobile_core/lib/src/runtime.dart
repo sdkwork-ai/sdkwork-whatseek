@@ -1,7 +1,8 @@
 /// Runtime for the WhatSeek Flutter surface: one client family per session.
-/// The contacts/messages accessors are the port interfaces — the Phase-1 mock
-/// clients by default, swapped by `bindPorts` for the sdkwork-im adapters when
-/// the runtime config mounts an IM gateway (bootstrap composition root only;
+/// The apps/contacts/messages accessors are the port interfaces — the Phase-1
+/// mock clients by default, swapped by `bindPorts` for the sdkwork-im
+/// adapters and the sdkwork-appstore apps adapter when the runtime config
+/// mounts the respective gateways (bootstrap composition root only;
 /// APP_SDK_INTEGRATION_SPEC.md §1). Chat stays on the mock family until its
 /// SDK family lands and is recomposed over the effective ports on rebind.
 library;
@@ -15,7 +16,7 @@ import 'ports.dart';
 class WhatseekRuntime {
   WhatseekRuntime();
 
-  final MockAppsClient apps = MockAppsClient();
+  AppsClient apps = MockAppsClient();
 
   ContactsClient contacts = MockContactsClient();
   MessagesClient messages = MockMessagesClient();
@@ -30,11 +31,23 @@ class WhatseekRuntime {
         tasks: tasks,
       );
 
-  /// Swap the contacts/messages drivers and recompose the chat capability
-  /// over the effective ports. Called by the bootstrap composition root only.
-  void bindPorts({required ContactsClient contacts, required MessagesClient messages}) {
-    this.contacts = contacts;
-    this.messages = messages;
+  /// Swap the contacts/messages/apps drivers and recompose the chat capability
+  /// over the effective ports. Called by the bootstrap composition root only;
+  /// null leaves a driver on its current binding.
+  void bindPorts({
+    ContactsClient? contacts,
+    MessagesClient? messages,
+    AppsClient? apps,
+  }) {
+    if (contacts != null) {
+      this.contacts = contacts;
+    }
+    if (messages != null) {
+      this.messages = messages;
+    }
+    if (apps != null) {
+      this.apps = apps;
+    }
     chat = _composeChat();
   }
 

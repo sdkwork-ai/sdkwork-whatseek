@@ -243,6 +243,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.8"
+  sdkwork_appstore_app_sdk:
+    dependency: "direct main"
+    description:
+      path: "../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-dart"
+      relative: true
+    source: path
+    version: "0.1.0"
   sdkwork_common_flutter:
     dependency: "direct overridden"
     description:

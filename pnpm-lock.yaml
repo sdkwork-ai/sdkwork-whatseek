@@ -314,6 +314,12 @@ importers:
 
   apps/sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core:
     dependencies:
+      '@sdkwork/appstore-app-sdk':
+        specifier: workspace:*
+        version: link:../../../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript
+      '@sdkwork/im-sdk':
+        specifier: workspace:*
+        version: link:../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
       '@sdkwork/whatseek-intent-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-intent-core
@@ -424,9 +430,6 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-apps:
     dependencies:
-      '@sdkwork/appstore-app-sdk':
-        specifier: workspace:*
-        version: link:../../../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript
       '@sdkwork/shell-mobile-react':
         specifier: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
         version: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
@@ -535,9 +538,6 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-contacts:
     dependencies:
-      '@sdkwork/im-sdk':
-        specifier: workspace:*
-        version: link:../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
       '@sdkwork/shell-mobile-react':
         specifier: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
         version: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
@@ -609,9 +609,6 @@ importers:
 
   apps/sdkwork-whatseek-h5/packages/sdkwork-whatseek-h5-messages:
     dependencies:
-      '@sdkwork/im-sdk':
-        specifier: workspace:*
-        version: link:../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
       '@sdkwork/shell-mobile-react':
         specifier: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
         version: link:../../../../../sdkwork-appbase/packages/mobile-react/foundation/sdkwork-shell-mobile-react
@@ -729,6 +726,9 @@ importers:
 
   apps/sdkwork-whatseek-mini-program:
     dependencies:
+      '@sdkwork/appstore-app-sdk':
+        specifier: workspace:*
+        version: link:../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript
       '@sdkwork/im-sdk':
         specifier: workspace:*
         version: link:../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
@@ -811,9 +811,6 @@ importers:
 
   apps/sdkwork-whatseek-mini-program/packages/sdkwork-whatseek-mp-contacts:
     dependencies:
-      '@sdkwork/im-sdk':
-        specifier: workspace:*
-        version: link:../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
       '@sdkwork/whatseek-mp-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-mp-core
@@ -832,9 +829,6 @@ importers:
 
   apps/sdkwork-whatseek-mini-program/packages/sdkwork-whatseek-mp-messages:
     dependencies:
-      '@sdkwork/im-sdk':
-        specifier: workspace:*
-        version: link:../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
       '@sdkwork/whatseek-mp-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-mp-core
@@ -956,9 +950,6 @@ importers:
 
   apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-apps:
     dependencies:
-      '@sdkwork/appstore-app-sdk':
-        specifier: workspace:*
-        version: link:../../../../../sdkwork-appstore/sdks/sdkwork-appstore-app-sdk/sdkwork-appstore-app-sdk-typescript
       '@sdkwork/whatseek-pc-commons':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-pc-commons
@@ -1067,9 +1058,6 @@ importers:
 
   apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-contacts:
     dependencies:
-      '@sdkwork/im-sdk':
-        specifier: workspace:*
-        version: link:../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
       '@sdkwork/whatseek-pc-commons':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-pc-commons
@@ -1141,9 +1129,6 @@ importers:
 
   apps/sdkwork-whatseek-pc/packages/sdkwork-whatseek-pc-messages:
     dependencies:
-      '@sdkwork/im-sdk':
-        specifier: workspace:*
-        version: link:../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
       '@sdkwork/whatseek-pc-commons':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-pc-commons

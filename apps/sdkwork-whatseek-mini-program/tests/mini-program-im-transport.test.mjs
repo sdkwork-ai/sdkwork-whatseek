@@ -195,45 +195,77 @@ test('fetch_polyfill_installs_only_missing_globals', () => {
 });
 
 test('im_sdk_family_is_declared_at_the_spec_mandated_seams', () => {
-  const readJson = (relative) => JSON.parse(readFileSync(path.join(surfaceRoot, relative), 'utf8'));
+  const readJson = (relative) => JSON.parse(readFileSync(relative, 'utf8'));
 
   // Root dependencies declare the composed consumer package once.
-  const root = readJson('package.json');
+  const root = readJson(path.join(surfaceRoot, 'package.json'));
   assert.equal(root.dependencies['@sdkwork/im-sdk'], 'workspace:*');
   assert.equal(root.dependencies['@sdkwork/sdk-common'], 'workspace:*');
+  // The sdkwork-appstore composed consumer package rides the same seams.
+  assert.equal(root.dependencies['@sdkwork/appstore-app-sdk'], 'workspace:*');
 
-  // Capability packages consume the composed client through their own deps.
+  // The adapter boundary is owned by the shared common family
+  // (APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md): service-core consumes the
+  // composed client; surface capability packages only re-export the adapter.
+  const serviceCore = readJson(
+    path.join(surfaceRoot, '..', 'sdkwork-whatseek-common', 'packages', 'sdkwork-whatseek-service-core', 'package.json'),
+  );
+  assert.equal(serviceCore.dependencies['@sdkwork/im-sdk'], 'workspace:*');
+  assert.equal(serviceCore.dependencies['@sdkwork/appstore-app-sdk'], 'workspace:*');
+  const serviceCoreSpec = readJson(
+    path.join(surfaceRoot, '..', 'sdkwork-whatseek-common', 'packages', 'sdkwork-whatseek-service-core', 'specs', 'component.spec.json'),
+  );
+  assert.ok(serviceCoreSpec.contracts.sdkClients.includes('@sdkwork/im-sdk'));
+  assert.ok(serviceCoreSpec.contracts.sdkClients.includes('@sdkwork/appstore-app-sdk'));
+
   for (const pkg of ['sdkwork-whatseek-mp-messages', 'sdkwork-whatseek-mp-contacts']) {
-    const manifest = readJson(`packages/${pkg}/package.json`);
-    assert.equal(manifest.dependencies['@sdkwork/im-sdk'], 'workspace:*', pkg);
-    const spec = readJson(`packages/${pkg}/specs/component.spec.json`);
-    assert.deepEqual(spec.contracts.sdkClients, ['@sdkwork/im-sdk'], pkg);
+    const manifest = readJson(path.join(surfaceRoot, `packages/${pkg}/package.json`));
+    assert.equal(manifest.dependencies['@sdkwork/im-sdk'], undefined, pkg);
+    const spec = readJson(path.join(surfaceRoot, `packages/${pkg}/specs/component.spec.json`));
+    assert.deepEqual(spec.contracts.sdkClients, [], pkg);
   }
 
-  // Core declares the dependency family.
-  const coreSpec = readJson('packages/sdkwork-whatseek-mp-core/specs/component.spec.json');
+  // Core declares the dependency families.
+  const coreSpec = readJson(path.join(surfaceRoot, 'packages/sdkwork-whatseek-mp-core/specs/component.spec.json'));
   assert.deepEqual(coreSpec.contracts.sdkDependencies, [
     {
       workspace: 'sdkwork-im-sdk',
       surface: 'open-api',
       credentialMode: 'protected-open-api-api-key-or-dual-token',
     },
+    {
+      workspace: 'sdkwork-appstore-app-sdk',
+      surface: 'app-api',
+      credentialMode: 'authenticated-app-api',
+    },
   ]);
 
-  // Every runtime-env source carries the IM driver keys (empty = mock driver).
+  // Every runtime-env source carries the SDK driver keys (empty = mock driver).
   for (const profile of ['development', 'test', 'staging', 'production']) {
-    const env = readJson(`config/mini-program/runtime-env.standalone.${profile}.json`);
+    const env = readJson(path.join(surfaceRoot, `config/mini-program/runtime-env.standalone.${profile}.json`));
     assert.equal(typeof env.sdkworkImApiBaseUrl, 'string', profile);
     assert.equal(typeof env.sdkworkImWebSocketBaseUrl, 'string', profile);
+    assert.equal(typeof env.sdkworkAppstoreApiBaseUrl, 'string', profile);
   }
 });
 
 test('capability_im_adapters_stay_transport_free_and_wx_free', () => {
-  const adapters = [
+  // Surface files are pure re-exports; the shared adapters carry the mapping.
+  const reExports = [
     'packages/sdkwork-whatseek-mp-messages/src/services/imMessagesClient.ts',
     'packages/sdkwork-whatseek-mp-contacts/src/services/imContactsClient.ts',
   ];
-  for (const relative of adapters) {
+  for (const relative of reExports) {
+    const source = readFileSync(path.join(surfaceRoot, relative), 'utf8');
+    assert.ok(source.includes('@sdkwork/whatseek-service-core'), relative);
+    assert.ok(!source.includes('wx.'), `${relative} must not touch wx.*`);
+    assert.ok(!/fetch\(|XMLHttpRequest|new WebSocket/u.test(source), `${relative} must not build transport`);
+  }
+  const sharedAdapters = [
+    '../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core/src/sdk/imMessagesClient.ts',
+    '../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core/src/sdk/imContactsClient.ts',
+  ];
+  for (const relative of sharedAdapters) {
     const source = readFileSync(path.join(surfaceRoot, relative), 'utf8');
     assert.ok(source.includes('@sdkwork/im-sdk'), relative);
     assert.ok(!source.includes('wx.'), `${relative} must not touch wx.*`);

@@ -5,6 +5,42 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-08 — SDK adapter boundaries consolidate into the common family; appstore driver reaches every surface
+
+- **SDK adapters move to `@sdkwork-whatseek-service-core` (高内聚低耦合)**:
+  the IM messages/contacts adapters and the appstore apps adapter are now
+  owned once by the shared common family — the seam
+  APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md assigns to it ("owns contracts,
+  service ports, runtime, bootstrap, SDK adapter boundaries"). The eight
+  per-surface copies (h5/pc/mp × messages/contacts, h5/pc apps) become thin
+  re-exports with unchanged public capability boundaries, six duplicated
+  adapter test suites collapse into the service-core suite (47 tests), and the
+  capability packages drop their now-unused `@sdkwork/im-sdk` /
+  `@sdkwork/appstore-app-sdk` workspace deps — `sdkClients` declarations move
+  to the service-core spec alongside `sdkDependencies`.
+- **Mini-program mounts the sdkwork-appstore driver**: `sdkworkAppstoreApiBaseUrl`
+  (+ `…Bootstrap{AccessToken,AuthToken}` operator bridge) joins
+  `MiniProgramRuntimeConfig`, the four committed `config/mini-program` profiles
+  declare the keys empty (the surface-contract pin test now covers the full SDK
+  driver key set), `bootstrapMiniProgramClients` gains an `apps` override, and
+  the runtime composition root constructs one composed appstore client — the
+  native 应用 tab then serves the same appstore home feed as H5/PC.
+- **Flutter mounts the sdkwork-appstore driver**: the generated Dart family
+  `sdkwork_appstore_app_sdk` is pinned via pubspec path override; core gains
+  the `AppsClient` port interface (the Dart mirror of TS `AppsPort`,
+  `MockAppsClient implements AppsClient`, chat recomposes over it), the apps
+  capability package owns the Dart `AppstoreAppsClient` adapter (envelope-safe
+  `data['item']`/`data['items']` navigation, same feed assembly and chart-code
+  mapping as TS), `bindPorts` swaps the apps driver, and the
+  `SDKWORK_APPSTORE_API_BASE_URL` dart-define keys land empty across the four
+  committed env profiles. 4 adapter tests pin feed assembly, chart mapping,
+  local-scope fallback, and envelope navigation.
+- **Mini-program lib bump**: the mp tsconfig `lib` moves to ES2022 (target
+  stays ES2021, noEmit) — the workspace-linked sdkwork-appstore source graph
+  (through `@sdkwork/utils`) requires it; runtime bundles are unchanged
+  (esbuild), and the appstore code path only executes when an operator profile
+  opts into the gateway.
+
 ### 2026-10-08 — App center home integrates the sdkwork-appstore catalog (Phase-2 platform wiring)
 
 - **The 应用 tab home no longer re-implements the appstore home feed**: the

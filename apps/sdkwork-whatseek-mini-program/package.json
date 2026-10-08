@@ -19,6 +19,7 @@
     "clean": "node -e \"import('node:fs').then(fs => { for (const p of ['src/runtime/app.js','src/runtime/runtime-env.js']) fs.rmSync(p, { force: true }); })\""
   },
   "dependencies": {
+    "@sdkwork/appstore-app-sdk": "workspace:*",
     "@sdkwork/im-sdk": "workspace:*",
     "@sdkwork/sdk-common": "workspace:*",
     "@sdkwork/whatseek-intent-core": "workspace:*",
