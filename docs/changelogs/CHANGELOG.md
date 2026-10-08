@@ -80,6 +80,39 @@ All notable changes to the WhatSeek application repository. Format follows
   mini-program typecheck/build/test 36/36; Flutter analyze clean + 54 root
   + 9 messages + 13 apps; H5/PC prod builds EXIT=0.
 
+### 2026-10-08 — Regression + adversarial audit round; stale gateway-artifact incident operationalized
+
+- **Full-matrix regression** on the recorded baseline and the current
+  tree: `pnpm verify` EXIT=0 (H5 117 / PC 99 / common 52 vitest,
+  mini-program 34 tests, H5 prod build), PC prod + H5 dev/test/staging +
+  mini-program staging/prod builds, Tauri `cargo build --release` +
+  launch smoke. Flutter 54+26 green on the baseline tree; the current
+  tree is red mid-flight from the in-progress sdkwork-appstore
+  Dart-family landing (missing per-package `pubspec_overrides` wiring —
+  owned by the appstore integration round).
+- **Adversarial audit: 0 new P0/P1/P2.** PRD §1-§9 line-by-line, a
+  placeholder/dead-code scan (90 flagged files, all benign i18n input
+  hints or build tooling), a hardcoded-CJK-outside-i18n scan (four
+  surfaces clean; mock session display names and the `万` count suffix
+  recorded as deliberate Phase-1 boundaries), and spec MUST spot checks.
+  Fixed the duplicated 2026-10-03 CHANGELOG heading.
+- **Incident (diagnosed, recovered, operationalized)**: messages/contacts
+  fell to a never-recovering error state on both web surfaces while
+  chat/apps stayed healthy. Root cause was a stale H5 dist built during
+  the live-gateway acceptance — it kept serving
+  `sdkworkImApiBaseUrl: 127.0.0.1:18089` + operator bootstrap tokens
+  after the gateway stopped; the five-state error handling behaved
+  exactly as designed. Recovery is a rebuild from the committed
+  empty-key sources; documented as runbook §9 step 6 (troubleshooting)
+  with the `dist/**/runtime-env.json` diagnosis step.
+- **Rendered acceptance on the fresh builds** (CUA/deep-link driven —
+  Playwright locator clicks hang on this React tree, documented since
+  2026-10-03): H5 390×844 five tabs + direct deep links (messages 7
+  conversations + badge 4, contacts 11 + six segments, apps center full
+  编辑流, profile visitor + five assets); PC 1440×900 nav rail + chat
+  task chips + messages/contacts/apps. Zero regressions. Evidence:
+  REQ-2026-0005 "Regression and Acceptance Round (2026-10-08)".
+
 ### 2026-10-07 — Parity polish: Flutter 收藏 deep link + mini-program plan types
 
 - **Flutter 收藏 quick link** now opens 我的应用 on the favorites segment

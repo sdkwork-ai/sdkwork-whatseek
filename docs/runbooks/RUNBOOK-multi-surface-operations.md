@@ -152,6 +152,21 @@ surface live:
    chats MUST go through `conversations.bindDirectChat` (actor pair); the
    app API rejects `memberUserIds` outside group conversations.
 
+6. Troubleshooting — stale gateway-configured build artifacts (proven
+   2026-10-08): a dist built while a live-gateway runtime source was in
+   place keeps serving that gateway URL (and bootstrap tokens) after the
+   gateway process stops — messages/contacts then fall to the error state
+   with a retry loop that never recovers, while chat/apps (mock drivers)
+   keep working. Diagnose by reading the built
+   `dist/**/runtime-env.json` (or the mini-program bundle's stamped
+   profile): a non-empty `sdkworkImApiBaseUrl` with no listener on that
+   address is this failure. Recovery is a rebuild from the committed
+   (empty-key) sources — `pnpm build:h5:prod` / `pnpm build:pc:prod`,
+   mini-program `pnpm build`, Flutter rebuild — and re-verify the two
+   lists render. Keep live-gateway profiles in LOCAL, uncommitted runtime
+   sources (step 4) so committed rebuilds always reset to the mock
+   driver.
+
 ## 8. Escalation
 
 Verification evidence and acceptance criteria live in

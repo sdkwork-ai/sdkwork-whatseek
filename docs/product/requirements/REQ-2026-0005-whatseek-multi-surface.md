@@ -283,6 +283,57 @@ UI self/echo distinction still keys off the Phase-1 mock session identity
 (`visitor`) rather than the IAM principal, so sent messages render an echo
 bubble — both close with the Phase-2 IAM session binding.
 
+## Regression and Acceptance Round (2026-10-08)
+
+Full-matrix regression plus a fresh adversarial audit over the tree as
+committed (`4e73302`/`dfaf1b9` chain, audit run against `dfaf1b9`):
+
+- **Quality gates**: `pnpm verify` EXIT=0 (12 standard checks, workspace
+  typecheck, H5 117 / PC 99 / common 52 vitest assertions, mini-program
+  34 node tests, H5 standalone.production build); `build:pc:prod`,
+  `build:h5:dev/test/staging`, mini-program dev/staging/prod builds all
+  PASS; Tauri `cargo build --release` (5.5 MB self-contained exe) +
+  launch smoke (alive after 7 s, clean kill). Flutter on the recorded
+  baseline tree (`b92dbc3`): `flutter analyze` clean + 54 root + 26
+  package tests green. Flutter on the current tree is intentionally
+  red mid-flight: the in-progress sdkwork-appstore Dart-family landing
+  (committed adapter + package path deps) still lacks the per-package
+  `pubspec_overrides` wiring, so `flutter analyze` cannot resolve
+  `sdkwork_appstore_app_sdk` yet — owned by the live-gateway/
+  appstore integration round, not a regression of delivered behavior.
+- **Adversarial audit** (PRD §1-§9 line-by-line, placeholder/dead-code
+  scan across the four surfaces, hardcoded-CJK-outside-i18n scan, spec
+  MUST spot checks): **0 new P0 / 0 P1 / 0 P2**. Observations recorded,
+  all deliberate Phase-1 boundaries: mock session display names are
+  zh-branded under en-US (real names arrive with the IAM runtime), the
+  `万` count suffix is locale-independent (shared formatter, test-pinned),
+  recommendation 功能差异/自定义 fields ride the app-api data-model
+  milestone (the chat recommendation card already carries 推荐原因),
+  scaffold generators embed zh template literals whose output is
+  i18n-ridden, and the duplicated 2026-10-03 CHANGELOG heading (fixed in
+  this round).
+- **Incident diagnosed and closed — stale gateway-configured dist**: the
+  first rendered pass of this round hit messages/contacts falling to the
+  error state with a never-recovering retry loop on H5 and PC while
+  chat/apps stayed healthy. Root cause: the locally built H5 dist still
+  carried the live-gateway acceptance runtime config
+  (`sdkworkImApiBaseUrl: 127.0.0.1:18089` + operator bootstrap tokens,
+  see Live-Gateway Acceptance above) after the gateway process had
+  stopped — the five-state error handling worked exactly as designed.
+  Recovery: rebuild from the committed empty-key sources; both lists
+  render again. Operationalized as runbook §9 step 6 (troubleshooting).
+- **Rendered acceptance on the fresh builds** (IAB, CUA/coordinate and
+  deep-link driven; Playwright locator clicks hang on this React tree —
+  documented since 2026-10-03): H5 390×844 — chat hero + suggestion
+  cards, apps center full 编辑流 (hero carousel, 今日精选, 编辑精选),
+  contacts 11 rows + six segment filters, messages 7 conversations +
+  unread badge 4 on the tab, profile visitor card + five-asset summary
+  (7/0/3/11/8), direct deep-link loads of /messages /contacts /profile;
+  PC 1440×900 — desktop nav rail with unread badge, chat history with
+  task chips (已取消/已完成), messages 9 conversations incl. persisted
+  task notifications, contacts, apps center. Zero visual or behavioral
+  regressions.
+
 ## Verification
 
 ```bash
