@@ -45,3 +45,20 @@ trace:
 pnpm --filter @sdkwork/whatseek-h5-apps test
 pnpm typecheck && pnpm test
 ```
+
+## Addendum — 2026-10-09 appstore catalog driver (PRD §83 Phase 2)
+
+The acceptance criteria above were met on the Phase-1 mock driver. The
+Phase-2 platform wiring has since landed: the apps capability serves the
+sdkwork-appstore catalog through the composed `@sdkwork/appstore-app-sdk`
+consumer package (Dart: `sdkwork_appstore_app_sdk`) on every surface —
+home feed (hero/collections+events/charts), search (results/联想/热搜/历史),
+categories, recommendations, wishlist favorites, detail (listing detail +
+media/相似/评论/星级提交/开发者其他应用) — behind the same `AppsPort`,
+activated per surface by `sdkworkAppstoreApiBaseUrl` (operator runbook
+§10). Whatseek-local scope (最近使用, 我的应用 AI-created lifecycle) and
+the AI creation flow remain on the whatseek clients by design. Driver
+activation is a deployment milestone (appstore gateway + PostgreSQL); the
+committed profiles keep every credential-bearing key empty and are pinned
+by the secret-free tests on H5/PC/Flutter and the mini-program
+surface-contract suite.
