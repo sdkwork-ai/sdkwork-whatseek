@@ -44,6 +44,9 @@ abstract class AppstoreCatalogGateway {
   Future<ListingMediaListResponse?> listListingMedia(String listingId);
   Future<SdkWorkListResponse?> listSimilar(String listingId);
   Future<ListingRatingListResponse?> listRatings(String listingId);
+  Future<SdkWorkListResponse?> listSearchHistory();
+  Future<SdkWorkApiResponse?> upsertSearchHistory(String queryText);
+  Future<void> clearSearchHistory();
   Future<WishlistItemListResponse?> listWishlist({int? pageSize});
   Future<WishlistItemResponse?> addWishlistItem(String listingId);
   Future<void> removeWishlistItem(String listingId);
@@ -106,6 +109,19 @@ class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
   @override
   Future<ListingRatingListResponse?> listRatings(String listingId) =>
       _client.listings.appstoreListingsRatingsList(listingId);
+
+  @override
+  Future<SdkWorkListResponse?> listSearchHistory() =>
+      _client.catalog.appstoreCatalogSearchHistoryList(null, 10);
+
+  @override
+  Future<SdkWorkApiResponse?> upsertSearchHistory(String queryText) =>
+      _client.catalog.appstoreCatalogSearchHistoryUpdate(
+          SearchHistoryUpsertRequest(queryText: queryText));
+
+  @override
+  Future<void> clearSearchHistory() =>
+      _client.catalog.appstoreCatalogSearchHistoryDelete();
 
   @override
   Future<WishlistItemListResponse?> listWishlist({int? pageSize}) =>
@@ -309,6 +325,26 @@ class AppstoreAppsClient implements AppsClient {
         .toList();
   }
 
+  @override
+  Future<List<String>> listSearchHistory() async {
+    final page = await _gateway.listSearchHistory();
+    return _asList(_asMap(page?.data)?['items'])
+        .map((row) => _string(row['queryText']) ?? _readSearchTerm(row))
+        .where((term) => term.isNotEmpty)
+        .toList();
+  }
+
+  @override
+  Future<void> recordSearchHistory(String query) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
+      return;
+    }
+    await _gateway.upsertSearchHistory(trimmed);
+  }
+
+  @override
+  Future<void> clearSearchHistory() => _gateway.clearSearchHistory();
   @override
   Future<List<String>> listSearchSuggestions(String query) async {
     final trimmed = query.trim();

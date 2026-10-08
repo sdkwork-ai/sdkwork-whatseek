@@ -51,7 +51,9 @@
     "emptyTitle": "未找到相关应用",
     "emptyDesc": "换个关键词试试，或者去对话页直接描述你的需求",
     "matchedPrefix": "匹配：",
-    "trending": "热门搜索"
+    "trending": "热门搜索",
+    "history": "搜索历史",
+    "historyClear": "清除"
   },
   "my": {
     "title": "我的应用",

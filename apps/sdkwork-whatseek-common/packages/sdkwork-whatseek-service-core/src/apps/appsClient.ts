@@ -157,6 +157,47 @@ export function createMockAppsClient(options: MockAppsClientOptions = {}): AppsP
     async listAppReviews(): Promise<AppReview[]> {
       return [];
     },
+    // Mock driver: search history persists to localStorage like the other
+    // whatseek-local scope (the store driver upserts server-side).
+    async listSearchHistory(): Promise<string[]> {
+      const storage = defaultStorage();
+      if (storage === null) {
+        return [];
+      }
+      try {
+        const parsed: unknown = JSON.parse(storage.getItem('whatseek.search-history') ?? '[]');
+        return Array.isArray(parsed) ? (parsed as string[]) : [];
+      } catch {
+        return [];
+      }
+    },
+    async recordSearchHistory(query: string): Promise<void> {
+      const trimmed = query.trim();
+      if (trimmed.length === 0) {
+        return;
+      }
+      const storage = defaultStorage();
+      if (storage === null) {
+        return;
+      }
+      const existing = await this.listSearchHistory();
+      const next = [trimmed, ...existing.filter((term) => term !== trimmed)].slice(0, 10);
+      try {
+        storage.setItem('whatseek.search-history', JSON.stringify(next));
+      } catch {
+        /* storage full/unavailable — history is best-effort */
+      }
+    },
+    async clearSearchHistory(): Promise<void> {
+      const storage = defaultStorage();
+      if (storage !== null) {
+        try {
+          storage.removeItem('whatseek.search-history');
+        } catch {
+          /* ignore */
+        }
+      }
+    },
     // The mock catalog carries no extra detail surface — same shape as getApp.
     async getAppDetail(appId) {
       return findCatalogApp(appId) ?? toCatalogShape(createdApps.find((app) => app.id === appId));

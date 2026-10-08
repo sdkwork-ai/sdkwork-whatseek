@@ -24,6 +24,15 @@ export function AppSearchScreen() {
     [apps, query],
   );
 
+  // Search history feeds the empty-query state (recorded on submit;
+  // the clear button wipes it server-side or locally per driver and bumps
+  // the version to refetch).
+  const [historyVersion, setHistoryVersion] = useState(0);
+  const history = useAsyncData(
+    () => (query.trim().length > 0 ? Promise.resolve([]) : apps.listSearchHistory()),
+    [apps, query, historyVersion],
+  );
+
   // Trending terms feed the empty-query state; hidden when the store driver
   // has no server-side source (empty list) — mirroring the sdkwork-appstore
   // reference search page.
@@ -74,7 +83,11 @@ export function AppSearchScreen() {
           className="flex items-center gap-2 rounded-full border border-border-default bg-panel px-3 py-1.5"
           onSubmit={(event) => {
             event.preventDefault();
-            setSearchParams(draft.trim().length > 0 ? { q: draft.trim() } : {});
+            const submitted = draft.trim();
+            if (submitted.length > 0) {
+              void apps.recordSearchHistory(submitted).catch(() => undefined);
+            }
+            setSearchParams(submitted.length > 0 ? { q: submitted } : {});
           }}
         >
           <span aria-hidden="true">🔍</span>
@@ -108,6 +121,43 @@ export function AppSearchScreen() {
               </button>
             ))}
           </Card>
+        </div>
+      ) : null}
+
+      {query.trim().length === 0 && history.state === 'ready' && history.data.length > 0 ? (
+        <div className="px-4 pt-3">
+          <p className="text-xs font-semibold text-secondary">
+            {t('whatseek.apps.search.history')}
+            <button
+              type="button"
+              className="ml-2 text-muted underline-offset-2 hover:underline"
+              onClick={() => {
+                void apps
+                .clearSearchHistory()
+                .catch(() => undefined)
+                .then(() => {
+                  setHistoryVersion((version) => version + 1);
+                });
+              }}
+            >
+              {t('whatseek.apps.search.historyClear')}
+            </button>
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {history.data.map((term) => (
+              <button
+                key={term}
+                type="button"
+                onClick={() => {
+                  setDraft(term);
+                  setSearchParams({ q: term });
+                }}
+                className="rounded-full border border-border-subtle bg-panel px-3 py-1.5 text-xs text-secondary hover:bg-panel-muted"
+              >
+                {term}
+              </button>
+            ))}
+          </div>
         </div>
       ) : null}
 

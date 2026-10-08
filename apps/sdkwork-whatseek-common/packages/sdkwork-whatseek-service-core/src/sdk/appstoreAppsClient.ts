@@ -58,6 +58,9 @@ export type AppstoreCatalogGateway = Pick<
   | 'listTrendingSearchTerms'
   | 'listSearchSuggestions'
   | 'searchListings'
+  | 'listSearchHistory'
+  | 'upsertSearchHistory'
+  | 'clearSearchHistory'
 > &
   Pick<AppStoreClient['listings'], 'get' | 'listMedia' | 'listSimilar' | 'listRatings'> &
   Pick<AppStoreClient['wishlist'], 'addItem' | 'listItems' | 'removeItem'>;
@@ -242,6 +245,25 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
       return (page.items as unknown as Record<string, unknown>[])
         .map(readSearchTerm)
         .filter((term) => term.length > 0);
+    },
+
+    async listSearchHistory(): Promise<string[]> {
+      const page = await gateway.listSearchHistory({ limit: 10 });
+      return (page.items as unknown as Record<string, unknown>[])
+        .map((row) => readString(row.queryText) ?? readSearchTerm(row))
+        .filter((term) => term.length > 0);
+    },
+
+    async recordSearchHistory(query): Promise<void> {
+      const trimmed = query.trim();
+      if (trimmed.length === 0) {
+        return;
+      }
+      await gateway.upsertSearchHistory({ queryText: trimmed });
+    },
+
+    async clearSearchHistory(): Promise<void> {
+      await gateway.clearSearchHistory();
     },
 
     async listSearchSuggestions(query): Promise<string[]> {

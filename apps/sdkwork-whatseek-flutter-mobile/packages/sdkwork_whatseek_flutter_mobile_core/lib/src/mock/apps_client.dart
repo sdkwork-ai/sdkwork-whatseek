@@ -10,6 +10,7 @@ import '../ports.dart';
 class MockAppsClient implements AppsClient {
   final List<WhatseekApp> _catalog;
   final List<String> _recentIds = [];
+  final List<String> _searchHistory = [];
   final Set<String> _favoriteIds = {};
   final List<CreatedApp> _createdApps = [];
 
@@ -121,6 +122,28 @@ class MockAppsClient implements AppsClient {
   /// The mock catalog carries no similar-apps source — the UI hides the rail.
   @override
   Future<List<WhatseekApp>> listSimilarApps(String appId) async => const [];
+
+  /// In-memory session history (the store driver persists server-side).
+  @override
+  Future<List<String>> listSearchHistory() async =>
+      List.unmodifiable(_searchHistory);
+
+  @override
+  Future<void> recordSearchHistory(String query) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
+      return;
+    }
+    _searchHistory
+      ..remove(trimmed)
+      ..insert(0, trimmed);
+    if (_searchHistory.length > 10) {
+      _searchHistory.removeLast();
+    }
+  }
+
+  @override
+  Future<void> clearSearchHistory() async => _searchHistory.clear();
 
   /// The mock catalog carries no rating rows — the UI hides the section.
   @override

@@ -51,7 +51,9 @@
     "emptyTitle": "No matching apps",
     "emptyDesc": "Try another keyword, or describe what you need in Chat",
     "matchedPrefix": "Matches: ",
-    "trending": "Trending searches"
+    "trending": "Trending searches",
+    "history": "Recent searches",
+    "historyClear": "Clear"
   },
   "my": {
     "title": "My apps",

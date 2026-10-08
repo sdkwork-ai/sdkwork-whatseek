@@ -5,6 +5,27 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — Search history integrates the appstore `search.history` endpoints
+
+- **`AppsPort.listSearchHistory` / `recordSearchHistory` / `clearSearchHistory`**:
+  store drivers serve them from `catalog/search/history` (list top 10,
+  rows read `queryText` first with the term/keyword fallback), upsert
+  `{queryText}` on submit, and DELETE on clear; the mock driver persists to
+  localStorage like the other whatseek-local scope (the Dart mock keeps an
+  in-memory session list).
+- **Four search screens**: H5/PC render a 搜索历史 chip row (with 清除 button
+  that clears and refetches via a version-keyed reload) above trending, and
+  record each submitted query fire-and-forget; Flutter adds the same chips +
+  clear TextButton with a `_loadHistory` refresh helper; the mini-program
+  search page records on search and binds the history row + clear in WXML
+  (runtime `apps.history/recordHistory/clearHistory` bindings).
+- **i18n**: two new keys per surface apps fragment (`search.history` =
+  搜索历史 / Recent searches, `search.historyClear` = 清除 / Clear),
+  including the Flutter zh/en JSON + Dart flat map.
+- **Tests**: service-core pins row reading (queryText-first fallback, empty
+  dropped), upsert body, and the empty-query guard; the Dart adapter suite
+  gains the same case.
+
 ### 2026-10-09 — Reviews section integrates `listings/{id}/ratings` on every detail screen
 
 - **`AppReview` model + `AppsPort.listAppReviews`**: store drivers map the

@@ -25,3 +25,10 @@
   font-size: 24rpx;
   color: var(--text-secondary, #666);
 }
+
+.history-clear {
+  margin-left: 12rpx;
+  font-size: 22rpx;
+  font-weight: 400;
+  color: var(--text-tertiary, #999);
+}

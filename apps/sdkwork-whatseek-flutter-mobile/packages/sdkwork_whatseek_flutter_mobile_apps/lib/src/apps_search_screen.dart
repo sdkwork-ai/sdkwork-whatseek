@@ -25,6 +25,7 @@ class _AppsSearchScreenState extends State<AppsSearchScreen> {
   final TextEditingController _draft = TextEditingController();
   Timer? _suggestionDebounce;
   List<String> _suggestions = const [];
+  List<String> _history = const [];
   late Future<List<String>> _trending;
 
   @override
@@ -39,6 +40,9 @@ class _AppsSearchScreenState extends State<AppsSearchScreen> {
     _trending = _query.isEmpty
         ? WhatseekRuntime.instance.apps.listTrendingSearches()
         : Future.value(const []);
+    if (_query.isEmpty) {
+      _loadHistory();
+    }
   }
 
   @override
@@ -59,11 +63,33 @@ class _AppsSearchScreenState extends State<AppsSearchScreen> {
   void _submit(String draft) {
     final query = draft.trim();
     _suggestionDebounce?.cancel();
+    if (query.isNotEmpty) {
+      WhatseekRuntime.instance.apps
+          .recordSearchHistory(query)
+          .then((_) => _loadHistory())
+          .catchError((_) {});
+    }
     setState(() {
       _query = query;
       _suggestions = const [];
       _results = _search(query);
     });
+  }
+
+  /// Refresh the history chips (best-effort; errors leave the list as-is).
+  void _loadHistory() {
+    WhatseekRuntime.instance.apps.listSearchHistory().then((history) {
+      if (mounted) {
+        setState(() => _history = history);
+      }
+    }).catchError((_) {});
+  }
+
+  Future<void> _clearHistory() async {
+    await WhatseekRuntime.instance.apps.clearSearchHistory();
+    if (mounted) {
+      setState(() => _history = const []);
+    }
   }
 
   /// Debounced server suggestions for the typed prefix (≥2 chars).
@@ -126,6 +152,41 @@ class _AppsSearchScreenState extends State<AppsSearchScreen> {
                       },
                     ),
                 ],
+              ),
+            ),
+          if (_query.isEmpty && _history.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(WhatseekAppsStrings.of(context, 'search.history'),
+                        style: Theme.of(context).textTheme.labelSmall),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        for (final term in _history)
+                          ActionChip(
+                            label: Text(term),
+                            onPressed: () {
+                              _draft.text = term;
+                              _submit(term);
+                            },
+                          ),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: _clearHistory,
+                        child: Text(WhatseekAppsStrings.of(context, 'search.historyClear')),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           if (_query.isEmpty)

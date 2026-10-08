@@ -189,6 +189,25 @@ class _FakeGateway implements AppstoreCatalogGateway {
       );
 
   @override
+  Future<SdkWorkListResponse?> listSearchHistory() async => SdkWorkListResponse(
+    code: 0,
+    data: _envelope({
+      'items': [
+        {'queryText': '智能客服'},
+        {'term': 'AI 剪辑'},
+        {'queryText': ''},
+      ],
+    }),
+  );
+
+  @override
+  Future<SdkWorkApiResponse?> upsertSearchHistory(String queryText) async =>
+      SdkWorkApiResponse(code: 0);
+
+  @override
+  Future<void> clearSearchHistory() async {}
+
+  @override
   Future<SdkWorkListResponse?> listSimilar(String listingId) async =>
       SdkWorkListResponse(
         code: 0,
@@ -372,6 +391,19 @@ void main() {
     expect(reviews.first.rating, 5);
     expect(reviews.first.title, '效率提升明显');
     expect(reviews.last.title, isEmpty);
+  });
+  test('search_history_reads_upserts_and_clears_through_the_catalog', () async {
+    final gateway = _FakeGateway({});
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    // Rows read queryText first with the term/keyword fallback, empty dropped.
+    expect(await client.listSearchHistory(), ['智能客服', 'AI 剪辑']);
+
+    await client.recordSearchHistory('视频剪辑');
+    expect(await client.listSearchHistory(), ['智能客服', 'AI 剪辑']);
+    expect(await client.listSearchSuggestions('  '), isEmpty);
+
+    await client.clearSearchHistory();
   });
   test('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', () async {
     final gateway = _FakeGateway({});

@@ -42,7 +42,9 @@
     "createFallback": "Nothing fits?",
     "createFallbackAction": "Let AI create one",
     "aiCapability": "AI-powered",
-    "trending": "Trending searches"
+    "trending": "Trending searches",
+    "history": "Recent searches",
+    "historyClear": "Clear"
   },
   "detail": {
     "similar": "Similar apps",

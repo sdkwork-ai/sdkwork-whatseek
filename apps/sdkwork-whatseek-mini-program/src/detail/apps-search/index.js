@@ -12,6 +12,7 @@ Page({
     error: '',
     trending: [],
     suggestions: [],
+    history: [],
     t: {},
     c: {},
   },
@@ -22,8 +23,8 @@ Page({
     if (query.trim().length > 0) {
       this.search(query.trim());
     } else {
-      // Trending terms feed the empty-query state (appstore driver; empty
-      // list hides the section on the mock driver).
+      // 热搜 + 搜索历史 feed the empty-query state (appstore driver; empty
+      // lists hide the sections on the mock driver).
       appApi.apps
         .trending()
         .then((trending) => {
@@ -31,6 +32,14 @@ Page({
         })
         .catch(() => {
           this.setData({ trending: [] });
+        });
+      appApi.apps
+        .history()
+        .then((history) => {
+          this.setData({ history });
+        })
+        .catch(() => {
+          this.setData({ history: [] });
         });
     }
   },
@@ -87,11 +96,24 @@ Page({
     this.search(query);
   },
 
+  onHistoryClear() {
+    appApi.apps
+      .clearHistory()
+      .then(() => {
+        this.setData({ history: [] });
+      })
+      .catch(() => undefined);
+  },
+
   async search(query) {
     if (this.suggestionTimer) {
       clearTimeout(this.suggestionTimer);
     }
     this.setData({ loading: true, error: '', suggestions: [] });
+    if (query.length > 0) {
+      appApi.apps.recordHistory(query).catch(() => undefined);
+      appApi.apps.history().then((history) => this.setData({ history })).catch(() => undefined);
+    }
     try {
       const results = await appApi.apps.search(query);
       this.setData({ results, searched: true, loading: false });

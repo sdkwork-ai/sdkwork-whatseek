@@ -100,6 +100,16 @@ function fakeGateway(
       if (index >= 0) wishlist.splice(index, 1);
       return undefined;
     }),
+    listSearchHistory: vi.fn(async () => ({
+      items: [
+        { queryText: '智能客服' },
+        { term: 'AI 剪辑' },
+        { queryText: '' },
+      ],
+      pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
+    })),
+    upsertSearchHistory: vi.fn(async (body: { queryText: string }) => ({ body })),
+    clearSearchHistory: vi.fn(async () => undefined),
     listRatings: vi.fn(async () => ({
       items: [
         { id: 'r-1', userId: 'user-9', rating: 5, title: '效率提升明显', createdAt: '2026-09-20T00:00:00Z' },
@@ -284,6 +294,22 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
       { id: 'r-1', author: 'user-9', rating: 5, title: '效率提升明显', createdAt: '2026-09-20T00:00:00Z' },
       { id: 'r-2', author: 'user-3', rating: 4, title: '', createdAt: '2026-09-21T00:00:00Z' },
     ]);
+  });
+  it('search_history_reads_upserts_and_clears_through_the_catalog', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    const client = createAppstoreAppsClient({ gateway });
+
+    // Rows read queryText first with the term/keyword fallback, empty dropped.
+    expect(await client.listSearchHistory()).toEqual(['智能客服', 'AI 剪辑']);
+
+    await client.recordSearchHistory('视频剪辑');
+    expect(gateway.upsertSearchHistory).toHaveBeenCalledWith({ queryText: '视频剪辑' });
+    // Empty queries never reach the gateway.
+    await client.recordSearchHistory('  ');
+    expect(gateway.upsertSearchHistory).toHaveBeenCalledTimes(1);
+
+    await client.clearSearchHistory();
+    expect(gateway.clearSearchHistory).toHaveBeenCalledTimes(1);
   });
   it('getAppDetail_falls_back_to_the_local_client_for_created_apps', async () => {
     const gateway = fakeGateway(HOME_FEED);

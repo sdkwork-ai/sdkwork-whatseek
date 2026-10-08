@@ -31,6 +31,12 @@ export interface AppsPort {
   listTrendingSearches(): Promise<string[]>;
   /** Server-side search suggestions for the typed query prefix. */
   listSearchSuggestions(query: string): Promise<string[]>;
+  /** Recent search terms for the empty-query state (empty on the mock driver). */
+  listSearchHistory(): Promise<string[]>;
+  /** Record one submitted search term (store drivers upsert server-side). */
+  recordSearchHistory(query: string): Promise<void>;
+  /** Clear the recorded search history. */
+  clearSearchHistory(): Promise<void>;
   /** Appstore-style home feed: heroes, stories, collections, chart previews. */
   listHomeFeed(): Promise<AppHomeFeed>;
   getCollection(collectionId: string): Promise<AppCollection | null>;

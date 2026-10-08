@@ -82,6 +82,18 @@ export async function listSearchSuggestions(query: string): Promise<string[]> {
   return appsPort().listSearchSuggestions(query);
 }
 
+export async function listSearchHistory(): Promise<string[]> {
+  return appsPort().listSearchHistory();
+}
+
+export async function recordSearchHistory(query: string): Promise<void> {
+  return appsPort().recordSearchHistory(query);
+}
+
+export async function clearSearchHistory(): Promise<void> {
+  return appsPort().clearSearchHistory();
+}
+
 export async function listAppReviews(appId: string): Promise<unknown[]> {
   return appsPort().listAppReviews(appId);
 }

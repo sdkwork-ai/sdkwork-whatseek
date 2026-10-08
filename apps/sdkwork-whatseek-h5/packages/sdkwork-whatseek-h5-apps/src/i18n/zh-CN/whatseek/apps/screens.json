@@ -38,7 +38,9 @@
     "createFallback": "没有合适的？",
     "createFallbackAction": "让 AI 帮你创建一个",
     "aiCapability": "AI 能力",
-    "trending": "热门搜索"
+    "trending": "热门搜索",
+    "history": "搜索历史",
+    "historyClear": "清除"
   },
   "detail": {
     "title": "应用详情",

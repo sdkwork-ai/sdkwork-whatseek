@@ -10,6 +10,15 @@
   </view>
 </view>
 
+<view wx:if="{{!searched && history.length > 0}}" class="panel">
+  <view class="section-title">{{t.search.history}}
+    <text class="history-clear" bindtap="onHistoryClear">{{t.search.historyClear}}</text>
+  </view>
+  <view class="trending-chips">
+    <view wx:for="{{history}}" wx:key="*this" class="badge" data-term="{{item}}" bindtap="onTrendingTap">{{item}}</view>
+  </view>
+</view>
+
 <view wx:if="{{!searched && trending.length > 0}}" class="panel">
   <view class="section-title">{{t.search.trending}}</view>
   <view class="trending-chips">

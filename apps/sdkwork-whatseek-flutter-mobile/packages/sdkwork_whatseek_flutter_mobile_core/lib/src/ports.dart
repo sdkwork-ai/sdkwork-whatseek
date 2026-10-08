@@ -40,6 +40,13 @@ abstract class AppsClient {
   Future<List<String>> listTrendingSearches();
   /// Server-side search suggestions for the typed query prefix.
   Future<List<String>> listSearchSuggestions(String query);
+  /// Recent search terms for the empty-query state (in-memory on the mock
+  /// driver, server-side on the appstore driver).
+  Future<List<String>> listSearchHistory();
+  /// Record one submitted search term.
+  Future<void> recordSearchHistory(String query);
+  /// Clear the recorded search history.
+  Future<void> clearSearchHistory();
   Future<List<WhatseekApp>> listRecommended();
   Future<List<WhatseekApp>> listHot();
   Future<AppHomeFeed> listHomeFeed();
