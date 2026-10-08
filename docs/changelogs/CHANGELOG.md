@@ -5,6 +5,26 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — Active store events fold into the collections pipeline (adapter-level, zero UI change)
+
+- **Events are curated collections in the appstore domain** (`collectionType`
+  includes EVENT), so the integration folds them into the existing
+  collections pipeline instead of adding a new section: `listHomeFeed`
+  fetches ACTIVE events (`catalog/events`, status `active`, top 4) and maps
+  each onto a kind-event `AppCollectionCard` appended after the home
+  payload's collections (their listing ids join the one batched resolution);
+  `getCollection` falls back to `catalog/events/{id}` when the collections
+  endpoint misses, so tapping an event card opens the existing collection
+  detail route through the same `listCollectionApps` path. Port, model, and
+  all four surfaces' UI are unchanged — the folding lives entirely inside
+  the shared TS adapter and the Dart adapter (best-effort: an events fetch
+  failure leaves the feed untouched).
+- **Tests**: service-core pins the folded event card (title/kind/cover apps,
+  status `active`, limit 4) and the collections→events fallback (including
+  `listCollectionApps` routing); the Dart adapter suite gains the same two
+  cases with envelope-shaped fakes (`event-*` fixture ids miss the
+  collections endpoint).
+
 ### 2026-10-09 — Search history integrates the appstore `search.history` endpoints
 
 - **`AppsPort.listSearchHistory` / `recordSearchHistory` / `clearSearchHistory`**:

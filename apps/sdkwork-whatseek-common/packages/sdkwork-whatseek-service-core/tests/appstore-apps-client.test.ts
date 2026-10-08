@@ -117,6 +117,25 @@ function fakeGateway(
       ],
       pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
     })),
+    listEvents: vi.fn(async () => ({
+      items: [
+        {
+          id: 'event-1',
+          title: '开学季 AI 工具节',
+          subtitle: '限时活动',
+          status: 'active',
+          items: [{ listingId: 'app-a' }, { listingId: 'app-b' }],
+        },
+      ],
+      pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
+    })),
+    getEvent: vi.fn(async (eventId: string) => ({
+      id: eventId,
+      title: '活动详情',
+      subtitle: '',
+      status: 'active',
+      items: [{ listingId: 'app-a' }],
+    })),
     listSimilar: vi.fn(async () => ({
       items: [listing('app-similar-1'), listing('app-similar-2')],
       pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
@@ -193,8 +212,9 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
     expect(feed.heroes[0]).toMatchObject({ id: 'app-hero', appId: 'app-hero', title: '应用 app-hero' });
     // The appstore feed carries no editorial story blocks.
     expect(feed.stories).toEqual([]);
-    // Collections keep server order with resolved cover apps.
-    expect(feed.collections).toHaveLength(1);
+    // Collections keep server order with resolved cover apps; the ACTIVE
+    // store event folds in as a kind-event card after them.
+    expect(feed.collections.map((collection) => collection.id)).toEqual(['col-1', 'event-1']);
     expect(feed.collections[0]).toMatchObject({ id: 'col-1', title: '本周精选' });
     expect(feed.collections[0]!.coverApps.map((app) => app.id)).toEqual(['app-a', 'app-b']);
     // Chart previews map known codes (top→hot) and skip whatseek-unknown ones (paid).
@@ -256,6 +276,30 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
     const suggestions = await client.listSearchSuggestions('剪辑');
     expect(suggestions).toEqual(['剪辑 助手']);
     expect(await client.listSearchSuggestions('  ')).toEqual([]);
+  });
+  it('listHomeFeed_folds_active_events_into_the_collections_rail', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    const client = createAppstoreAppsClient({ gateway });
+
+    const feed = await client.listHomeFeed();
+    // The ACTIVE event joins the home payload collections as a kind-event card.
+    const eventCard = feed.collections.find((collection) => collection.id === 'event-1');
+    expect(eventCard).toMatchObject({ title: '开学季 AI 工具节', kind: 'event' });
+    expect(eventCard!.coverApps.map((app) => app.id)).toEqual(['app-a', 'app-b']);
+    expect(gateway.listEvents).toHaveBeenCalledWith({ status: 'active', limit: 4 });
+  });
+
+  it('getCollection_falls_back_to_the_events_endpoint_on_a_collections_miss', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    gateway.getCollection = vi.fn(async () => {
+      throw new Error('404 not a collection');
+    });
+    const client = createAppstoreAppsClient({ gateway });
+
+    const collection = await client.getCollection('event-9');
+    expect(collection).toMatchObject({ id: 'event-9', kind: 'event', title: '活动详情' });
+    const apps = await client.listCollectionApps('event-9');
+    expect(apps.map((app) => app.id)).toEqual(['app-a']);
   });
   it('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', async () => {
     const gateway = fakeGateway(HOME_FEED);

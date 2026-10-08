@@ -58,6 +58,8 @@ export type AppstoreCatalogGateway = Pick<
   | 'listTrendingSearchTerms'
   | 'listSearchSuggestions'
   | 'searchListings'
+  | 'listEvents'
+  | 'getEvent'
   | 'listSearchHistory'
   | 'upsertSearchHistory'
   | 'clearSearchHistory'
@@ -193,6 +195,30 @@ function mapCollectionKind(collectionType: string): AppCollectionKind {
   return 'theme';
 }
 
+
+/**
+ * Map a weak-typed catalog event row onto the collection shape (kind
+ * 'event'); the appstore domain models events as curated listing
+ * collections (collectionType EVENT), so the home rail and the collection
+ * detail route serve them through the same pipeline.
+ */
+function mapEventCollection(row: Record<string, unknown>): AppCollection {
+  const localizations = Array.isArray(row.localizations)
+    ? (row.localizations as { locale: string; displayName: string; description?: string }[])
+    : [];
+  const items = Array.isArray(row.items) ? (row.items as Record<string, unknown>[]) : [];
+  const appIds = items.length > 0
+    ? items.map((item) => readString(item.listingId) ?? '').filter((id) => id.length > 0)
+    : (readString(row.listingIds) ?? '').split(',').map((id) => id.trim()).filter((id) => id.length > 0);
+  return {
+    id: readString(row.id) ?? '',
+    title: readString(row.title) || readLocalized(localizations, 'displayName') || '活动',
+    description: readString(row.subtitle) || readLocalized(localizations, 'description'),
+    kind: 'event',
+    appIds,
+  };
+}
+
 function mapCollection(collection: CatalogCollection): AppCollection {
   return {
     id: collection.id,
@@ -301,7 +327,16 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
         .map((slot) => slot.listingId)
         .filter((id) => id.length > 0)
         .slice(0, HERO_SLOT_LIMIT);
-      const collections = home.collections.map(mapCollection);
+      // Active store events fold into the collections rail as kind-event
+      // cards — the appstore domain models events as curated listing
+      // collections (collectionType EVENT), so the same pipeline serves them.
+      const eventsPage = await gateway
+        .listEvents({ status: 'active', limit: 4 })
+        .catch(() => null);
+      const eventCollections = ((eventsPage?.items ?? []) as unknown as Record<string, unknown>[]).map(
+        mapEventCollection,
+      );
+      const collections = [...home.collections.map(mapCollection), ...eventCollections];
       const chartSnapshots = home.charts.filter((snapshot) =>
         Object.values(CHART_CODES).includes(snapshot.chartCode),
       );
@@ -357,13 +392,20 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
     },
 
     async getCollection(collectionId): Promise<AppCollection | null> {
-      const collection = await gateway.getCollection(collectionId);
-      return mapCollection(collection);
+      // Collections first; a miss falls back to the events endpoint (events
+      // are curated collections in the appstore domain, kind 'event').
+      try {
+        return mapCollection(await gateway.getCollection(collectionId));
+      } catch {
+        const event = await gateway.getEvent(collectionId).catch(() => null);
+        const row = event as unknown as Record<string, unknown> | null;
+        return row === null ? null : mapEventCollection(row);
+      }
     },
 
     async listCollectionApps(collectionId): Promise<WhatseekApp[]> {
-      const collection = await gateway.getCollection(collectionId);
-      return resolveListings(readCollectionIds(collection));
+      const collection = await this.getCollection(collectionId);
+      return collection === null ? [] : resolveListings(collection.appIds);
     },
 
     async listChart(chartId: AppChartId): Promise<WhatseekApp[]> {

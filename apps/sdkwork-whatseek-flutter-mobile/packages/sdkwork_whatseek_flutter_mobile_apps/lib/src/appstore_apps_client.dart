@@ -44,6 +44,8 @@ abstract class AppstoreCatalogGateway {
   Future<ListingMediaListResponse?> listListingMedia(String listingId);
   Future<SdkWorkListResponse?> listSimilar(String listingId);
   Future<ListingRatingListResponse?> listRatings(String listingId);
+  Future<SdkWorkListResponse?> listEvents({String? status, int? pageSize});
+  Future<SdkWorkResourceResponse?> getEvent(String eventId);
   Future<SdkWorkListResponse?> listSearchHistory();
   Future<SdkWorkApiResponse?> upsertSearchHistory(String queryText);
   Future<void> clearSearchHistory();
@@ -111,6 +113,14 @@ class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
       _client.listings.appstoreListingsRatingsList(listingId);
 
   @override
+  Future<SdkWorkListResponse?> listEvents({String? status, int? pageSize}) =>
+      _client.catalog.appstoreCatalogEventsList(null, pageSize, status);
+
+  @override
+  Future<SdkWorkResourceResponse?> getEvent(String eventId) =>
+      _client.catalog.appstoreCatalogEventsRetrieve(eventId);
+
+  @override
   Future<SdkWorkListResponse?> listSearchHistory() =>
       _client.catalog.appstoreCatalogSearchHistoryList(null, 10);
 
@@ -154,6 +164,34 @@ Future<Map<String, dynamic>?> _safeData(Future<Object?> future) async {
 /// Search-suggestion/trending rows carry the term under one of these fields.
 String _readSearchTerm(Map<String, dynamic> row) {
   return _string(row['term']) ?? _string(row['keyword']) ?? _string(row['suggestion']) ?? '';
+}
+
+/// Map a weak-typed catalog event row onto the collection shape (kind
+/// 'event'); the appstore domain models events as curated listing
+/// collections (collectionType EVENT).
+AppCollection _mapEventRow(Map<String, dynamic> row) {
+  final localizations = _asList(row['localizations']);
+  final items = _asList(row['items']);
+  final appIds = items.isNotEmpty
+      ? items
+          .map((item) => _string(item['listingId']) ?? '')
+          .where((id) => id.isNotEmpty)
+          .toList()
+      : (_string(row['listingIds']) ?? '')
+          .split(',')
+          .where((id) => id.isNotEmpty)
+          .toList();
+  final localizedTitle = _localized(localizations, 'displayName');
+  final localizedDescription = _localized(localizations, 'description');
+  final title = _string(row['title']) ?? '';
+  final subtitle = _string(row['subtitle']) ?? '';
+  return AppCollection(
+    id: _string(row['id']) ?? '',
+    title: title.isNotEmpty ? title : (localizedTitle.isNotEmpty ? localizedTitle : '活动'),
+    description: subtitle.isNotEmpty ? subtitle : localizedDescription,
+    kind: AppCollectionKind.event,
+    appIds: appIds,
+  );
 }
 
 /// whatseek chart tabs mapped onto appstore chart snapshot codes.
@@ -371,7 +409,17 @@ class AppstoreAppsClient implements AppsClient {
         .where((id) => id.isNotEmpty)
         .take(_heroSlotLimit)
         .toList();
-    final collections = _asList(item['collections']).map(_mapCollection).toList();
+    // Active store events fold into the collections rail as kind-event
+    // cards — the appstore domain models events as curated listing
+    // collections (collectionType EVENT).
+    final eventsEnvelope = await _safeData(_gateway.listEvents(status: 'active', pageSize: 4));
+    final eventCollections = _asList(eventsEnvelope?['items'])
+        .map(_mapEventRow)
+        .toList();
+    final collections = [
+      ..._asList(item['collections']).map(_mapCollection),
+      ...eventCollections,
+    ];
     final charts = _asList(item['charts'])
         .where((snapshot) => kAppstoreChartCodes.values.contains(_string(snapshot['chartCode'])))
         .toList();
@@ -437,9 +485,21 @@ class AppstoreAppsClient implements AppsClient {
 
   @override
   Future<AppCollection?> getCollection(String collectionId) async {
-    final collection = _asMap((await _gateway.getCollection(collectionId))?.data);
-    final item = collection == null ? null : _asMap(collection['item']);
-    return item == null ? null : _mapCollection(item);
+    // Collections first; a miss falls back to the events endpoint (events
+    // are curated collections in the appstore domain, kind 'event').
+    Map<String, dynamic>? item;
+    try {
+      final envelope = _asMap((await _gateway.getCollection(collectionId))?.data);
+      item = envelope == null ? null : _asMap(envelope['item']);
+    } catch (_) {
+      item = null;
+    }
+    if (item != null) {
+      return _mapCollection(item);
+    }
+    final eventEnvelope = await _safeData(_gateway.getEvent(collectionId));
+    final event = eventEnvelope == null ? null : _asMap(eventEnvelope['item']);
+    return event == null ? null : _mapEventRow(event);
   }
 
   @override

@@ -72,24 +72,30 @@ class _FakeGateway implements AppstoreCatalogGateway {
       );
 
   @override
-  Future<AppstoreCatalogCollectionsRetrieveResponse?> getCollection(String collectionId) async =>
-      AppstoreCatalogCollectionsRetrieveResponse(
-        code: 0,
-        data: _envelope({
-          'item': {
-            'id': collectionId,
-            'collectionCode': collectionId,
-            'collectionType': 'EDITORIAL',
-            'localizations': [
-              {'locale': 'zh-CN', 'displayName': '精选合集', 'description': '合集描述'},
-            ],
-            'items': [
-              {'listingId': 'app-a'},
-              {'listingId': 'app-b'},
-            ],
-          },
-        }),
-      );
+  Future<AppstoreCatalogCollectionsRetrieveResponse?> getCollection(String collectionId) async {
+    // Fixture convention: event-* ids miss the collections endpoint and
+    // exercise the events fallback.
+    if (collectionId.startsWith('event-')) {
+      throw Exception('404 not a collection');
+    }
+    return AppstoreCatalogCollectionsRetrieveResponse(
+      code: 0,
+      data: _envelope({
+        'item': {
+          'id': collectionId,
+          'collectionCode': collectionId,
+          'collectionType': 'EDITORIAL',
+          'localizations': [
+            {'locale': 'zh-CN', 'displayName': '精选合集', 'description': '合集描述'},
+          ],
+          'items': [
+            {'listingId': 'app-a'},
+            {'listingId': 'app-b'},
+          ],
+        },
+      }),
+    );
+  }
 
   @override
   Future<AppstoreCatalogChartsRetrieveResponse?> getChart(String chartCode) async =>
@@ -185,6 +191,37 @@ class _FakeGateway implements AppstoreCatalogGateway {
             {'id': 'r-1', 'userId': 'user-9', 'rating': 5, 'title': '效率提升明显', 'createdAt': '2026-09-20T00:00:00Z'},
             {'id': 'r-2', 'userId': 'user-3', 'rating': 4, 'createdAt': '2026-09-21T00:00:00Z'},
           ],
+        }),
+      );
+
+  @override
+  Future<SdkWorkListResponse?> listEvents({String? status, int? pageSize}) async =>
+      SdkWorkListResponse(
+        code: 0,
+        data: _envelope({
+          'items': [
+            {
+              'id': 'event-1',
+              'title': '开学季 AI 工具节',
+              'subtitle': '限时活动',
+              'status': 'active',
+              'items': [{'listingId': 'app-a'}, {'listingId': 'app-b'}],
+            },
+          ],
+        }),
+      );
+
+  @override
+  Future<SdkWorkResourceResponse?> getEvent(String eventId) async =>
+      SdkWorkResourceResponse(
+        code: 0,
+        data: _envelope({
+          'item': {
+            'id': eventId,
+            'title': '活动详情',
+            'status': 'active',
+            'items': [{'listingId': 'app-a'}],
+          },
         }),
       );
 
@@ -404,6 +441,28 @@ void main() {
     expect(await client.listSearchSuggestions('  '), isEmpty);
 
     await client.clearSearchHistory();
+  });
+  test('listHomeFeed_folds_active_events_into_the_collections_rail', () async {
+    final gateway = _FakeGateway({});
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    final feed = await client.listHomeFeed();
+    final eventCard = feed.collections.firstWhere((collection) => collection.id == 'event-1');
+    expect(eventCard.title, '开学季 AI 工具节');
+    expect(eventCard.kind, AppCollectionKind.event);
+    expect(eventCard.coverApps.map((app) => app.id), ['app-a', 'app-b']);
+  });
+
+  test('getCollection_falls_back_to_the_events_endpoint_on_a_collections_miss', () async {
+    final gateway = _FakeGateway({});
+    // Fixture convention: event-* ids miss the collections endpoint and
+    // exercise the events fallback.
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    final collection = await client.getCollection('event-9');
+    expect(collection!.id, 'event-9');
+    expect(collection.kind, AppCollectionKind.event);
+    expect((await client.listCollectionApps('event-9')).map((app) => app.id), ['app-a']);
   });
   test('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', () async {
     final gateway = _FakeGateway({});
