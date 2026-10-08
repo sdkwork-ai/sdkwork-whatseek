@@ -25,7 +25,19 @@ export function AppDetailScreen() {
   // Other listings by the same developer (hidden when none).
   const developerApps = useAsyncData(() => apps.listDeveloperApps(appId), [apps, appId]);
   // Rating rows for the 评论 section (hidden when the driver returns none).
-  const reviews = useAsyncData(() => apps.listAppReviews(appId), [apps, appId]);
+  // Star control: tap to upsert the session rating, then refetch the rows.
+  const [myRating, setMyRating] = useState(0);
+  const [reviewsVersion, setReviewsVersion] = useState(0);
+  const reviews = useAsyncData(() => apps.listAppReviews(appId), [apps, appId, reviewsVersion]);
+  const rateAndRefetch = (rating: number): void => {
+    setMyRating(rating);
+    void apps
+      .rateApp(appId, rating)
+      .catch(() => undefined)
+      .then(() => {
+        setReviewsVersion((version) => version + 1);
+      });
+  };
 
   if (detail.state === 'loading') {
     return <ScreenState state="loading" />;
@@ -181,10 +193,28 @@ export function AppDetailScreen() {
         </Card>
       ) : null}
 
-      {reviews.state === 'ready' && reviews.data.length > 0 ? (
+      {reviews.state === 'ready' ? (
         <Card className="mt-3 p-4">
-          <h2 className="text-sm font-semibold text-primary">{t('whatseek.apps.detail.reviews')}</h2>
-          <ul className="mt-2 space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-primary">{t('whatseek.apps.detail.reviews')}</h2>
+            <div className="flex gap-0.5" role="group">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  aria-label={String(star)}
+                  onClick={() => {
+                    rateAndRefetch(star);
+                  }}
+                  className="text-sm leading-none text-warning"
+                >
+                  {star <= myRating ? '★' : '☆'}
+                </button>
+              ))}
+            </div>
+          </div>
+          {reviews.data.length > 0 ? (
+            <ul className="mt-2 space-y-3">
             {reviews.data.map((review) => (
               <li key={review.id}>
                 <p className="text-xs text-muted">
@@ -193,7 +223,8 @@ export function AppDetailScreen() {
                 {review.title ? <p className="mt-0.5 text-sm text-secondary">{review.title}</p> : null}
               </li>
             ))}
-          </ul>
+            </ul>
+          ) : null}
         </Card>
       ) : null}
 

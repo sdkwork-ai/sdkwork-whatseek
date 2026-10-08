@@ -64,6 +64,8 @@ abstract class AppsClient {
   Future<List<WhatseekApp>> listDeveloperApps(String appId);
   /// Rating rows for the detail screen 评论 section (empty on the mock driver).
   Future<List<AppReview>> listAppReviews(String appId);
+  /// Upsert the session user's star rating (1–5) for the listing.
+  Future<void> rateApp(String appId, num rating);
   Future<WhatseekApp?> openApp(String appId, {bool isVisitor = false});
   Future<void> recordRecent(String appId);
   Future<List<WhatseekApp>> listRecent();

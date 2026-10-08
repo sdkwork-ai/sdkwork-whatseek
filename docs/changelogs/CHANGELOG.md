@@ -5,6 +5,26 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — Star-rating submission integrates `listings/{id}/ratings` upsert (completes the ratings loop)
+
+- **`AppsPort.rateApp(appId, rating)`**: store drivers upsert the session
+  user's star rating via `listings/{id}/ratings` (`ratings.update`, mirroring
+  the sdkwork-appstore reference detail page which writes the star rating to
+  the listing domain); the mock driver persists to localStorage and echoes
+  the session row into `listAppReviews` (the Dart mock keeps an in-memory
+  echo), so standalone users see their rating in the list.
+- **Four detail screens render a star control** in the 评论 section header
+  (tap a star → upsert → refetch the rows): H5/PC five star buttons with a
+  version-keyed reviews refetch; Flutter a Wrap of tap stars with a
+  `_reloadReviews` helper; the mini-program detail page binds the star row
+  in WXML (runtime `apps.rate` binding).
+- **Comment text intentionally out of scope**: the reference writes review
+  text to the comments domain (thread-bound, a separate SDK family whatseek
+  does not consume) — only the star half is integrated, matching whatseek's
+  consumption boundary.
+- **Tests**: service-core pins the upsert call shape; the Dart adapter suite
+  captures the upsert body.
+
 ### 2026-10-09 — Developer-apps rail integrates `listings/{id}/developer_other` on every detail screen
 
 - **`AppsPort.listDeveloperApps`**: store drivers resolve the developer-other

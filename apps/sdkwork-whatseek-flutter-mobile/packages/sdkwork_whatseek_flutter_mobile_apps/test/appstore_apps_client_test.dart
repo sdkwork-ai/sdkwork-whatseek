@@ -182,6 +182,18 @@ class _FakeGateway implements AppstoreCatalogGateway {
         }),
       );
 
+  ListingRatingUpsertRequest? updateRatingBody;
+
+  @override
+  Future<ListingRatingResponse?> updateRating(String listingId, ListingRatingUpsertRequest body) async {
+    updateRatingBody = body;
+    return ListingRatingResponse(
+      code: 0,
+      data: _envelope({
+        'item': {'id': 'r-me', 'listingId': listingId, 'userId': 'user-me', 'rating': body.rating},
+      }),
+    );
+  }
   @override
   Future<ListingRatingListResponse?> listRatings(String listingId) async =>
       ListingRatingListResponse(
@@ -478,6 +490,14 @@ void main() {
 
     final others = await client.listDeveloperApps('app-a');
     expect(others.map((app) => app.id), ['app-dev-1', 'app-dev-2']);
+  });
+  test('rateApp_upserts_the_session_rating_through_the_listings_domain', () async {
+    final gateway = _FakeGateway({});
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    await client.rateApp('app-a', 4);
+    expect(gateway.updateRatingBody, isNotNull);
+    expect(gateway.updateRatingBody!.rating, 4);
   });
   test('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', () async {
     final gateway = _FakeGateway({});

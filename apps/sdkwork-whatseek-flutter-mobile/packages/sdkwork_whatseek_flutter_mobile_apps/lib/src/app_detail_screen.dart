@@ -20,6 +20,7 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
   late Future<List<WhatseekApp>> _similar;
   late Future<List<WhatseekApp>> _developerApps;
   late Future<List<AppReview>> _reviews;
+  num _myRating = 0;
   late Future<bool> _favorite;
 
   @override
@@ -32,6 +33,7 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
     _similar = WhatseekRuntime.instance.apps.listSimilarApps(widget.appId);
     _developerApps = WhatseekRuntime.instance.apps.listDeveloperApps(widget.appId);
     _reviews = WhatseekRuntime.instance.apps.listAppReviews(widget.appId);
+    _myRating = 0;
     _favorite = _loadFavorite();
   }
 
@@ -40,6 +42,12 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
     return favorites.any((app) => app.id == widget.appId);
   }
 
+  /// Refetch the reviews rows after a rating upsert (best-effort).
+  void _reloadReviews() {
+    setState(() {
+      _reviews = WhatseekRuntime.instance.apps.listAppReviews(widget.appId);
+    });
+  }
   Future<void> _toggleFavorite() async {
     final favorited =
         await WhatseekRuntime.instance.apps.toggleFavorite(widget.appId);
@@ -233,14 +241,35 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                 future: _reviews,
                 builder: (context, snapshot) {
                   final reviews = snapshot.data ?? const <AppReview>[];
-                  if (reviews.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(WhatseekAppsStrings.of(context, 'detail.reviews'),
-                          style: Theme.of(context).textTheme.titleSmall),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(WhatseekAppsStrings.of(context, 'detail.reviews'),
+                              style: Theme.of(context).textTheme.titleSmall),
+                          Wrap(
+                            children: [
+                              for (final star in [1, 2, 3, 4, 5])
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() => _myRating = star);
+                                    WhatseekRuntime.instance.apps
+                                        .rateApp(widget.appId, star)
+                                        .then((_) => _reloadReviews())
+                                        .catchError((_) => null);
+                                  },
+                                  child: Text(
+                                    star <= _myRating ? '★' : '☆',
+                                    style: const TextStyle(
+                                        color: Color(0xFFfbbf24), fontSize: 16),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 4),
                       for (final review in reviews) ...[
                         Text(

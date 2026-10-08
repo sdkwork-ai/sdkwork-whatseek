@@ -50,7 +50,15 @@
         <view class="row-desc">⭐ {{item.rating}} · {{item.priceLabel}}</view>
       </view>
     </view>
-    <view wx:if="{{reviews.length > 0}}" class="detail-section-title">{{t.detail.reviews}}</view>
+    <view class="detail-section-title">{{t.detail.reviews}}
+      <text class="rate-stars">
+        <text wx:for="{{[1, 2, 3, 4, 5]}}" wx:key="*this" wx:for-item="star" data-star="{{star}}" bindtap="onRateTap">{{star <= myRating ? '★' : '☆'}}</text>
+      </text>
+    </view>
+    <view wx:for="{{reviews}}" wx:key="id" class="review-row">
+      <view class="row-desc">⭐ {{item.rating}} · {{item.author}} · {{item.createdAt}}</view>
+      <view wx:if="{{item.title}}" class="row-title">{{item.title}}</view>
+    </view>
     <view wx:for="{{reviews}}" wx:key="id" class="review-row">
       <view class="row-desc">⭐ {{item.rating}} · {{item.author}} · {{item.createdAt}}</view>
       <view wx:if="{{item.title}}" class="row-title">{{item.title}}</view>

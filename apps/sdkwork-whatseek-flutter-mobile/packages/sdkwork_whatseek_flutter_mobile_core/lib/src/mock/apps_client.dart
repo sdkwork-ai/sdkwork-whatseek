@@ -11,6 +11,7 @@ class MockAppsClient implements AppsClient {
   final List<WhatseekApp> _catalog;
   final List<String> _recentIds = [];
   final List<String> _searchHistory = [];
+  final Map<String, num> _myRatings = {};
   final Set<String> _favoriteIds = {};
   final List<CreatedApp> _createdApps = [];
 
@@ -149,9 +150,29 @@ class MockAppsClient implements AppsClient {
   @override
   Future<void> clearSearchHistory() async => _searchHistory.clear();
 
-  /// The mock catalog carries no rating rows — the UI hides the section.
+  /// The mock driver echoes the session rating into the reviews list
+  /// (the store driver persists server-side).
   @override
-  Future<List<AppReview>> listAppReviews(String appId) async => const [];
+  Future<List<AppReview>> listAppReviews(String appId) async {
+    final myRating = _myRatings[appId];
+    if (myRating == null) {
+      return const [];
+    }
+    return [
+      AppReview(
+        id: 'local-$appId',
+        author: '我',
+        rating: myRating,
+        title: '',
+        createdAt: '',
+      ),
+    ];
+  }
+
+  @override
+  Future<void> rateApp(String appId, num rating) async {
+    _myRatings[appId] = rating;
+  }
 
   /// The mock catalog carries no extra detail surface — same shape as getApp.
   @override

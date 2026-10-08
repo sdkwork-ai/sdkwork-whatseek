@@ -24,3 +24,13 @@
 .review-row {
   margin-bottom: 12rpx;
 }
+
+.rate-stars {
+  margin-left: 12rpx;
+  color: #fbbf24;
+  font-size: 26rpx;
+}
+
+.rate-stars text {
+  padding: 0 4rpx;
+}

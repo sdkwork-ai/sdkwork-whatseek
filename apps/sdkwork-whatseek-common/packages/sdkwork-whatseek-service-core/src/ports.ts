@@ -59,6 +59,8 @@ export interface AppsPort {
   listDeveloperApps(appId: string): Promise<WhatseekApp[]>;
   /** Rating rows for the detail screen 评论 section (empty on the mock driver). */
   listAppReviews(appId: string): Promise<AppReview[]>;
+  /** Upsert the session user's star rating (1–5) for the listing. */
+  rateApp(appId: string, rating: number): Promise<void>;
   listRecent(): Promise<WhatseekApp[]>;
   recordRecent(appId: string): Promise<void>;
   listFavorites(): Promise<WhatseekApp[]>;

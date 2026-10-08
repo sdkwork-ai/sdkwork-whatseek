@@ -182,6 +182,7 @@ export function createAppsClient(appstore: AppStoreClient | null): AppsPort {
       listMedia: appstore.listings.listMedia,
       listSimilar: appstore.listings.listSimilar,
       listDeveloperOther: appstore.listings.listDeveloperOther,
+      updateRating: appstore.listings.updateRating,
       listRatings: appstore.listings.listRatings,
       listItems: appstore.wishlist.listItems,
       addItem: appstore.wishlist.addItem,

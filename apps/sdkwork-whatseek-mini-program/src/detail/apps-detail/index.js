@@ -7,6 +7,7 @@ Page({
   data: {
     similar: [],
     reviews: [],
+    myRating: 0,
     developerApps: [],
     app: null,
     loading: true,
@@ -61,6 +62,20 @@ Page({
     this.load();
   },
 
+  onRateTap(event) {
+    const star = Number(event.currentTarget.dataset.star);
+    if (!(star >= 1 && star <= 5)) {
+      return;
+    }
+    this.setData({ myRating: star });
+    appApi.apps
+      .rate(this.appId, star)
+      .then(() => appApi.apps.reviews(this.appId))
+      .then((reviews) => {
+        this.setData({ reviews });
+      })
+      .catch(() => undefined);
+  },
   onSimilarTap(event) {
     const appId = event.currentTarget.dataset.id;
     this.setData({ similar: [], reviews: [], developerApps: [] });

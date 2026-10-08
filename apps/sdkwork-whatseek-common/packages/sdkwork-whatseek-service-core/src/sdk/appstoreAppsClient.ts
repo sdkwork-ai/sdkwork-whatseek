@@ -64,7 +64,7 @@ export type AppstoreCatalogGateway = Pick<
   | 'upsertSearchHistory'
   | 'clearSearchHistory'
 > &
-  Pick<AppStoreClient['listings'], 'get' | 'listMedia' | 'listSimilar' | 'listRatings' | 'listDeveloperOther'> &
+  Pick<AppStoreClient['listings'], 'get' | 'listMedia' | 'listSimilar' | 'listRatings' | 'listDeveloperOther' | 'updateRating'> &
   Pick<AppStoreClient['wishlist'], 'addItem' | 'listItems' | 'removeItem'>;
 
 export interface AppstoreAppsClientOptions {
@@ -314,6 +314,9 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
       return page.items.map(mapSummary);
     },
 
+    async rateApp(appId, rating): Promise<void> {
+      await gateway.updateRating(appId, { rating });
+    },
     async listAppReviews(appId): Promise<AppReview[]> {
       const page = await gateway.listRatings(appId, { limit: 10 });
       return (page.items as unknown as Record<string, unknown>[]).map((row) => ({

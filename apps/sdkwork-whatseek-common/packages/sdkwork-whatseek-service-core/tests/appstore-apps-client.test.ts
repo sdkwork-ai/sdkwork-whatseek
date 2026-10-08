@@ -136,6 +136,12 @@ function fakeGateway(
       status: 'active',
       items: [{ listingId: 'app-a' }],
     })),
+    updateRating: vi.fn(async (listingId: string, body: { rating: number }) => ({
+      id: 'r-me',
+      listingId,
+      userId: 'user-me',
+      rating: body.rating,
+    })),
     listDeveloperOther: vi.fn(async () => ({
       items: [listing('app-dev-1'), listing('app-dev-2')],
       pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
@@ -366,6 +372,13 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
 
     await client.clearSearchHistory();
     expect(gateway.clearSearchHistory).toHaveBeenCalledTimes(1);
+  });
+  it('rateApp_upserts_the_session_rating_through_the_listings_domain', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    const client = createAppstoreAppsClient({ gateway });
+
+    await client.rateApp('app-a', 4);
+    expect(gateway.updateRating).toHaveBeenCalledWith('app-a', { rating: 4 });
   });
   it('getAppDetail_falls_back_to_the_local_client_for_created_apps', async () => {
     const gateway = fakeGateway(HOME_FEED);

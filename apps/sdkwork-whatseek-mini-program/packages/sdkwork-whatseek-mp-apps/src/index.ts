@@ -98,6 +98,10 @@ export async function listDeveloperApps(appId: string): Promise<unknown[]> {
   return appsPort().listDeveloperApps(appId);
 }
 
+export async function rateApp(appId: string, rating: number): Promise<void> {
+  return appsPort().rateApp(appId, rating);
+}
+
 export async function listAppReviews(appId: string): Promise<unknown[]> {
   return appsPort().listAppReviews(appId);
 }

@@ -80,6 +80,7 @@ export interface PageApi {
     detail(appId: string): Promise<unknown>;
     similarApps(appId: string): Promise<unknown[]>;
     reviews(appId: string): Promise<unknown[]>;
+    rate(appId: string, rating: number): Promise<void>;
     developerApps(appId: string): Promise<unknown[]>;
     history(): Promise<unknown[]>;
     recordHistory(query: string): Promise<void>;
@@ -263,6 +264,7 @@ export function bootstrapRuntime(): PageApi {
       detail: (appId) => apps.getAppDetail(appId),
       similarApps: (appId) => apps.listSimilarApps(appId),
       reviews: (appId) => apps.listAppReviews(appId),
+      rate: (appId, rating) => apps.rateApp(appId, rating),
       developerApps: (appId) => apps.listDeveloperApps(appId),
       history: () => apps.listSearchHistory(),
       recordHistory: (query) => apps.recordSearchHistory(query),

@@ -45,6 +45,7 @@ abstract class AppstoreCatalogGateway {
   Future<SdkWorkListResponse?> listSimilar(String listingId);
   Future<SdkWorkListResponse?> listDeveloperOther(String listingId);
   Future<ListingRatingListResponse?> listRatings(String listingId);
+  Future<ListingRatingResponse?> updateRating(String listingId, ListingRatingUpsertRequest body);
   Future<SdkWorkListResponse?> listEvents({String? status, int? pageSize});
   Future<SdkWorkResourceResponse?> getEvent(String eventId);
   Future<SdkWorkListResponse?> listSearchHistory();
@@ -116,6 +117,10 @@ class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
   @override
   Future<ListingRatingListResponse?> listRatings(String listingId) =>
       _client.listings.appstoreListingsRatingsList(listingId);
+
+  @override
+  Future<ListingRatingResponse?> updateRating(String listingId, ListingRatingUpsertRequest body) =>
+      _client.listings.appstoreListingsRatingsUpdate(listingId, body);
 
   @override
   Future<SdkWorkListResponse?> listEvents({String? status, int? pageSize}) =>
@@ -566,6 +571,10 @@ class AppstoreAppsClient implements AppsClient {
     return _asList(_asMap(page?.data)?['items']).map(_mapSummary).toList();
   }
 
+  @override
+  Future<void> rateApp(String appId, num rating) async {
+    await _gateway.updateRating(appId, ListingRatingUpsertRequest(rating: rating.toInt()));
+  }
   @override
   Future<List<AppReview>> listAppReviews(String appId) async {
     final page = await _gateway.listRatings(appId);

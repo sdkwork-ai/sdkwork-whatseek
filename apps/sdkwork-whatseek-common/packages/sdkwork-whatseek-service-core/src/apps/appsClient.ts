@@ -157,9 +157,42 @@ export function createMockAppsClient(options: MockAppsClientOptions = {}): AppsP
     async listDeveloperApps(): Promise<WhatseekApp[]> {
       return [];
     },
-    // The mock catalog carries no rating rows — the UI hides the section.
+    // Mock driver: the session rating persists to localStorage and echoes
+    // into the reviews list (the store driver upserts server-side).
     async listAppReviews(): Promise<AppReview[]> {
-      return [];
+      const storage = defaultStorage();
+      if (storage === null) {
+        return [];
+      }
+      try {
+        const parsed: unknown = JSON.parse(storage.getItem('whatseek.app-ratings') ?? '{}');
+        if (typeof parsed !== 'object' || parsed === null) {
+          return [];
+        }
+        return Object.entries(parsed as Record<string, number>).map(([appId, rating]) => ({
+          id: 'local-' + appId,
+          author: '我',
+          rating,
+          title: '',
+          createdAt: '',
+        }));
+      } catch {
+        return [];
+      }
+    },
+    async rateApp(appId: string, rating: number): Promise<void> {
+      const storage = defaultStorage();
+      if (storage === null) {
+        return;
+      }
+      try {
+        const parsed: unknown = JSON.parse(storage.getItem('whatseek.app-ratings') ?? '{}');
+        const ratings = typeof parsed === 'object' && parsed !== null ? (parsed as Record<string, number>) : {};
+        ratings[appId] = rating;
+        storage.setItem('whatseek.app-ratings', JSON.stringify(ratings));
+      } catch {
+        /* storage full/unavailable — rating is best-effort */
+      }
     },
     // Mock driver: search history persists to localStorage like the other
     // whatseek-local scope (the store driver upserts server-side).
