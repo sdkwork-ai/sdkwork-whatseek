@@ -153,6 +153,10 @@ export function createMockAppsClient(options: MockAppsClientOptions = {}): AppsP
     async listSimilarApps(): Promise<WhatseekApp[]> {
       return [];
     },
+    // The mock catalog carries no developer grouping — the UI hides the rail.
+    async listDeveloperApps(): Promise<WhatseekApp[]> {
+      return [];
+    },
     // The mock catalog carries no rating rows — the UI hides the section.
     async listAppReviews(): Promise<AppReview[]> {
       return [];

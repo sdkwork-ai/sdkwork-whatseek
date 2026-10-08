@@ -42,6 +42,14 @@
         <view class="row-desc">⭐ {{item.rating}} · {{item.priceLabel}}</view>
       </view>
     </view>
+    <view wx:if="{{developerApps.length > 0}}" class="detail-section-title">{{t.detail.developerApps}}</view>
+    <view wx:for="{{developerApps}}" wx:key="id" class="row" data-id="{{item.id}}" bindtap="onSimilarTap">
+      <view class="row-glyph">{{item.icon}}</view>
+      <view class="result-main">
+        <view class="row-title">{{item.name}}</view>
+        <view class="row-desc">⭐ {{item.rating}} · {{item.priceLabel}}</view>
+      </view>
+    </view>
     <view wx:if="{{reviews.length > 0}}" class="detail-section-title">{{t.detail.reviews}}</view>
     <view wx:for="{{reviews}}" wx:key="id" class="review-row">
       <view class="row-desc">⭐ {{item.rating}} · {{item.author}} · {{item.createdAt}}</view>

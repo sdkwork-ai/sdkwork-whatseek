@@ -245,6 +245,14 @@ class _FakeGateway implements AppstoreCatalogGateway {
   Future<void> clearSearchHistory() async {}
 
   @override
+  Future<SdkWorkListResponse?> listDeveloperOther(String listingId) async =>
+      SdkWorkListResponse(
+        code: 0,
+        data: _envelope({
+          'items': [_listingRow('app-dev-1'), _listingRow('app-dev-2')],
+        }),
+      );
+  @override
   Future<SdkWorkListResponse?> listSimilar(String listingId) async =>
       SdkWorkListResponse(
         code: 0,
@@ -463,6 +471,13 @@ void main() {
     expect(collection!.id, 'event-9');
     expect(collection.kind, AppCollectionKind.event);
     expect((await client.listCollectionApps('event-9')).map((app) => app.id), ['app-a']);
+  });
+  test('listDeveloperApps_resolves_other_listings_by_the_same_developer', () async {
+    final gateway = _FakeGateway({});
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    final others = await client.listDeveloperApps('app-a');
+    expect(others.map((app) => app.id), ['app-dev-1', 'app-dev-2']);
   });
   test('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', () async {
     final gateway = _FakeGateway({});

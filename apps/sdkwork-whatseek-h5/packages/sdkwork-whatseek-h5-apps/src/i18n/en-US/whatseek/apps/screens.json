@@ -45,6 +45,7 @@
   "detail": {
     "title": "App details",
     "similar": "Similar apps",
+    "developerApps": "More from this developer",
     "reviews": "Reviews",
     "notFound": "App not found",
     "aiCapability": "AI capability",

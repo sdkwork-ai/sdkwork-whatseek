@@ -7,6 +7,7 @@ Page({
   data: {
     similar: [],
     reviews: [],
+    developerApps: [],
     app: null,
     loading: true,
     error: '',
@@ -32,10 +33,11 @@ Page({
   async load() {
     this.setData({ loading: true, error: '' });
     try {
-      const [app, similarApps, reviews, favorites] = await Promise.all([
+      const [app, similarApps, developerApps, reviews, favorites] = await Promise.all([
         appApi.apps.detail(this.appId),
         appApi.apps.similarApps(this.appId),
         appApi.apps.reviews(this.appId),
+        appApi.apps.developerApps(this.appId),
         appApi.apps.favorites(),
       ]);
       if (app === null) {
@@ -46,6 +48,7 @@ Page({
         app,
         similar: similarApps,
         reviews,
+        developerApps,
         favorite: favorites.some((favorite) => favorite.id === app.id),
         loading: false,
       });
@@ -60,7 +63,7 @@ Page({
 
   onSimilarTap(event) {
     const appId = event.currentTarget.dataset.id;
-    this.setData({ similar: [], reviews: [] });
+    this.setData({ similar: [], reviews: [], developerApps: [] });
     this.appId = appId;
     this.load();
   },

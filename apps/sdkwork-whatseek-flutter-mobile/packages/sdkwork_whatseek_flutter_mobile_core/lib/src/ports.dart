@@ -60,6 +60,8 @@ abstract class AppsClient {
   Future<WhatseekApp?> getAppDetail(String appId);
   /// Similar store listings for the detail screen (empty on the mock driver).
   Future<List<WhatseekApp>> listSimilarApps(String appId);
+  /// Other listings by the same developer (empty on the mock driver).
+  Future<List<WhatseekApp>> listDeveloperApps(String appId);
   /// Rating rows for the detail screen 评论 section (empty on the mock driver).
   Future<List<AppReview>> listAppReviews(String appId);
   Future<WhatseekApp?> openApp(String appId, {bool isVisitor = false});

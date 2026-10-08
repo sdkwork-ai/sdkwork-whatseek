@@ -18,6 +18,7 @@ class AppDetailScreen extends StatefulWidget {
 class _AppDetailScreenState extends State<AppDetailScreen> {
   late Future<WhatseekApp?> _app;
   late Future<List<WhatseekApp>> _similar;
+  late Future<List<WhatseekApp>> _developerApps;
   late Future<List<AppReview>> _reviews;
   late Future<bool> _favorite;
 
@@ -29,6 +30,7 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
     _app = WhatseekRuntime.instance.apps.getAppDetail(widget.appId);
     // Similar store listings rail (hidden when the driver returns none).
     _similar = WhatseekRuntime.instance.apps.listSimilarApps(widget.appId);
+    _developerApps = WhatseekRuntime.instance.apps.listDeveloperApps(widget.appId);
     _reviews = WhatseekRuntime.instance.apps.listAppReviews(widget.appId);
     _favorite = _loadFavorite();
   }
@@ -176,6 +178,39 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                           style: Theme.of(context).textTheme.titleSmall),
                       const SizedBox(height: 4),
                       for (final item in similar)
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          leading: Text(item.icon,
+                              style: const TextStyle(fontSize: 24)),
+                          title: Text(item.name),
+                          subtitle: Text('⭐ ${item.rating.toStringAsFixed(1)} · ${item.priceLabel}'),
+                          onTap: () => Navigator.of(context).pushNamed(
+                            'app.whatseek.apps.detail',
+                            arguments: item.id,
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              // Other listings by the same developer
+              // (sdkwork-appstore listings/{id}/developer_other).
+              FutureBuilder<List<WhatseekApp>>(
+                future: _developerApps,
+                builder: (context, snapshot) {
+                  final others = snapshot.data ?? const <WhatseekApp>[];
+                  if (others.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(WhatseekAppsStrings.of(context, 'detail.developerApps'),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(height: 4),
+                      for (final item in others)
                         ListTile(
                           contentPadding: EdgeInsets.zero,
                           dense: true,

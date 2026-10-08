@@ -136,6 +136,10 @@ function fakeGateway(
       status: 'active',
       items: [{ listingId: 'app-a' }],
     })),
+    listDeveloperOther: vi.fn(async () => ({
+      items: [listing('app-dev-1'), listing('app-dev-2')],
+      pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
+    })),
     listSimilar: vi.fn(async () => ({
       items: [listing('app-similar-1'), listing('app-similar-2')],
       pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
@@ -300,6 +304,14 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
     expect(collection).toMatchObject({ id: 'event-9', kind: 'event', title: '活动详情' });
     const apps = await client.listCollectionApps('event-9');
     expect(apps.map((app) => app.id)).toEqual(['app-a']);
+  });
+  it('listDeveloperApps_resolves_other_listings_by_the_same_developer', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    const client = createAppstoreAppsClient({ gateway });
+
+    const others = await client.listDeveloperApps('app-a');
+    expect(gateway.listDeveloperOther).toHaveBeenCalledWith('app-a', { limit: 6 });
+    expect(others.map((app) => app.id)).toEqual(['app-dev-1', 'app-dev-2']);
   });
   it('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', async () => {
     const gateway = fakeGateway(HOME_FEED);

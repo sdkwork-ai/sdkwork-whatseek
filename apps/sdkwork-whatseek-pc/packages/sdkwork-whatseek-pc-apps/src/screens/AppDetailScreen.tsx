@@ -21,6 +21,8 @@ export function AppDetailScreen() {
   const detail = useAsyncData(() => apps.getAppDetail(appId), [apps, appId]);
   // Similar store listings rail (hidden when the driver returns none).
   const similar = useAsyncData(() => apps.listSimilarApps(appId), [apps, appId]);
+  // Other listings by the same developer (hidden when none).
+  const developerApps = useAsyncData(() => apps.listDeveloperApps(appId), [apps, appId]);
   // Rating rows for the 评论 section (hidden when the driver returns none).
   const reviews = useAsyncData(() => apps.listAppReviews(appId), [apps, appId]);
 
@@ -144,6 +146,29 @@ export function AppDetailScreen() {
           <h2 className="text-sm font-semibold text-primary">{t('whatseek.apps.detail.similar')}</h2>
           <div className="mt-2">
             {similar.data.map((app) => (
+              <ListRow
+                key={app.id}
+                leading={<Avatar glyph={app.icon} />}
+                title={app.name}
+                description={
+                  <span className="block truncate text-xs text-muted">
+                    ⭐ {app.rating.toFixed(1)} · {app.priceLabel}
+                  </span>
+                }
+                onClick={() => {
+                  navigate(`/apps/detail/${app.id}`);
+                }}
+              />
+            ))}
+          </div>
+        </Card>
+      ) : null}
+
+      {developerApps.state === 'ready' && developerApps.data.length > 0 ? (
+        <Card className="mt-3 p-4">
+          <h2 className="text-sm font-semibold text-primary">{t('whatseek.apps.detail.developerApps')}</h2>
+          <div className="mt-2">
+            {developerApps.data.map((app) => (
               <ListRow
                 key={app.id}
                 leading={<Avatar glyph={app.icon} />}

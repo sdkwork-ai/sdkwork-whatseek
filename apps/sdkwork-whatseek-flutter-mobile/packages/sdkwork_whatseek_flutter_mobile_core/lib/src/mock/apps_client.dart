@@ -123,6 +123,10 @@ class MockAppsClient implements AppsClient {
   @override
   Future<List<WhatseekApp>> listSimilarApps(String appId) async => const [];
 
+  /// The mock catalog carries no developer grouping — the UI hides the rail.
+  @override
+  Future<List<WhatseekApp>> listDeveloperApps(String appId) async => const [];
+
   /// In-memory session history (the store driver persists server-side).
   @override
   Future<List<String>> listSearchHistory() async =>

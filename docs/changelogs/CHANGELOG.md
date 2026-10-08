@@ -5,6 +5,22 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — Developer-apps rail integrates `listings/{id}/developer_other` on every detail screen
+
+- **`AppsPort.listDeveloperApps`**: store drivers resolve the developer-other
+  endpoint (top 6 listing summaries); the mock driver returns an empty list
+  and the UI hides the rail. The `createAppsClient` gateway assembly gains
+  the `listDeveloperOther` slice; the Dart adapter mirrors it.
+- **Four detail screens render the rail**: H5/PC append a 开发者的其他应用
+  Card of ListRows below the similar rail; Flutter renders ListTile rows
+  after the similar FutureBuilder; the mini-program detail page loads it in
+  parallel with the detail fetch and taps re-run `load()`.
+- **i18n**: one new key per surface apps fragment (`detail.developerApps` =
+  开发者的其他应用 / More from this developer), including the Flutter zh/en
+  JSON + Dart flat map.
+- **Tests**: service-core and Dart adapter suites pin endpoint resolution
+  (limit 6, listing order); chat capability port stubs updated.
+
 ### 2026-10-09 — Active store events fold into the collections pipeline (adapter-level, zero UI change)
 
 - **Events are curated collections in the appstore domain** (`collectionType`

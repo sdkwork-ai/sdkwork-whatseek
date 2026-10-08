@@ -45,6 +45,7 @@
   "detail": {
     "title": "应用详情",
     "similar": "相似应用",
+    "developerApps": "开发者的其他应用",
     "reviews": "用户评论",
     "notFound": "应用不存在",
     "aiCapability": "AI 能力",

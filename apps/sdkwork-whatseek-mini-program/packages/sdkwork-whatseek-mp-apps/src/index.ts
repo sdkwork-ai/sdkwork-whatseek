@@ -94,6 +94,10 @@ export async function clearSearchHistory(): Promise<void> {
   return appsPort().clearSearchHistory();
 }
 
+export async function listDeveloperApps(appId: string): Promise<unknown[]> {
+  return appsPort().listDeveloperApps(appId);
+}
+
 export async function listAppReviews(appId: string): Promise<unknown[]> {
   return appsPort().listAppReviews(appId);
 }
