@@ -12,6 +12,7 @@ import type {
   AppHomeFeed,
   AppCollection,
   AppRecommendation,
+  AppReview,
   ChatMessage,
   ChatReply,
   Contact,
@@ -48,6 +49,8 @@ export interface AppsPort {
   getAppDetail(appId: string): Promise<WhatseekApp | null>;
   /** Similar store listings for the detail screen (empty on the mock driver). */
   listSimilarApps(appId: string): Promise<WhatseekApp[]>;
+  /** Rating rows for the detail screen 评论 section (empty on the mock driver). */
+  listAppReviews(appId: string): Promise<AppReview[]>;
   listRecent(): Promise<WhatseekApp[]>;
   recordRecent(appId: string): Promise<void>;
   listFavorites(): Promise<WhatseekApp[]>;

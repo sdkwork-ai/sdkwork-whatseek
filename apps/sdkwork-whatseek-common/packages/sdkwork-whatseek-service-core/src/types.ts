@@ -125,6 +125,17 @@ export interface AppChartPreview {
   apps: WhatseekApp[];
 }
 
+/** A user rating row on the appstore listing (detail-screen 评论 section). */
+export interface AppReview {
+  id: string;
+  /** Rater principal id; display-name join is a server-side concern. */
+  author: string;
+  /** 0–5 rating value. */
+  rating: number;
+  /** Optional one-line review headline. */
+  title: string;
+  createdAt: string;
+}
 export interface AppHomeFeed {
   heroes: AppHeroSlide[];
   stories: AppStoryCard[];

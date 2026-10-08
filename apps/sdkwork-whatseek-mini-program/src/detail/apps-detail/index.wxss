@@ -19,3 +19,8 @@
   background: var(--sdk-color-surface-canvas);
   border: 1rpx solid var(--sdk-color-border-subtle);
 }
+
+/* 用户评论行（appstore ratings 集成） */
+.review-row {
+  margin-bottom: 12rpx;
+}

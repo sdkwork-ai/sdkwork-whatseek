@@ -18,6 +18,7 @@ class AppDetailScreen extends StatefulWidget {
 class _AppDetailScreenState extends State<AppDetailScreen> {
   late Future<WhatseekApp?> _app;
   late Future<List<WhatseekApp>> _similar;
+  late Future<List<AppReview>> _reviews;
   late Future<bool> _favorite;
 
   @override
@@ -28,6 +29,7 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
     _app = WhatseekRuntime.instance.apps.getAppDetail(widget.appId);
     // Similar store listings rail (hidden when the driver returns none).
     _similar = WhatseekRuntime.instance.apps.listSimilarApps(widget.appId);
+    _reviews = WhatseekRuntime.instance.apps.listAppReviews(widget.appId);
     _favorite = _loadFavorite();
   }
 
@@ -186,6 +188,33 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                             arguments: item.id,
                           ),
                         ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              // Rating rows (sdkwork-appstore listings/{id}/ratings).
+              FutureBuilder<List<AppReview>>(
+                future: _reviews,
+                builder: (context, snapshot) {
+                  final reviews = snapshot.data ?? const <AppReview>[];
+                  if (reviews.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(WhatseekAppsStrings.of(context, 'detail.reviews'),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(height: 4),
+                      for (final review in reviews) ...[
+                        Text(
+                            '⭐ ${review.rating} · ${review.author} · ${review.createdAt.isEmpty ? '' : review.createdAt.substring(0, 10)}',
+                            style: Theme.of(context).textTheme.bodySmall),
+                        if (review.title.isNotEmpty)
+                          Text(review.title,
+                              style: Theme.of(context).textTheme.bodyMedium),
+                      ],
                     ],
                   );
                 },

@@ -100,6 +100,13 @@ function fakeGateway(
       if (index >= 0) wishlist.splice(index, 1);
       return undefined;
     }),
+    listRatings: vi.fn(async () => ({
+      items: [
+        { id: 'r-1', userId: 'user-9', rating: 5, title: '效率提升明显', createdAt: '2026-09-20T00:00:00Z' },
+        { id: 'r-2', userId: 'user-3', rating: 4, createdAt: '2026-09-21T00:00:00Z' },
+      ],
+      pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
+    })),
     listSimilar: vi.fn(async () => ({
       items: [listing('app-similar-1'), listing('app-similar-2')],
       pageInfo: { mode: 'cursor', nextCursor: null, hasMore: false },
@@ -266,6 +273,17 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
     const similar = await client.listSimilarApps('app-a');
     expect(gateway.listSimilar).toHaveBeenCalledWith('app-a', { limit: 6 });
     expect(similar.map((app) => app.id)).toEqual(['app-similar-1', 'app-similar-2']);
+  });
+  it('listAppReviews_maps_rating_rows_for_the_detail_section', async () => {
+    const gateway = fakeGateway(HOME_FEED);
+    const client = createAppstoreAppsClient({ gateway });
+
+    const reviews = await client.listAppReviews('app-a');
+    expect(gateway.listRatings).toHaveBeenCalledWith('app-a', { limit: 10 });
+    expect(reviews).toEqual([
+      { id: 'r-1', author: 'user-9', rating: 5, title: '效率提升明显', createdAt: '2026-09-20T00:00:00Z' },
+      { id: 'r-2', author: 'user-3', rating: 4, title: '', createdAt: '2026-09-21T00:00:00Z' },
+    ]);
   });
   it('getAppDetail_falls_back_to_the_local_client_for_created_apps', async () => {
     const gateway = fakeGateway(HOME_FEED);

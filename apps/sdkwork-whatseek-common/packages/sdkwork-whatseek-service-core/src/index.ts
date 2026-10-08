@@ -16,6 +16,7 @@ export type {
   AppHeroSlide,
   AppHomeFeed,
   AppRecommendation,
+  AppReview,
   AppStoryCard,
   ChatCard,
   ChatMessage,

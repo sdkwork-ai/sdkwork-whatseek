@@ -79,6 +79,7 @@ export interface PageApi {
     chart(chartId: string): Promise<unknown[]>;
     detail(appId: string): Promise<unknown>;
     similarApps(appId: string): Promise<unknown[]>;
+    reviews(appId: string): Promise<unknown[]>;
     myApps(): Promise<unknown[]>;
     open(appId: string): Promise<void>;
     generate(requirement: string): Promise<unknown>;
@@ -257,6 +258,7 @@ export function bootstrapRuntime(): PageApi {
       chart: (chartId) => apps.listChart(chartId as Parameters<typeof apps.listChart>[0]),
       detail: (appId) => apps.getAppDetail(appId),
       similarApps: (appId) => apps.listSimilarApps(appId),
+      reviews: (appId) => apps.listAppReviews(appId),
       myApps: () => apps.listMyApps(),
       open: (appId) => apps.openApp(appId),
       generate: (requirement) => apps.generateApp(requirement),

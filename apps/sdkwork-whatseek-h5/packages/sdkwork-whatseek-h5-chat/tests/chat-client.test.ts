@@ -24,6 +24,7 @@ function fakeDeps(overrides: {
       getApp: async () => null,
       getAppDetail: async () => null,
       listSimilarApps: async () => [],
+      listAppReviews: async () => [],
       listRecent: async () => [],
       recordRecent: async () => undefined,
       listFavorites: async () => [],

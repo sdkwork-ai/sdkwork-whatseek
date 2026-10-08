@@ -94,6 +94,26 @@ class WhatseekApp {
   final List<String>? screenshots;
 }
 
+/// A user rating row on the appstore listing (detail-screen 评论 section).
+class AppReview {
+  const AppReview({
+    required this.id,
+    required this.author,
+    required this.rating,
+    required this.title,
+    required this.createdAt,
+  });
+
+  final String id;
+
+  /// Rater principal id; display-name join is a server-side concern.
+  final String author;
+
+  /// 0–5 rating value.
+  final num rating;
+  final String title;
+  final String createdAt;
+}
 class CreatedApp {
   const CreatedApp({
     required this.id,

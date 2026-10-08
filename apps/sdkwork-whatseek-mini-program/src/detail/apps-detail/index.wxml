@@ -42,6 +42,11 @@
         <view class="row-desc">⭐ {{item.rating}} · {{item.priceLabel}}</view>
       </view>
     </view>
+    <view wx:if="{{reviews.length > 0}}" class="detail-section-title">{{t.detail.reviews}}</view>
+    <view wx:for="{{reviews}}" wx:key="id" class="review-row">
+      <view class="row-desc">⭐ {{item.rating}} · {{item.author}} · {{item.createdAt}}</view>
+      <view wx:if="{{item.title}}" class="row-title">{{item.title}}</view>
+    </view>
   </view>
   <button class="btn-brand detail-btn" bindtap="onUse">{{t.detail.use}}</button>
   <button class="detail-fav {{favorite ? 'detail-fav-active' : ''}}" disabled="{{favoriting}}" bindtap="onFavorite">

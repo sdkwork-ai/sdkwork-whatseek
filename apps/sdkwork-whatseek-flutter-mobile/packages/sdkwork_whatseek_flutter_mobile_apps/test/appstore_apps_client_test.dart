@@ -177,6 +177,18 @@ class _FakeGateway implements AppstoreCatalogGateway {
       );
 
   @override
+  Future<ListingRatingListResponse?> listRatings(String listingId) async =>
+      ListingRatingListResponse(
+        code: 0,
+        data: _envelope({
+          'items': [
+            {'id': 'r-1', 'userId': 'user-9', 'rating': 5, 'title': '效率提升明显', 'createdAt': '2026-09-20T00:00:00Z'},
+            {'id': 'r-2', 'userId': 'user-3', 'rating': 4, 'createdAt': '2026-09-21T00:00:00Z'},
+          ],
+        }),
+      );
+
+  @override
   Future<SdkWorkListResponse?> listSimilar(String listingId) async =>
       SdkWorkListResponse(
         code: 0,
@@ -349,6 +361,17 @@ void main() {
 
     final similar = await client.listSimilarApps('app-a');
     expect(similar.map((app) => app.id), ['app-similar-1', 'app-similar-2']);
+  });
+  test('listAppReviews_maps_rating_rows_for_the_detail_section', () async {
+    final gateway = _FakeGateway({});
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    final reviews = await client.listAppReviews('app-a');
+    expect(reviews, hasLength(2));
+    expect(reviews.first.author, 'user-9');
+    expect(reviews.first.rating, 5);
+    expect(reviews.first.title, '效率提升明显');
+    expect(reviews.last.title, isEmpty);
   });
   test('getAppDetail_hydrates_detail_and_screenshot_media_for_store_apps', () async {
     final gateway = _FakeGateway({});

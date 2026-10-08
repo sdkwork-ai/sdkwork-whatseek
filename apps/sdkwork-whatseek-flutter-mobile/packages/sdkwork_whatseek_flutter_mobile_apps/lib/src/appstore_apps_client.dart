@@ -43,6 +43,7 @@ abstract class AppstoreCatalogGateway {
   Future<ListingResponse?> getListing(String listingId);
   Future<ListingMediaListResponse?> listListingMedia(String listingId);
   Future<SdkWorkListResponse?> listSimilar(String listingId);
+  Future<ListingRatingListResponse?> listRatings(String listingId);
   Future<WishlistItemListResponse?> listWishlist({int? pageSize});
   Future<WishlistItemResponse?> addWishlistItem(String listingId);
   Future<void> removeWishlistItem(String listingId);
@@ -101,6 +102,10 @@ class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
   @override
   Future<SdkWorkListResponse?> listSimilar(String listingId) =>
       _client.listings.appstoreListingsSimilarList(listingId);
+
+  @override
+  Future<ListingRatingListResponse?> listRatings(String listingId) =>
+      _client.listings.appstoreListingsRatingsList(listingId);
 
   @override
   Future<WishlistItemListResponse?> listWishlist({int? pageSize}) =>
@@ -453,6 +458,21 @@ class AppstoreAppsClient implements AppsClient {
   Future<List<WhatseekApp>> listSimilarApps(String appId) async {
     final page = await _gateway.listSimilar(appId);
     return _asList(_asMap(page?.data)?['items']).map(_mapSummary).toList();
+  }
+
+  @override
+  Future<List<AppReview>> listAppReviews(String appId) async {
+    final page = await _gateway.listRatings(appId);
+    return [
+      for (final row in _asList(_asMap(page?.data)?['items']))
+        AppReview(
+          id: _string(row['id']) ?? '',
+          author: _string(row['userId']) ?? '',
+          rating: row['rating'] as num? ?? 0,
+          title: _string(row['title']) ?? '',
+          createdAt: _string(row['createdAt']) ?? '',
+        ),
+    ];
   }
 
   @override

@@ -22,6 +22,8 @@ export function AppDetailScreen() {
   const detail = useAsyncData(() => apps.getAppDetail(appId), [apps, appId]);
   // Similar store listings rail (hidden when the driver returns none).
   const similar = useAsyncData(() => apps.listSimilarApps(appId), [apps, appId]);
+  // Rating rows for the 评论 section (hidden when the driver returns none).
+  const reviews = useAsyncData(() => apps.listAppReviews(appId), [apps, appId]);
 
   if (detail.state === 'loading') {
     return <ScreenState state="loading" />;
@@ -151,6 +153,22 @@ export function AppDetailScreen() {
               />
             ))}
           </div>
+        </Card>
+      ) : null}
+
+      {reviews.state === 'ready' && reviews.data.length > 0 ? (
+        <Card className="mt-3 p-4">
+          <h2 className="text-sm font-semibold text-primary">{t('whatseek.apps.detail.reviews')}</h2>
+          <ul className="mt-2 space-y-3">
+            {reviews.data.map((review) => (
+              <li key={review.id}>
+                <p className="text-xs text-muted">
+                  ⭐ {review.rating.toFixed(1)} · {review.author} · {review.createdAt.slice(0, 10)}
+                </p>
+                {review.title ? <p className="mt-0.5 text-sm text-secondary">{review.title}</p> : null}
+              </li>
+            ))}
+          </ul>
         </Card>
       ) : null}
 

@@ -46,6 +46,7 @@
   },
   "detail": {
     "similar": "相似应用",
+    "reviews": "用户评论",
     "title": "应用详情",
     "notFound": "应用不存在",
     "aiCapability": "AI 能力",

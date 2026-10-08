@@ -5,6 +5,24 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — Reviews section integrates `listings/{id}/ratings` on every detail screen
+
+- **`AppReview` model + `AppsPort.listAppReviews`**: store drivers map the
+  appstore rating rows (`{id, userId, rating, title?, createdAt}`) for the
+  detail screen 评论 section (top 10); the mock driver returns an empty list
+  and the UI hides the section. The `createAppsClient` gateway assembly gains
+  the `listRatings` slice; the Dart adapter mirrors it (`ListingRating`
+  envelope navigation) with a new `AppReview` Dart model.
+- **Four detail screens render the reviews**: H5/PC append a 用户评论 Card
+  (star · author · date, optional headline); Flutter mirrors with the same
+  rows; the mini-program detail page loads reviews in parallel with the
+  detail fetch (runtime `apps.reviews` binding) and renders the WXML block
+  with page styles.
+- **i18n**: one new key per surface apps fragment (`detail.reviews` =
+  用户评论 / Reviews), including the Flutter zh/en JSON + Dart flat map.
+- **Tests**: service-core and Dart adapter suites pin rating-row mapping
+  (author/rating/title fallbacks).
+
 ### 2026-10-09 — Similar-apps rail integrates `listings/{id}/similar` on every detail screen
 
 - **`AppsPort.listSimilarApps`**: store drivers resolve the appstore similar

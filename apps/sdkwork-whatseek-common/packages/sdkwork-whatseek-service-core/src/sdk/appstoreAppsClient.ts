@@ -32,6 +32,7 @@ import type {
   AppCollectionKind,
   AppHomeFeed,
   AppRecommendation,
+  AppReview,
   AppsPort,
   CreatedApp,
   WhatseekApp,
@@ -58,7 +59,7 @@ export type AppstoreCatalogGateway = Pick<
   | 'listSearchSuggestions'
   | 'searchListings'
 > &
-  Pick<AppStoreClient['listings'], 'get' | 'listMedia' | 'listSimilar'> &
+  Pick<AppStoreClient['listings'], 'get' | 'listMedia' | 'listSimilar' | 'listRatings'> &
   Pick<AppStoreClient['wishlist'], 'addItem' | 'listItems' | 'removeItem'>;
 
 export interface AppstoreAppsClientOptions {
@@ -258,6 +259,17 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
     async listSimilarApps(appId): Promise<WhatseekApp[]> {
       const page = await gateway.listSimilar(appId, { limit: 6 });
       return page.items.map(mapSummary);
+    },
+
+    async listAppReviews(appId): Promise<AppReview[]> {
+      const page = await gateway.listRatings(appId, { limit: 10 });
+      return (page.items as unknown as Record<string, unknown>[]).map((row) => ({
+        id: readString(row.id) ?? '',
+        author: readString(row.userId) ?? '',
+        rating: Number(row.rating ?? 0),
+        title: readString(row.title) ?? '',
+        createdAt: readString(row.createdAt) ?? '',
+      }));
     },
 
     async listHomeFeed(): Promise<AppHomeFeed> {

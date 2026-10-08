@@ -5,7 +5,7 @@
  * generated appstore app SDK client — the port stays identical.
  */
 
-import type { AppChartId, AppHomeFeed, AppCollection, AppRecommendation, CreatedApp, WhatseekApp } from '../types.js';
+import type { AppChartId, AppHomeFeed, AppCollection, AppRecommendation, AppReview, CreatedApp, WhatseekApp } from '../types.js';
 import type { AppsPort } from '../ports.js';
 
 import { WHATSEEK_CATALOG, WHATSEEK_CATEGORIES, planModulesForRequirement, planPagesForRequirement, planDataModelForRequirement } from './catalog.js';
@@ -151,6 +151,10 @@ export function createMockAppsClient(options: MockAppsClientOptions = {}): AppsP
     },
     // The mock catalog carries no similar-apps source — the UI hides the rail.
     async listSimilarApps(): Promise<WhatseekApp[]> {
+      return [];
+    },
+    // The mock catalog carries no rating rows — the UI hides the section.
+    async listAppReviews(): Promise<AppReview[]> {
       return [];
     },
     // The mock catalog carries no extra detail surface — same shape as getApp.

@@ -29,6 +29,7 @@
   },
   "detail": {
     "similar": "相似应用",
+    "reviews": "用户评论",
     "use": "立即使用",
     "openFailedTitle": "无法打开应用",
     "notFound": "应用不存在或已下架。",
