@@ -5,6 +5,34 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — Shared driver factories own composed-client construction; 收藏 rides the appstore wishlist
+
+- **Driver factories move to the common family**: `createImSdkClient` /
+  `createAppstoreSdkClient` / `createMessagesClient` / `createContactsClient` /
+  `createAppsClient` are now owned once by
+  `@sdkwork/whatseek-service-core` (`sdk/driverClients`), taking a structural
+  driver-env (the seven `sdkwork{Im,Appstore}*` source keys) plus the surface
+  identity. The H5 and PC bootstrap composition roots — previously line-for-line
+  duplicates — shrink to thin wrappers that pin `platform: 'h5'|'pc'` and the
+  session-principal accessor; the mini-program runtime likewise stops
+  hand-wiring TokenManagers and passes its `wx.connectSocket` transport factory.
+  Bootstraps remain the only places that invoke construction and register ports
+  (APP_SDK_INTEGRATION_SPEC.md §1); H5's root manifest declares
+  `@sdkwork/whatseek-service-core` directly now that its bootstrap composes
+  over it.
+- **收藏 integrates the appstore wishlist (Phase-3 seam closed early)**: store
+  listings toggle the server-side wishlist (`wishlist.items` add/remove/list,
+  client idempotency key on add) and favorites merge wishlist-resolved cards
+  with whatseek-local ones; AI-created `gen-*` apps never resolve as store
+  listings and keep the local favorites scope. Port shape unchanged — the
+  split lives entirely inside the shared TS adapter and the Dart adapter
+  (`createAppsClient` assembles the gateway from the catalog + wishlist
+  slices). Mock-driver standalone profiles see zero behavior change.
+- **Tests**: service-core gains the driver-factory suite (platform stamping,
+  null cases, token-bridge seeding, gateway assembly) and wishlist favorites
+  coverage (stateful fake, toggle both ways, local fallback); the Dart adapter
+  test pins the same favorites split.
+
 ### 2026-10-08 — SDK adapter boundaries consolidate into the common family; appstore driver reaches every surface
 
 - **SDK adapters move to `@sdkwork-whatseek-service-core` (高内聚低耦合)**:

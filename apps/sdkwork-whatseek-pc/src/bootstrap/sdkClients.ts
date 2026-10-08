@@ -1,31 +1,17 @@
 /**
  * App bootstrap: runtime environment + SDK client registration (APP_PC
- * ARCHITECTURE_SPEC.md bootstrap composition; APP_SDK_INTEGRATION_SPEC.md §1).
- * This is the composition root — the only place that constructs SDK clients.
- *
- * sdkwork-im driver (messages + contacts capabilities): when the runtime
- * environment declares an IM API base URL (`sdkworkImApiBaseUrl` from
- * etc/browser runtime-env sources), one composed `@sdkwork/im-sdk` client is
- * constructed with one session TokenManager and injected into both port
- * adapters; otherwise both ports stay on the Phase-1 mock clients (standalone
- * milestone default).
- *
- * sdkwork-appstore driver (apps capability): same activation rule over
- * `sdkworkAppstoreApiBaseUrl` — one composed `@sdkwork/appstore-app-sdk`
- * client feeds the AppsPort home feed / catalog; whatseek-local user scope
- * (recent, favorites, 我的应用) stays on the mock client inside the adapter.
- * Remaining ports stay on mock clients until their SDK families land.
+ * ARCHITECTURE_SPEC.md bootstrap composition). The composed-client factories
+ * live in the shared common family (`@sdkwork/whatseek-service-core`,
+ * `sdk/driverClients`); this composition root is the only place that invokes
+ * them with the pc surface identity and registers the resulting ports
+ * (APP_SDK_INTEGRATION_SPEC.md §1). The thin wrappers below pin the platform
+ * and the session-principal accessor so the rest of the surface stays
+ * driver-agnostic.
  */
 
-import { createTokenManager } from '@sdkwork/sdk-common';
-import { createAppStoreClient, type AppStoreClient } from '@sdkwork/appstore-app-sdk';
-import { ImSdkClient, type ImSdkClientOptions } from '@sdkwork/im-sdk';
-import { createAppstoreAppsClient, createMockAppsClient } from '@sdkwork/whatseek-pc-apps';
+import type { AppStoreClient } from '@sdkwork/appstore-app-sdk';
+import type { ImSdkClient } from '@sdkwork/im-sdk';
 import { createMockChatClient, createMockTasksClient } from '@sdkwork/whatseek-pc-chat';
-import {
-  createImContactsClient,
-  createMockContactsClient,
-} from '@sdkwork/whatseek-pc-contacts';
 import {
   getCurrentUser,
   registerWhatseekClient,
@@ -34,59 +20,42 @@ import {
   type MessagesPort,
   type WhatseekRuntimeEnvironment,
 } from '@sdkwork/whatseek-pc-core';
-import { createImMessagesClient, createMockMessagesClient } from '@sdkwork/whatseek-pc-messages';
+import {
+  createAppsClient as createSharedAppsClient,
+  createAppstoreSdkClient as createSharedAppstoreSdkClient,
+  createContactsClient as createSharedContactsClient,
+  createImSdkClient as createSharedImSdkClient,
+  createMessagesClient as createSharedMessagesClient,
+} from '@sdkwork/whatseek-service-core';
 
 import { currentRuntimeEnvironment } from './environment.js';
 
+/** Surface identity stamped onto every composed SDK client. */
+const PLATFORM = 'pc' as const;
+
 /**
- * Construct the composed IM client for the resolved runtime environment, or
- * `null` when no IM gateway is declared (mock-driver standalone milestone).
- * Exported for bootstrap tests; production code goes through
- * `bootstrapSdkClients`.
+ * Composed IM client for the resolved runtime environment, or `null` when no
+ * IM gateway is declared (mock-driver standalone milestone). Exported for
+ * bootstrap tests; production code goes through `bootstrapSdkClients`.
  */
 export function createImSdkClient(env: WhatseekRuntimeEnvironment): ImSdkClient | null {
-  const apiBaseUrl = env.sdkworkImApiBaseUrl?.trim() ?? '';
-  if (apiBaseUrl.length === 0) {
-    return null;
-  }
-  // TokenManager closure rule (APP_SDK_INTEGRATION_SPEC.md: one manager per
-  // authenticated session context, shared by every SDK client). Tokens come
-  // from the IAM login runtime (Phase 2) or, until that lands, from the
-  // operator-declared `sdkworkImBootstrap*` runtime-env bridge (minted by the
-  // gateway's own IAM credential-entry surface); empty starts the session
-  // empty and the IM gateway rejects unauthenticated calls, so the driver
-  // only activates when a gateway is actually mounted.
-  const tokenManager = createTokenManager();
-  const bootstrapAccessToken = env.sdkworkImBootstrapAccessToken?.trim() ?? '';
-  const bootstrapAuthToken = env.sdkworkImBootstrapAuthToken?.trim() ?? '';
-  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
-    tokenManager.setTokens({
-      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
-      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
-    });
-  }
-  const websocketBaseUrl = env.sdkworkImWebSocketBaseUrl?.trim() ?? '';
-  const options: ImSdkClientOptions = {
-    apiBaseUrl,
-    ...(websocketBaseUrl.length > 0 ? { websocketBaseUrl } : {}),
-    platform: 'pc',
-    tokenManager,
-  };
-  return new ImSdkClient(options);
+  return createSharedImSdkClient(env, { platform: PLATFORM });
+}
+
+/**
+ * Composed appstore client for the resolved runtime environment, or `null`
+ * when no appstore gateway is declared. Exported for bootstrap tests;
+ * production code goes through `bootstrapSdkClients`.
+ */
+export function createAppstoreSdkClient(env: WhatseekRuntimeEnvironment): AppStoreClient | null {
+  return createSharedAppstoreSdkClient(env, { platform: PLATFORM });
 }
 
 /**
  * Build the messages port. `im === null` selects the mock driver.
  */
 export function createMessagesClient(im: ImSdkClient | null): MessagesPort {
-  if (im === null) {
-    return createMockMessagesClient();
-  }
-  return createImMessagesClient({
-    gateway: {
-      conversations: im.conversations,
-      connect: (options) => im.connect(options),
-    },
+  return createSharedMessagesClient(im, {
     currentUserId: () => getCurrentUser()?.id ?? 'visitor',
   });
 }
@@ -96,48 +65,14 @@ export function createMessagesClient(im: ImSdkClient | null): MessagesPort {
  * no second TokenManager). `im === null` selects the mock driver.
  */
 export function createContactsClient(im: ImSdkClient | null): ContactsPort {
-  if (im === null) {
-    return createMockContactsClient();
-  }
-  return createImContactsClient({
-    gateway: { contacts: im.social.contacts },
-  });
-}
-
-/**
- * Construct the composed appstore client for the resolved runtime environment,
- * or `null` when no appstore gateway is declared (mock-driver standalone
- * milestone). Same TokenManager closure rule as the IM driver; tokens come
- * from the operator-declared `sdkworkAppstoreBootstrap*` runtime-env bridge
- * until the IAM login runtime lands (APP_SDK_INTEGRATION_SPEC.md §4).
- * Exported for bootstrap tests; production code goes through
- * `bootstrapSdkClients`.
- */
-export function createAppstoreSdkClient(env: WhatseekRuntimeEnvironment): AppStoreClient | null {
-  const apiBaseUrl = env.sdkworkAppstoreApiBaseUrl?.trim() ?? '';
-  if (apiBaseUrl.length === 0) {
-    return null;
-  }
-  const tokenManager = createTokenManager();
-  const bootstrapAccessToken = env.sdkworkAppstoreBootstrapAccessToken?.trim() ?? '';
-  const bootstrapAuthToken = env.sdkworkAppstoreBootstrapAuthToken?.trim() ?? '';
-  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
-    tokenManager.setTokens({
-      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
-      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
-    });
-  }
-  return createAppStoreClient({ baseUrl: apiBaseUrl, tokenManager, platform: 'pc' });
+  return createSharedContactsClient(im);
 }
 
 /**
  * Build the apps port. `appstore === null` selects the mock driver.
  */
 export function createAppsClient(appstore: AppStoreClient | null): AppsPort {
-  if (appstore === null) {
-    return createMockAppsClient();
-  }
-  return createAppstoreAppsClient({ gateway: appstore.catalog });
+  return createSharedAppsClient(appstore);
 }
 
 export function bootstrapSdkClients(): void {

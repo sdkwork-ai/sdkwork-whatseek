@@ -26,8 +26,18 @@ function listing(id: string, overrides: Partial<ListingSummary> = {}): ListingSu
 /** Fake catalog gateway: `resolve` answers the batched ids-resolution call. */
 function fakeGateway(
   home: Record<string, unknown>,
-  resolve: (ids: string[]) => ListingSummary[] = (ids) => ids.map((id) => listing(id)),
-): AppstoreCatalogGateway & { searchListings: ReturnType<typeof vi.fn> } {
+  resolve: (ids: string[]) => ListingSummary[] = (ids) =>
+    // Fixture convention: `app-*` ids are store listings; everything else
+    // (e.g. `gen-*` created apps) resolves to nothing.
+    ids.filter((id) => id.startsWith('app-')).map((id) => listing(id)),
+): AppstoreCatalogGateway & {
+  searchListings: ReturnType<typeof vi.fn>;
+  listItems: ReturnType<typeof vi.fn>;
+  addItem: ReturnType<typeof vi.fn>;
+  removeItem: ReturnType<typeof vi.fn>;
+} {
+  // Stateful in-memory wishlist so toggle semantics can be pinned.
+  const wishlist: Array<{ id: string; listingId: string; wishlistStatus: string; createdAt: string }> = [];
   return {
     getHome: vi.fn(async () => home),
     listCollections: vi.fn(async () => ({ items: [], pageInfo: { mode: 'cursor', hasMore: false } })),
@@ -64,7 +74,22 @@ function fakeGateway(
       items: params?.ids === undefined ? [listing('app-search')] : resolve(params.ids),
       pageInfo: { mode: 'cursor' as const, nextCursor: null, hasMore: false },
     })),
-  } as unknown as AppstoreCatalogGateway & { searchListings: ReturnType<typeof vi.fn> };
+    listItems: vi.fn(async () => ({ items: [...wishlist], pageInfo: { mode: 'cursor', hasMore: false } })),
+    addItem: vi.fn(async (listingId: string) => {
+      wishlist.push({ id: `w-${wishlist.length + 1}`, listingId, wishlistStatus: 'ACTIVE', createdAt: '' });
+      return {};
+    }),
+    removeItem: vi.fn(async (listingId: string) => {
+      const index = wishlist.findIndex((item) => item.listingId === listingId);
+      if (index >= 0) wishlist.splice(index, 1);
+      return undefined;
+    }),
+  } as unknown as AppstoreCatalogGateway & {
+    searchListings: ReturnType<typeof vi.fn>;
+    listItems: ReturnType<typeof vi.fn>;
+    addItem: ReturnType<typeof vi.fn>;
+    removeItem: ReturnType<typeof vi.fn>;
+  };
 }
 
 const HOME_FEED = {
@@ -198,8 +223,13 @@ describe('createAppstoreAppsClient (home feed integration)', () => {
     await client.recordRecent('app-a');
     expect(await client.listRecent()).toEqual(await local.listRecent());
 
-    // Favorites and 我的应用 resolve through the local catalog; store ids
-    // unknown to the local scope drop out of the resolved list.
+    // Store-listing favorites ride the appstore wishlist…
+    expect(await client.toggleFavorite('app-a')).toBe(true);
+    expect(gateway.addItem).toHaveBeenCalledWith('app-a');
+    expect(await client.toggleFavorite('app-a')).toBe(false);
+    expect(gateway.removeItem).toHaveBeenCalledWith('app-a');
+
+    // …while the AI-created apps stay whatseek-local (never store listings).
     const created = await local.createAppFromPlan('团队周报助手', ['周报']);
     await client.toggleFavorite(created.id);
     expect((await client.listFavorites()).map((app) => app.id)).toContain(created.id);

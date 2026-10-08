@@ -28,6 +28,8 @@ class _FakeGateway implements AppstoreCatalogGateway {
 
   final Map<String, dynamic> home;
   final List<String> searchedIds = [];
+  // Stateful in-memory wishlist so toggle semantics can be pinned.
+  final List<Map<String, dynamic>> wishlist = [];
 
   @override
   Future<HomeFeedResponse?> getHome() async => HomeFeedResponse(
@@ -149,6 +151,28 @@ class _FakeGateway implements AppstoreCatalogGateway {
           ],
         }),
       );
+
+  @override
+  Future<WishlistItemListResponse?> listWishlist({int? pageSize}) async =>
+      WishlistItemListResponse(
+        code: 0,
+        data: _envelope({'items': [...wishlist]}),
+      );
+
+  @override
+  Future<WishlistItemResponse?> addWishlistItem(String listingId) async {
+    wishlist.add({
+      'id': 'w-${wishlist.length + 1}',
+      'listingId': listingId,
+      'wishlistStatus': 'ACTIVE',
+    });
+    return WishlistItemResponse(code: 0, data: _envelope({'item': wishlist.last}));
+  }
+
+  @override
+  Future<void> removeWishlistItem(String listingId) async {
+    wishlist.removeWhere((item) => item['listingId'] == listingId);
+  }
 }
 
 void main() {
@@ -209,5 +233,22 @@ void main() {
     final categories = await client.listCategories();
     expect(categories.first.id, 'cat-1');
     expect(categories.first.labelKey, '效率');
+  });
+
+  test('favorites_ride_the_wishlist_while_created_apps_stay_local', () async {
+    final gateway = _FakeGateway({});
+    final client = AppstoreAppsClient(gateway: gateway);
+
+    // Store-listing favorites ride the appstore wishlist.
+    expect(await client.toggleFavorite('app-a'), isTrue);
+    expect(gateway.wishlist.map((item) => item['listingId']), ['app-a']);
+    expect((await client.listFavorites()).map((app) => app.id), ['app-a']);
+    expect(await client.toggleFavorite('app-a'), isFalse);
+    expect(gateway.wishlist, isEmpty);
+    expect(await client.listFavorites(), isEmpty);
+
+    // AI-created apps stay whatseek-local (never store listings).
+    final plan = client.draftCreationPlan('团队周报助手');
+    expect(plan.title, isNotEmpty);
   });
 }

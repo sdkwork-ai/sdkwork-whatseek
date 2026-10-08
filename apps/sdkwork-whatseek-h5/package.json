@@ -36,6 +36,7 @@
     "@sdkwork/whatseek-h5-messages": "workspace:*",
     "@sdkwork/whatseek-h5-profile": "workspace:*",
     "@sdkwork/whatseek-h5-shell": "workspace:*",
+    "@sdkwork/whatseek-service-core": "workspace:*",
     "@tailwindcss/typography": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "react": "catalog:",

@@ -13,16 +13,18 @@
 ///
 /// Wire notes: the Dart generated family keeps the `{code, data, traceId}`
 /// envelope (`dynamic data`), so this boundary navigates `data['item']` /
-/// `data['items']` defensively. Whatseek-local user scope (最近使用, 收藏,
-/// 我的应用, AI 创建 lifecycle) has no appstore app-api counterpart yet and
-/// stays on the mock client (`local`); the appstore user-library family is the
-/// designated Phase-3 seam for favorites.
+/// `data['items']` defensively. Whatseek-local user scope is split by backing:
+/// 收藏 for store listings rides the appstore wishlist, while 最近使用 and the
+/// AI-created 我的应用 lifecycle stay on the mock client (`local`) — the
+/// appstore app-api has no counterpart for them.
 library;
 
 import 'package:sdkwork_appstore_app_sdk/sdkwork_appstore_app_sdk.dart';
 import 'package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart';
 
-/// Narrow catalog slice of the composed appstore client this adapter consumes.
+/// Narrow slice of the composed appstore client this adapter consumes: the
+/// catalog API for feed/search/browse plus the wishlist API for 收藏
+/// (server-side store favorites; created apps stay whatseek-local).
 abstract class AppstoreCatalogGateway {
   Future<HomeFeedResponse?> getHome();
   Future<AppstoreCatalogCollectionsRetrieveResponse?> getCollection(String collectionId);
@@ -35,9 +37,12 @@ abstract class AppstoreCatalogGateway {
   });
   Future<SdkWorkListResponse?> listRecommendations({int? pageSize});
   Future<CategoryListResponse?> listCategories({int? pageSize});
+  Future<WishlistItemListResponse?> listWishlist({int? pageSize});
+  Future<WishlistItemResponse?> addWishlistItem(String listingId);
+  Future<void> removeWishlistItem(String listingId);
 }
 
-/// Default gateway over the composed appstore client's catalog API.
+/// Default gateway over the composed appstore client's catalog + wishlist API.
 class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
   SdkworkAppstoreCatalogGateway(this._client);
 
@@ -70,7 +75,23 @@ class SdkworkAppstoreCatalogGateway implements AppstoreCatalogGateway {
   @override
   Future<CategoryListResponse?> listCategories({int? pageSize}) =>
       _client.catalog.appstoreCatalogCategoriesList(null, pageSize, null);
+
+  @override
+  Future<WishlistItemListResponse?> listWishlist({int? pageSize}) =>
+      _client.wishlist.appstoreWishlistItemsList(null, pageSize);
+
+  @override
+  Future<WishlistItemResponse?> addWishlistItem(String listingId) => _client.wishlist
+      .appstoreWishlistItemsCreate(WishlistItemAddRequest(listingId: listingId), _idempotencyKey());
+
+  @override
+  Future<void> removeWishlistItem(String listingId) =>
+      _client.wishlist.appstoreWishlistItemsDelete(listingId);
 }
+
+/// Client-generated idempotency key for the wishlist add command
+/// (API_SPEC §15 command pattern; unique per attempt).
+String _idempotencyKey() => 'whatseek-${DateTime.now().microsecondsSinceEpoch}';
 
 /// whatseek chart tabs mapped onto appstore chart snapshot codes.
 const Map<AppChartId, String> kAppstoreChartCodes = {
@@ -369,9 +390,11 @@ class AppstoreAppsClient implements AppsClient {
     return items.isEmpty ? _local.getApp(appId) : _mapSummary(items.first);
   }
 
-  // Whatseek-local user scope: the appstore app-api has no recent/favorite/
-  // created-app resources for this surface yet (user library/wishlist is the
-  // designated Phase-3 seam), so the mock client keeps owning these.
+  // Whatseek-local user scope, split by backing: 收藏 for store listings is
+  // the appstore wishlist (server-side, per account); 最近使用 and the
+  // AI-created 我的应用 lifecycle have no appstore app-api resource and stay
+  // on the mock client. The two id spaces are disjoint (listing ids vs
+  // `gen-*` created ids), so the merged list never duplicates.
   @override
   Future<WhatseekApp?> openApp(String appId, {bool isVisitor = false}) async {
     final app = await getApp(appId);
@@ -389,10 +412,33 @@ class AppstoreAppsClient implements AppsClient {
   Future<List<WhatseekApp>> listRecent() => _local.listRecent();
 
   @override
-  Future<List<WhatseekApp>> listFavorites() => _local.listFavorites();
+  Future<List<WhatseekApp>> listFavorites() async {
+    final wishlistPage = await _gateway.listWishlist(pageSize: _listPageSize);
+    final ids = _asList(_asMap(wishlistPage?.data)?['items'])
+        .map((item) => _string(item['listingId']) ?? '')
+        .where((id) => id.isNotEmpty)
+        .toList();
+    final wishlistApps = await _resolveListings(ids);
+    return [...wishlistApps, ...await _local.listFavorites()];
+  }
 
   @override
-  Future<bool> toggleFavorite(String appId) => _local.toggleFavorite(appId);
+  Future<bool> toggleFavorite(String appId) async {
+    // Created apps never resolve as store listings — keep them local.
+    final page = await _gateway.searchListings(ids: appId, pageSize: 1);
+    if (_asList(_asMap(page?.data)?['items']).isEmpty) {
+      return _local.toggleFavorite(appId);
+    }
+    final wishlistPage = await _gateway.listWishlist(pageSize: _listPageSize);
+    final wishlisted = _asList(_asMap(wishlistPage?.data)?['items'])
+        .any((item) => _string(item['listingId']) == appId);
+    if (wishlisted) {
+      await _gateway.removeWishlistItem(appId);
+      return false;
+    }
+    await _gateway.addWishlistItem(appId);
+    return true;
+  }
 
   @override
   Future<List<CreatedApp>> listMyApps() => _local.listMyApps();

@@ -40,7 +40,11 @@ import type {
 import { createMockAppsClient } from '../apps/appsClient.js';
 import { extractSearchKeywords } from '../apps/search.js';
 
-/** Narrow slice of the composed appstore client this adapter consumes. */
+/**
+ * Narrow slice of the composed appstore client this adapter consumes: the
+ * catalog facade for feed/search/browse and the wishlist facade for 收藏
+ * (server-side store favorites; created apps stay whatseek-local).
+ */
 export type AppstoreCatalogGateway = Pick<
   AppStoreClient['catalog'],
   | 'getChart'
@@ -50,7 +54,8 @@ export type AppstoreCatalogGateway = Pick<
   | 'listCollections'
   | 'listRecommendations'
   | 'searchListings'
->;
+> &
+  Pick<AppStoreClient['wishlist'], 'addItem' | 'listItems' | 'removeItem'>;
 
 export interface AppstoreAppsClientOptions {
   /** Injected composed appstore client slice (constructed at app bootstrap). */
@@ -65,6 +70,7 @@ const CHART_CODES: Record<AppChartId, string> = { hot: 'top', free: 'free', new:
 /** Hero slots and chart quick views cap at the editorial reference sizes. */
 const HERO_SLOT_LIMIT = 5;
 const CHART_PREVIEW_SIZE = 3;
+const WISHLIST_PAGE_SIZE = 50;
 const CHART_SIZE = 10;
 const LIST_PAGE_SIZE = 50;
 
@@ -325,9 +331,11 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
       return storeApp === undefined ? local.getApp(appId) : mapSummary(storeApp);
     },
 
-    // Whatseek-local user scope: the appstore app-api has no recent/favorite/
-    // created-app resources for this surface yet (user library/wishlist is the
-    // designated Phase-3 seam), so the mock client keeps owning these.
+    // Whatseek-local user scope, split by backing: 收藏 for store listings is
+    // the appstore wishlist (server-side, per account); 最近使用 and the
+    // AI-created 我的应用 lifecycle have no appstore app-api resource and stay
+    // on the mock client. The two id spaces are disjoint (listing ids vs
+    // `gen-*` created ids), so the merged list never duplicates.
     async listRecent() {
       return local.listRecent();
     },
@@ -335,10 +343,29 @@ export function createAppstoreAppsClient(options: AppstoreAppsClientOptions): Ap
       await local.recordRecent(appId);
     },
     async listFavorites() {
-      return local.listFavorites();
+      const [wishlistPage, localFavorites] = await Promise.all([
+        gateway.listItems({ limit: WISHLIST_PAGE_SIZE }),
+        local.listFavorites(),
+      ]);
+      const wishlistApps = await resolveListings(
+        wishlistPage.items.map((item) => item.listingId),
+      );
+      return [...wishlistApps, ...localFavorites];
     },
     async toggleFavorite(appId) {
-      return local.toggleFavorite(appId);
+      // Created apps never resolve as store listings — keep them local.
+      const page = await gateway.searchListings({ ids: [appId], limit: 1 });
+      if (page.items.length === 0) {
+        return local.toggleFavorite(appId);
+      }
+      const wishlistPage = await gateway.listItems({ limit: WISHLIST_PAGE_SIZE });
+      const wishlisted = wishlistPage.items.some((item) => item.listingId === appId);
+      if (wishlisted) {
+        await gateway.removeItem(appId);
+        return false;
+      }
+      await gateway.addItem(appId);
+      return true;
     },
     async listMyApps(): Promise<CreatedApp[]> {
       return local.listMyApps();

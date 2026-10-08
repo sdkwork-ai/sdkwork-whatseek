@@ -320,6 +320,9 @@ importers:
       '@sdkwork/im-sdk':
         specifier: workspace:*
         version: link:../../../../../sdkwork-im/sdks/sdkwork-im-sdk/sdkwork-im-sdk-typescript
+      '@sdkwork/sdk-common':
+        specifier: workspace:*
+        version: link:../../../../../sdkwork-sdk-commons/sdkwork-sdk-common-typescript
       '@sdkwork/whatseek-intent-core':
         specifier: workspace:*
         version: link:../sdkwork-whatseek-intent-core
@@ -369,6 +372,9 @@ importers:
       '@sdkwork/whatseek-h5-shell':
         specifier: workspace:*
         version: link:packages/sdkwork-whatseek-h5-shell
+      '@sdkwork/whatseek-service-core':
+        specifier: workspace:*
+        version: link:../sdkwork-whatseek-common/packages/sdkwork-whatseek-service-core
       '@tailwindcss/typography':
         specifier: 'catalog:'
         version: 0.5.20(tailwindcss@4.3.3)

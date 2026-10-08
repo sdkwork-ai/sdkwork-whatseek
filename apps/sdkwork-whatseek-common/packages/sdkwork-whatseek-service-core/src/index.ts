@@ -100,3 +100,13 @@ export {
   type AppstoreAppsClientOptions,
   type AppstoreCatalogGateway,
 } from './sdk/appstoreAppsClient.js';
+export {
+  createAppsClient,
+  createAppstoreSdkClient,
+  createContactsClient,
+  createImSdkClient,
+  createMessagesClient,
+  type AppstoreSdkDriverOptions,
+  type ImSdkDriverOptions,
+  type WhatseekSdkDriverEnv,
+} from './sdk/driverClients.js';

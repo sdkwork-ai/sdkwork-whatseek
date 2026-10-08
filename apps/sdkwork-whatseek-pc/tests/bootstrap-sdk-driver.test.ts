@@ -217,7 +217,10 @@ describe('appstore sdk client construction (bootstrap composition root)', () => 
     await expect(mockPort.listHomeFeed()).resolves.toHaveProperty('heroes');
 
     const getHome = vi.fn(async () => ({ featuredSlots: [], collections: [], charts: [] }));
-    const storePort = createAppsClient({ catalog: { getHome } } as never);
+    const storePort = createAppsClient({
+      catalog: { getHome },
+      wishlist: { listItems: vi.fn(), addItem: vi.fn(), removeItem: vi.fn() },
+    } as never);
     await storePort.listHomeFeed();
     expect(getHome).toHaveBeenCalledTimes(1);
   });

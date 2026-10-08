@@ -12,10 +12,13 @@
  * Empty (standalone milestone default) keeps every port on the mock clients.
  */
 
-import { createTokenManager } from '@sdkwork/sdk-common';
-import { createAppStoreClient, type AppStoreClient } from '@sdkwork/appstore-app-sdk';
-import { ImSdkClient, type ImSdkClientOptions } from '@sdkwork/im-sdk';
-import { createAppstoreAppsClient } from '@sdkwork/whatseek-service-core';
+import type { AppStoreClient } from '@sdkwork/appstore-app-sdk';
+import { ImSdkClient } from '@sdkwork/im-sdk';
+import {
+  createAppstoreSdkClient as createSharedAppstoreSdkClient,
+  createAppsClient as createSharedAppsClient,
+  createImSdkClient as createSharedImSdkClient,
+} from '@sdkwork/whatseek-service-core';
 import {
   bindMiniProgramHost,
   bindRuntimeConfig,
@@ -158,62 +161,26 @@ function bindWxHost(): void {
 }
 
 /**
- * Construct the composed IM client for the resolved runtime config, or `null`
- * when no IM gateway is declared (mock-driver standalone milestone).
+ * Composed IM client for the resolved runtime config, or `null` when no IM
+ * gateway is declared (mock-driver standalone milestone). Construction lives
+ * in the shared common family (`@sdkwork/whatseek-service-core`,
+ * `sdk/driverClients`); this wrapper pins the mini-program surface identity
+ * and the `wx.connectSocket`-backed realtime transport.
  */
 function createMiniProgramImSdkClient(env: MiniProgramRuntimeConfig): ImSdkClient | null {
-  const apiBaseUrl = env.sdkworkImApiBaseUrl?.trim() ?? '';
-  if (apiBaseUrl.length === 0) {
-    return null;
-  }
-  // TokenManager closure rule (APP_SDK_INTEGRATION_SPEC.md: one manager per
-  // authenticated session context). Tokens come from the IAM login runtime
-  // (Phase 2) or, until that lands, from the operator-declared
-  // `sdkworkImBootstrap*` runtime-config bridge (minted by the gateway's own
-  // IAM credential-entry surface); empty starts the session empty and the
-  // driver only activates when a gateway is actually mounted.
-  const tokenManager = createTokenManager();
-  const bootstrapAccessToken = env.sdkworkImBootstrapAccessToken?.trim() ?? '';
-  const bootstrapAuthToken = env.sdkworkImBootstrapAuthToken?.trim() ?? '';
-  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
-    tokenManager.setTokens({
-      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
-      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
-    });
-  }
-  const websocketBaseUrl = env.sdkworkImWebSocketBaseUrl?.trim() ?? '';
-  const options: ImSdkClientOptions = {
-    apiBaseUrl,
-    ...(websocketBaseUrl.length > 0 ? { websocketBaseUrl } : {}),
+  return createSharedImSdkClient(env, {
     platform: 'mini-program',
-    tokenManager,
     webSocketFactory: createMiniProgramWebSocketFactory(wx as unknown as MiniProgramWebSocketPort),
-  };
-  return new ImSdkClient(options);
+  });
 }
 
 /**
- * Construct the composed appstore client for the resolved runtime config, or
- * `null` when no appstore gateway is declared (mock-driver standalone
- * milestone). Same TokenManager closure rule as the IM driver; tokens come
- * from the operator-declared `sdkworkAppstoreBootstrap*` runtime-config bridge
- * until the IAM login runtime lands (APP_SDK_INTEGRATION_SPEC.md §4).
+ * Composed appstore client for the resolved runtime config, or `null` when no
+ * appstore gateway is declared (mock-driver standalone milestone). Shared
+ * factory construction, mini-program surface identity pinned here.
  */
 function createMiniProgramAppstoreSdkClient(env: MiniProgramRuntimeConfig): AppStoreClient | null {
-  const apiBaseUrl = env.sdkworkAppstoreApiBaseUrl?.trim() ?? '';
-  if (apiBaseUrl.length === 0) {
-    return null;
-  }
-  const tokenManager = createTokenManager();
-  const bootstrapAccessToken = env.sdkworkAppstoreBootstrapAccessToken?.trim() ?? '';
-  const bootstrapAuthToken = env.sdkworkAppstoreBootstrapAuthToken?.trim() ?? '';
-  if (bootstrapAccessToken.length > 0 || bootstrapAuthToken.length > 0) {
-    tokenManager.setTokens({
-      ...(bootstrapAccessToken.length > 0 ? { accessToken: bootstrapAccessToken } : {}),
-      ...(bootstrapAuthToken.length > 0 ? { authToken: bootstrapAuthToken } : {}),
-    });
-  }
-  return createAppStoreClient({ baseUrl: apiBaseUrl, tokenManager, platform: 'mini-program' });
+  return createSharedAppstoreSdkClient(env, { platform: 'mini-program' });
 }
 
 export function bootstrapRuntime(): PageApi {
@@ -240,11 +207,10 @@ export function bootstrapRuntime(): PageApi {
             ? {}
             : {
                 // sdkwork-appstore driver: the home feed / catalog comes from
-                // the composed appstore client; whatseek-local user scope
-                // (recents, favorites, 我的应用) stays on the mock client
-                // inside the shared adapter until the appstore user-library
-                // family lands.
-                apps: createAppstoreAppsClient({ gateway: appstore.catalog }),
+                // the composed appstore client (收藏 rides the appstore
+                // wishlist); recents and 我的应用 stay on the mock client
+                // inside the shared adapter.
+                apps: createSharedAppsClient(appstore),
               }),
           ...(im === null
             ? {}
