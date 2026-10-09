@@ -9,11 +9,11 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import type { ReactElement } from 'react';
 
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { applyColorMode, getWhatseekClient, readAppliedColorMode, changeWhatseekLocale, resetWhatseekClients, useSessionStore } from '@sdkwork/whatseek-h5-core';
 import { useChatStore } from '@sdkwork/whatseek-h5-chat';
-import { AppRunnerScreen } from '@sdkwork/whatseek-h5-apps';
+import { AppRunnerScreen, AppSearchScreen } from '@sdkwork/whatseek-h5-apps';
 import { TabBar } from '@sdkwork/whatseek-h5-shell';
 import { ContactsHomeScreen } from '@sdkwork/whatseek-h5-contacts';
 import { ChatHomeScreen } from '@sdkwork/whatseek-h5-chat';
@@ -311,5 +311,17 @@ describe('Profile + settings', () => {
     // restore for other tests
     applyColorMode('light');
     void changeWhatseekLocale('zh-CN');
+  });
+});
+
+describe('AppSearchScreen (search discovery)', () => {
+  it('records_search_history_when_a_trending_chip_runs_the_search', async () => {
+    const user = userEvent.setup();
+    renderAt(<AppSearchScreen />, '/apps/search');
+    const hotTerm = await screen.findByRole('button', { name: '剪辑大师' });
+    const recordSpy = vi.spyOn(getWhatseekClient('apps'), 'recordSearchHistory');
+    await user.click(hotTerm);
+    await screen.findByText(/找到 1 个应用/);
+    expect(recordSpy).toHaveBeenCalledWith('剪辑大师');
   });
 });

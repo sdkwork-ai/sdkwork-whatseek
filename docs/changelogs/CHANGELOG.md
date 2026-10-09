@@ -5,6 +5,29 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-10-09 — Search history records every executed search; integration campaign independently verified
+
+- **Cross-surface fix (H5 + PC)**: trending / suggestion / history chips now
+  route through one `runSearch` path that records search history best-effort
+  before updating the query — previously only the typed form submit recorded
+  history, so tapping a hot term (the most common entry) never appeared in
+  历史. The Flutter search screen's `_submit` already unified every entry
+  point and the mini-program page records through its runtime facade; H5/PC
+  now match (render tests pin the chip → `recordSearchHistory` call on both).
+- **Integration campaign independently verified**: the 14-commit
+  service-core consolidation + sdkwork-appstore family landing is green
+  end to end (`pnpm verify` EXIT=0, Flutter analyze + root/package tests
+  green, mini-program staging/prod builds, Tauri cargo rebuild + launch
+  smoke) — adapters live only in the shared common family, surface
+  packages re-export them, one session TokenManager backs every driver,
+  and the SDK import seams stay at bootstrap + service-core.
+- **Rendered acceptance of the new integration surfaces** (fresh builds):
+  app detail rating submission (star tap → star fill + echo review row),
+  search trending chips → results with full coverage meta; chat/tasks stay
+  on the documented mock boundary (PRD §9 leaves the LLM gateway choice
+  open; the sdkwork-agents family has no proven gateway — nothing to
+  integrate against yet).
+
 ### 2026-10-09 — Star-rating submission integrates `listings/{id}/ratings` upsert (completes the ratings loop)
 
 - **`AppsPort.rateApp(appId, rating)`**: store drivers upsert the session

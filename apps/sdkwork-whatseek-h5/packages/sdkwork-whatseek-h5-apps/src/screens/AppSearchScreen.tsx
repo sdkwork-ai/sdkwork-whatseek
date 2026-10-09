@@ -69,6 +69,18 @@ export function AppSearchScreen() {
     };
   }, [apps, draft]);
 
+  // One search path for every entry point (typed submit, suggestion,
+  // history, and trending chips): each executed search records history
+  // best-effort, mirroring the Flutter search screen's `_submit`.
+  const runSearch = (term: string) => {
+    const submitted = term.trim();
+    setDraft(submitted);
+    if (submitted.length > 0) {
+      void apps.recordSearchHistory(submitted).catch(() => undefined);
+    }
+    setSearchParams(submitted.length > 0 ? { q: submitted } : {});
+  };
+
   return (
     <div className="pb-6">
       <SdkworkMobileNavBar
@@ -83,11 +95,7 @@ export function AppSearchScreen() {
           className="flex items-center gap-2 rounded-full border border-border-default bg-panel px-3 py-1.5"
           onSubmit={(event) => {
             event.preventDefault();
-            const submitted = draft.trim();
-            if (submitted.length > 0) {
-              void apps.recordSearchHistory(submitted).catch(() => undefined);
-            }
-            setSearchParams(submitted.length > 0 ? { q: submitted } : {});
+            runSearch(draft);
           }}
         >
           <span aria-hidden="true">🔍</span>
@@ -111,8 +119,7 @@ export function AppSearchScreen() {
                 key={term}
                 type="button"
                 onClick={() => {
-                  setDraft(term);
-                  setSearchParams({ q: term });
+                  runSearch(term);
                 }}
                 className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-secondary hover:bg-panel-muted"
               >
@@ -149,8 +156,7 @@ export function AppSearchScreen() {
                 key={term}
                 type="button"
                 onClick={() => {
-                  setDraft(term);
-                  setSearchParams({ q: term });
+                  runSearch(term);
                 }}
                 className="rounded-full border border-border-subtle bg-panel px-3 py-1.5 text-xs text-secondary hover:bg-panel-muted"
               >
@@ -170,8 +176,7 @@ export function AppSearchScreen() {
                 key={term}
                 type="button"
                 onClick={() => {
-                  setDraft(term);
-                  setSearchParams({ q: term });
+                  runSearch(term);
                 }}
                 className="rounded-full border border-border-subtle bg-panel px-3 py-1.5 text-xs text-secondary hover:bg-panel-muted"
               >
