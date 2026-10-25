@@ -59,7 +59,7 @@ jobs:
     name: Package WhatSeek (WhatSeek 问寻)
     uses: sdkwork-ai/sdkwork-github-workflow/.github/workflows/sdkwork-package.yml@b0829529b9277a3da32b90c2d36ff34ff09fa832
     with:
-      config_path: sdkwork.workflow.json
+      config_path: agent.workflow.json
       tag: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
       package_version: ${{ inputs.package_version }}
       platform: ${{ inputs.platform }}

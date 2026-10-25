@@ -62,3 +62,14 @@ packages/sdkwork_whatseek_flutter_mobile_*/.flutter-plugins*
 # Generated composition output
 generated/
 
+# ---- auto-audited: local artifacts that must never be committed ----
+*.key
+*.pem
+*.p12
+*.pfx
+*.keystore
+tmp/
+temp/
+*.tmp
+*.temp
+.next/
