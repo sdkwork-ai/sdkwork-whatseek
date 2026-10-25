@@ -24,7 +24,7 @@ Repository Canon: `../../docs/README.md`; product `../../docs/product/prd/PRD.md
 
 ## Spec Resolution Order
 
-Use dynamic progressive loading: read this file, then the app declaration (`sdkwork.app.config.json`) and nearest component specs when relevant, then the task row in `../../../sdkwork-specs/README.md`, then only selected standards, and implementation files last. Language-specific standards load on demand only.
+Use dynamic progressive loading: read this file, then the app declaration (`agent.app.config.json`) and nearest component specs when relevant, then the task row in `../../../sdkwork-specs/README.md`, then only selected standards, and implementation files last. Language-specific standards load on demand only.
 
 ## Required Specs By Task Type
 

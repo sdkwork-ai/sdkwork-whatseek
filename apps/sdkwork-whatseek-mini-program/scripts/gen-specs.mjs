@@ -69,7 +69,7 @@ const root = {
     surface: 'app',
     languages: ['typescript'],
     status: 'DRAFT',
-    manifests: ['package.json', 'sdkwork.app.config.json', 'project.config.json', 'specs/component.spec.json'],
+    manifests: ['package.json', 'agent.app.config.json', 'project.config.json', 'specs/component.spec.json'],
   },
   canonicalSpecs: [
     { file: 'APPLICATION_SPEC.md', path: '../../../sdkwork-specs/APPLICATION_SPEC.md', purpose: 'Application-wide contract for owned application roots.' },
@@ -107,7 +107,7 @@ writeFileSync(
 
 const appManifest = {
   schemaVersion: 3,
-  kind: 'sdkwork.app',
+  kind: 'agent.app',
   app: {
     key: 'sdkwork-whatseek-mini-program',
     name: 'WhatSeek Mini Program',
@@ -174,7 +174,7 @@ const appManifest = {
     deploymentConfig: 'etc/sdkwork.deployment.config.json',
   },
 };
-writeFileSync(path.join(base, 'sdkwork.app.config.json'), JSON.stringify(appManifest, null, 2) + '\n');
+writeFileSync(path.join(base, 'agent.app.config.json'), JSON.stringify(appManifest, null, 2) + '\n');
 
 const etcConfig = {
   schemaVersion: 1,

@@ -18,7 +18,7 @@ Standalone-only milestone: `standalone.development` (default), `standalone.test`
 
 ## Rules
 
-- Concrete environment, runtime, and base-URL values belong here — never in `sdkwork.app.config.json` and never in component code.
+- Concrete environment, runtime, and base-URL values belong here — never in `agent.app.config.json` and never in component code.
 - No secrets: committed `etc/` files carry no tokens or credentials. Local-only overrides live in ignored `etc/**/*.local.*` files.
 - Standalone profiles serve from the same origin; every SDK base URL stays `/`.
 

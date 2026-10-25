@@ -12,7 +12,7 @@
     "surface": "app",
     "languages": ["typescript"],
     "status": "DRAFT",
-    "manifests": ["package.json", "sdkwork.app.config.json", "specs/component.spec.json"]
+    "manifests": ["package.json", "agent.app.config.json", "specs/component.spec.json"]
   },
   "canonicalSpecs": [
     {
@@ -23,7 +23,7 @@
     {
       "file": "APP_MANIFEST_SPEC.md",
       "path": "../../../sdkwork-specs/APP_MANIFEST_SPEC.md",
-      "purpose": "App manifest (sdkwork.app.config.json) authority."
+      "purpose": "App manifest (agent.app.config.json) authority."
     },
     {
       "file": "FRONTEND_SPEC.md",

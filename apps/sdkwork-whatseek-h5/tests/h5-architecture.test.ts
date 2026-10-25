@@ -118,12 +118,12 @@ describe('browser build contract (PNPM_SCRIPT_SPEC §4.2)', () => {
   });
 
   it('declares_standalone_only_deployment_profiles_in_both_manifests', () => {
-    const appManifest = readJson('sdkwork.app.config.json') as {
+    const appManifest = readJson('agent.app.config.json') as {
       runtime?: { supportedDeploymentProfiles?: string[]; defaultDeploymentProfile?: string };
     };
     expect(appManifest.runtime?.supportedDeploymentProfiles).toEqual(['standalone']);
     expect(appManifest.runtime?.defaultDeploymentProfile).toBe('standalone');
-    const rootManifest = JSON.parse(readFileSync(path.join(repoRoot, 'sdkwork.app.config.json'), 'utf8')) as {
+    const rootManifest = JSON.parse(readFileSync(path.join(repoRoot, 'agent.app.config.json'), 'utf8')) as {
       runtime?: { supportedDeploymentProfiles?: string[] };
     };
     expect(rootManifest.runtime?.supportedDeploymentProfiles).toEqual(['standalone']);

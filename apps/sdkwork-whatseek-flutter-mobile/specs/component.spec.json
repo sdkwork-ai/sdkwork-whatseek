@@ -16,7 +16,7 @@
     "status": "DRAFT",
     "manifests": [
       "pubspec.yaml",
-      "sdkwork.app.config.json",
+      "agent.app.config.json",
       "specs/component.spec.json"
     ]
   },
