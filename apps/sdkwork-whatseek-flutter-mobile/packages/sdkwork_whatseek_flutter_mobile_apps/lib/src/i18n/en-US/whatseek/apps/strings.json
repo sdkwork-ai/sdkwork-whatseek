@@ -15,7 +15,18 @@
     "collections": "Collections",
     "categories": "Categories",
     "charts": "Charts",
-    "chartsMore": "See all"
+    "chartsMore": "See all",
+    "createMenu": {
+      "tooltip": "Create a page",
+      "corporateSite": "Company website",
+      "webPage": "New web page",
+      "landingPage": "Campaign landing page",
+      "personalPage": "Personal homepage",
+      "corporateSitePrompt": "Build a company website with an about section, products and services, customer cases, and contact details — clean and professional.",
+      "webPagePrompt": "Create a new web page; I'll add the topic and content next.",
+      "landingPagePrompt": "Build a campaign landing page with a hero section, campaign details, a sign-up form, and a countdown.",
+      "personalPagePrompt": "Build a personal homepage with an avatar, bio, portfolio, and contact details."
+    }
   },
   "charts": {
     "title": "Charts"

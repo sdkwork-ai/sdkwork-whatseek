@@ -160,7 +160,7 @@ export function ChatHomeScreen() {
         <div className="flex-1 space-y-3 px-4 pt-4 pb-2">
           {entries.map((entry) => (
             <div key={entry.id} className={entry.role === 'user' ? 'flex justify-end' : 'flex justify-start'}>
-              <div className={entry.role === 'user' ? 'max-w-[80%] space-y-2' : 'w-full max-w-[92%] space-y-2'}>
+              <div className={entry.role === 'user' ? 'max-w-[80%] space-y-2' : 'w-full space-y-2'}>
                 <div
                   className={
                     entry.role === 'user'

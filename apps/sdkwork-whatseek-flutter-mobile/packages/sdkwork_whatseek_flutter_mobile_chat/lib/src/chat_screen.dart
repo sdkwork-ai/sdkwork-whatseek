@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:sdkwork_whatseek_flutter_mobile_core/sdkwork_whatseek_flutter_mobile_core.dart';
 
+import 'chat_drawer.dart';
 import 'i18n/chat_strings.dart';
+import 'scan_screen.dart';
+
+/// The 对话 navbar "+" menu entries: the two quick actions of the first tab
+/// (WeChat-style home menu, rebranded for WhatSeek).
+enum _ChatMoreAction { scan, createApp }
 
 /// One rendered chat turn. Assistant text carries an i18n key (raw service
 /// text passes through unresolved); AI replies may carry a task id (PRD §41)
@@ -94,6 +100,10 @@ class _ChatScreenState extends State<ChatScreen> {
     }
     setState(() {
       _entries.add(ChatEntry(role: 'user', text: trimmed));
+      // The composer is a transient draft: once the turn is on the thread the
+      // field clears, so the next message starts from an empty box (H5/PC
+      // parity).
+      _input.clear();
       _sending = true;
     });
     try {
@@ -193,10 +203,106 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  /// Drawer "开始新对话": clears the thread and its transient task chips. A
+  /// reply that is still streaming keeps the current thread instead of being
+  /// silently dropped.
+  void _startNewConversation() {
+    if (_sending) {
+      return;
+    }
+    setState(() {
+      _entries.clear();
+      _taskStates.clear();
+    });
+  }
+
+  void _openScan(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const ScanScreen()),
+    );
+  }
+
+  void _openCreateApp(BuildContext context) {
+    Navigator.of(context).pushNamed('app.whatseek.apps.create');
+  }
+
+  void _openMyApps(BuildContext context) {
+    Navigator.of(context).pushNamed('app.whatseek.apps.my');
+  }
+
+  void _openFavorites(BuildContext context) {
+    // H5 `/apps/my?tab=favorites` parity: the favorites segment is the route
+    // argument.
+    Navigator.of(context).pushNamed(
+      'app.whatseek.apps.my',
+      arguments: 'favorites',
+    );
+  }
+
+  void _openSettings(BuildContext context) {
+    Navigator.of(context).pushNamed('app.whatseek.profile.settings');
+  }
+
+  /// Navbar trailing slot: the "+" menu with 扫一扫 and 创建应用. The two
+  /// entries are the only quick actions of the first tab; everything else
+  /// lives in the drawer.
+  Widget _buildMoreMenu(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return PopupMenuButton<_ChatMoreAction>(
+      tooltip: WhatseekChatStrings.of(context, 'home.menuTooltip'),
+      icon: const Icon(Icons.add),
+      position: PopupMenuPosition.under,
+      onSelected: (_ChatMoreAction action) {
+        switch (action) {
+          case _ChatMoreAction.scan:
+            _openScan(context);
+          case _ChatMoreAction.createApp:
+            _openCreateApp(context);
+        }
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<_ChatMoreAction>>[
+        PopupMenuItem<_ChatMoreAction>(
+          value: _ChatMoreAction.scan,
+          child: Row(
+            children: [
+              Icon(Icons.qr_code_scanner, size: 18, color: scheme.primary),
+              const SizedBox(width: 10),
+              Text(WhatseekChatStrings.of(context, 'home.menuScan')),
+            ],
+          ),
+        ),
+        PopupMenuItem<_ChatMoreAction>(
+          value: _ChatMoreAction.createApp,
+          child: Row(
+            children: [
+              Icon(Icons.add_box_outlined, size: 18, color: scheme.primary),
+              const SizedBox(width: 10),
+              Text(WhatseekChatStrings.of(context, 'home.menuCreateApp')),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(WhatseekChatStrings.of(context, 'home.title'))),
+      // The navbar hamburger opens this drawer; the trailing "+" menu holds
+      // the two quick actions. Only the first tab owns this chrome.
+      drawer: ChatDrawer(
+        onNewChat: _startNewConversation,
+        onOpenMyApps: () => _openMyApps(context),
+        onOpenFavorites: () => _openFavorites(context),
+        onOpenCreateApp: () => _openCreateApp(context),
+        onOpenSettings: () => _openSettings(context),
+      ),
+      appBar: AppBar(
+        title: Text(WhatseekChatStrings.of(context, 'home.title')),
+        // A drawer makes AppBar imply the leading hamburger; the right slot is
+        // the quick-action menu.
+        actions: <Widget>[_buildMoreMenu(context)],
+      ),
       body: Column(
         children: [
           Expanded(
@@ -205,7 +311,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 : ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: _entries.length + (_sending ? 1 : 0),
-                    itemBuilder: (context, index) {
+                    // The row widgets capture theme colors and text styles, so
+                    // build them against the screen's context: it owns the
+                    // theme dependency and repaints on a live light/dark swap
+                    // (THEME_DARKMODE_SPEC §3.2).
+                    itemBuilder: (_, index) {
                       if (index == _entries.length) {
                         return Align(
                           alignment: Alignment.centerLeft,
@@ -242,7 +352,7 @@ class _ChatScreenState extends State<ChatScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
               child: SizedBox(
                 width: double.infinity,
-                child: OutlinedButton(
+                child: FilledButton.tonal(
                   onPressed: () => _send(WhatseekChatStrings.of(context, key)),
                   child: Text(WhatseekChatStrings.of(context, key)),
                 ),
@@ -256,37 +366,50 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildEntry(BuildContext context, ChatEntry entry) {
     final isUser = entry.role == 'user';
     final scheme = Theme.of(context).colorScheme;
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.82),
-        decoration: BoxDecoration(
-          color: isUser ? scheme.primary : scheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              isUser
-                  ? entry.text
-                  : WhatseekChatStrings.of(context, entry.text, entry.params),
-              style: TextStyle(color: isUser ? scheme.onPrimary : scheme.onSurface),
-            ),
-            if (entry.taskId != null) ...[
-              const SizedBox(height: 6),
-              _buildTaskChip(context, entry.taskId!),
-            ],
-            for (final card in entry.cards) ...[
-              const SizedBox(height: 8),
-              _buildCard(context, card),
-            ],
+    final bubble = Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: isUser ? scheme.primary : scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            isUser
+                ? entry.text
+                : WhatseekChatStrings.of(context, entry.text, entry.params),
+            style: TextStyle(color: isUser ? scheme.onPrimary : scheme.onSurface),
+          ),
+          if (entry.taskId != null) ...[
+            const SizedBox(height: 6),
+            _buildTaskChip(context, entry.taskId!),
           ],
-        ),
+          for (final card in entry.cards) ...[
+            const SizedBox(height: 8),
+            _buildCard(context, card),
+          ],
+        ],
       ),
     );
+    if (isUser) {
+      // A user turn is a right-aligned chat bubble: it keeps a left gutter so
+      // the two roles read as a dialogue.
+      return Align(
+        alignment: Alignment.centerRight,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.82,
+          ),
+          child: bubble,
+        ),
+      );
+    }
+    // An assistant turn is an answer, not a chat bubble: it spans the whole
+    // content width, so the reply is never inset on the right (H5 `w-full`
+    // parity — a capped width left a right margin that read as a right indent).
+    return Row(children: [Expanded(child: bubble)]);
   }
 
   /// Compact AI task state chip (PRD §41): seven-state label from the chat
@@ -315,7 +438,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Text(WhatseekChatStrings.of(context, 'taskAction.confirm')),
             ),
             const SizedBox(width: 8),
-            OutlinedButton(
+            TextButton(
               onPressed: () => _resolveTask(taskId, 'cancel_task'),
               child: Text(WhatseekChatStrings.of(context, 'taskAction.cancel')),
             ),
@@ -329,9 +452,9 @@ class _ChatScreenState extends State<ChatScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        // Flat nested surface: a solid panel inside the muted bubble, no border.
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: switch (card.type) {
         'app_results' => Column(

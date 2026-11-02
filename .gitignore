@@ -86,3 +86,6 @@ temp/
 !.env.cloud.staging
 !.env.cloud.demo
 !.env.cloud.production
+
+# SDKWork local preview screenshots (local-only)
+**/.sdkwork/preview/

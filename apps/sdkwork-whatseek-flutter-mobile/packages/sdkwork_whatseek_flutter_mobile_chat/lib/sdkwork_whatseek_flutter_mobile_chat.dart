@@ -2,5 +2,7 @@
 /// AI chat entry (PRD §8/§9): intent-routed replies, cards, and task states.
 library;
 
+export 'src/chat_drawer.dart';
 export 'src/chat_screen.dart';
 export 'src/i18n/chat_strings.dart';
+export 'src/scan_screen.dart';

@@ -7,7 +7,18 @@
     "inputLabel": "Message input",
     "send": "Send",
     "thinking": "WhatSeek is thinking…",
-    "newTopic": "Start a new chat"
+    "newTopic": "Start a new chat",
+    "menuTooltip": "More",
+    "menuScan": "Scan",
+    "menuCreateApp": "Create app",
+    "drawerTitle": "WhatSeek",
+    "drawerSubtitle": "Your AI assistant",
+    "drawerNewChat": "Start a new chat",
+    "drawerMyApps": "My apps",
+    "drawerFavorites": "Saved apps",
+    "drawerCreateApp": "Create app with AI",
+    "drawerSettings": "Settings",
+    "drawerClose": "Close menu"
   },
   "suggest": {
     "searchApp": "Find me a video editing tool",
@@ -72,6 +83,21 @@
     "actionTaskConfirmed": "Task completed. The result is in your Messages.",
     "actionTaskCancelled": "Task cancelled.",
     "actionTaskInactive": "This task is no longer awaiting confirmation."
+  },
+  "scan": {
+    "title": "Scan",
+    "hint": "Place a QR code inside the frame to scan",
+    "torchOn": "Turn on the flashlight",
+    "torchOff": "Turn off the flashlight",
+    "permissionDeniedTitle": "Camera unavailable",
+    "permissionDeniedDescription": "Allow WhatSeek to use the camera in system settings, then scan again.",
+    "unsupportedTitle": "Scanning not supported",
+    "unsupportedDescription": "This device has no usable camera.",
+    "errorTitle": "Scan failed",
+    "errorDescription": "The camera could not start. Go back and try again.",
+    "resultTitle": "Scan result",
+    "rescan": "Scan again",
+    "done": "Done"
   },
   "taskAction": {
     "confirm": "Confirm result",

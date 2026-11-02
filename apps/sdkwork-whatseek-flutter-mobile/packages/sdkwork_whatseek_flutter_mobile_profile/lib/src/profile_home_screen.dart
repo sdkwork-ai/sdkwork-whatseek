@@ -107,7 +107,7 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
                       onPressed: () => _applyNext(widget.onSignIn?.call()),
                       child: Text(WhatseekProfileStrings.of(context, 'home.signIn')),
                     )
-                  : OutlinedButton(
+                  : FilledButton.tonal(
                       onPressed: () => _applyNext(widget.onSignOut?.call()),
                       child: Text(WhatseekProfileStrings.of(context, 'home.signOut')),
                     ),

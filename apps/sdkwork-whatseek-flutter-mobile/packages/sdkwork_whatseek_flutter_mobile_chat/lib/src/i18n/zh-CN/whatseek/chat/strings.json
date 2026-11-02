@@ -7,7 +7,18 @@
     "inputLabel": "消息输入框",
     "send": "发送",
     "thinking": "问寻正在思考…",
-    "newTopic": "开始新对话"
+    "newTopic": "开始新对话",
+    "menuTooltip": "更多",
+    "menuScan": "扫一扫",
+    "menuCreateApp": "创建应用",
+    "drawerTitle": "问寻",
+    "drawerSubtitle": "你的 AI 助手",
+    "drawerNewChat": "开始新对话",
+    "drawerMyApps": "我的应用",
+    "drawerFavorites": "收藏的应用",
+    "drawerCreateApp": "AI 创建应用",
+    "drawerSettings": "设置",
+    "drawerClose": "关闭菜单"
   },
   "suggest": {
     "searchApp": "帮我找一个视频剪辑工具",
@@ -72,6 +83,21 @@
     "actionTaskConfirmed": "任务已完成，结果已同步到「消息」。",
     "actionTaskCancelled": "任务已取消。",
     "actionTaskInactive": "该任务已不在待确认状态。"
+  },
+  "scan": {
+    "title": "扫一扫",
+    "hint": "将二维码放入框内，即可自动识别",
+    "torchOn": "打开闪光灯",
+    "torchOff": "关闭闪光灯",
+    "permissionDeniedTitle": "无法使用相机",
+    "permissionDeniedDescription": "请在系统设置中允许问寻访问相机，然后重新扫码。",
+    "unsupportedTitle": "设备不支持扫码",
+    "unsupportedDescription": "当前设备没有可用的摄像头。",
+    "errorTitle": "扫码失败",
+    "errorDescription": "相机启动失败，请返回后重试。",
+    "resultTitle": "扫描结果",
+    "rescan": "重新扫描",
+    "done": "完成"
   },
   "taskAction": {
     "confirm": "确认完成",

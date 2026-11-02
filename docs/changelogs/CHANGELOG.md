@@ -5,6 +5,24 @@ All notable changes to the WhatSeek application repository. Format follows
 
 ## Unreleased
 
+### 2026-11-02 — 对话首页 navbar gains a drawer and the 扫一扫 / 创建应用 quick menu (Flutter)
+
+- **First tab only**: the Flutter 对话 root AppBar now implies the leading
+  drawer (hamburger) button and renders a trailing "+" menu with 扫一扫 and
+  创建应用; the other four tab roots keep their existing chrome.
+- **Drawer**: brand header plus 开始新对话 / 我的应用 / 收藏的应用 / AI 创建应用 /
+  设置 — every entry closes the drawer before handing the intent back to the
+  chat composition, so pushes never stack above an open drawer.
+- **扫一扫 is real**: a new full-screen `ScanScreen` uses `mobile_scanner`
+  (QR / Code128 / EAN-13) with torch, a branded frame, permission /
+  unsupported / error states and a result sheet (完成 / 重新扫描). Android
+  gets the CAMERA permission plus a `required=false` camera feature so
+  camera-less devices stay installable.
+- **i18n + tests**: zh-CN/en-US chat fragments and the Dart mirror gain the
+  menu/drawer/scan keys; `test/chat_navbar_test.dart` pins the drawer icon,
+  the two menu entries, route targets and the new-chat reset (analyze clean,
+  full Flutter suite 82 green).
+
 ### 2026-10-09 — Search history records every executed search; integration campaign independently verified
 
 - **Cross-surface fix (H5 + PC)**: trending / suggestion / history chips now

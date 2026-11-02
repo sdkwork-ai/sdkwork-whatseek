@@ -268,14 +268,24 @@ class MockAppsClient implements AppsClient {
       }
     }
 
-    if (_containsAny(lowered, ['库存', '进销存', '仓库'])) {
-      addAll(['商品入库', '出库管理', '库存盘点', '库存预警', '库存统计']);
-    }
-    if (_containsAny(lowered, ['客户', 'crm', '销售'])) {
-      addAll(['客户列表', '客户详情', '跟进记录', '标签', '搜索', '数据统计']);
-    }
-    if (_containsAny(lowered, ['独立站', '商城', '电商', '店铺'])) {
-      addAll(['首页', '商品页', '购物车', '订单', '客户管理', '营销页面']);
+    // A page/site brief describes pages, not an app domain — and it must win
+    // over the domain keywords it happens to contain ("客户案例" is not a CRM
+    // ask, "商城官网" is still a website). The navbar "+" menu seeds exactly
+    // these briefs (创建企业官网 / 新建网页 / 活动落地页 / 个人主页).
+    final isSite =
+        _containsAny(lowered, ['官网', '网站', '网页', '落地页', '主页', '站点']);
+    if (isSite) {
+      addAll(['首页', '关于我们', '产品与服务', '案例展示', '联系我们']);
+    } else {
+      if (_containsAny(lowered, ['库存', '进销存', '仓库'])) {
+        addAll(['商品入库', '出库管理', '库存盘点', '库存预警', '库存统计']);
+      }
+      if (_containsAny(lowered, ['客户', 'crm', '销售'])) {
+        addAll(['客户列表', '客户详情', '跟进记录', '标签', '搜索', '数据统计']);
+      }
+      if (_containsAny(lowered, ['独立站', '商城', '电商', '店铺'])) {
+        addAll(['首页', '商品页', '购物车', '订单', '客户管理', '营销页面']);
+      }
     }
     if (modules.isEmpty) {
       addAll(['首页', '列表', '详情', '设置', '数据统计']);
@@ -284,17 +294,22 @@ class MockAppsClient implements AppsClient {
     // mirroring the shared TS catalog derivations).
     final pages = <String>[];
     final dataModel = <String>[];
-    if (_containsAny(lowered, ['库存', '进销存', '仓库'])) {
-      pages.addAll(['入库工作台', '库存看板', '盘点流程页']);
-      dataModel.addAll(['商品 SKU', '入库单', '出库单', '盘点记录']);
-    }
-    if (_containsAny(lowered, ['客户', 'crm', '销售'])) {
-      pages.addAll(['客户 360 视图', '跟进时间线', '漏斗看板']);
-      dataModel.addAll(['客户', '联系人', '跟进记录', '商机']);
-    }
-    if (_containsAny(lowered, ['独立站', '商城', '电商', '店铺'])) {
-      pages.addAll(['商品详情页', '购物车抽屉', '结算页']);
-      dataModel.addAll(['商品', '购物车项', '订单', '优惠券']);
+    if (isSite) {
+      pages.addAll(['首页', '关于我们页', '产品服务页', '案例展示页', '联系表单页']);
+      dataModel.addAll(['站点配置', '栏目', '页面内容', '询盘表单']);
+    } else {
+      if (_containsAny(lowered, ['库存', '进销存', '仓库'])) {
+        pages.addAll(['入库工作台', '库存看板', '盘点流程页']);
+        dataModel.addAll(['商品 SKU', '入库单', '出库单', '盘点记录']);
+      }
+      if (_containsAny(lowered, ['客户', 'crm', '销售'])) {
+        pages.addAll(['客户 360 视图', '跟进时间线', '漏斗看板']);
+        dataModel.addAll(['客户', '联系人', '跟进记录', '商机']);
+      }
+      if (_containsAny(lowered, ['独立站', '商城', '电商', '店铺'])) {
+        pages.addAll(['商品详情页', '购物车抽屉', '结算页']);
+        dataModel.addAll(['商品', '购物车项', '订单', '优惠券']);
+      }
     }
     if (pages.isEmpty) {
       pages.addAll(['首页', '列表页', '详情页']);
@@ -385,6 +400,11 @@ class MockAppsClient implements AppsClient {
         .replaceFirst(RegExp('^帮我'), '')
         .replaceAll(RegExp('(创建|做一个|做|生成|开发|搭建|制作)'), '')
         .trim();
+    // Seeded page briefs run long; keep the head clause before the length cap.
+    final head = name.split(RegExp('[：:，,。;；\\n]')).first.trim();
+    if (head.isNotEmpty) {
+      name = head;
+    }
     if (name.isEmpty) {
       name = requirement.trim();
     }

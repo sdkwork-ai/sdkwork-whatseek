@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  mobile_scanner: ^7.5.0
   sdkwork_whatseek_flutter_mobile_core:
     path: ../sdkwork_whatseek_flutter_mobile_core
   sdkwork_whatseek_flutter_mobile_commons:

@@ -164,7 +164,7 @@ class _AppCreateScreenState extends State<AppCreateScreen> {
                 onSubmitted: (_) => _applyInstruction(),
               ),
               const SizedBox(height: 8),
-              OutlinedButton(
+              FilledButton.tonal(
                 onPressed: _modifying ? null : _applyInstruction,
                 child: Text(WhatseekAppsStrings.of(context, 'create.modifyAction')),
               ),

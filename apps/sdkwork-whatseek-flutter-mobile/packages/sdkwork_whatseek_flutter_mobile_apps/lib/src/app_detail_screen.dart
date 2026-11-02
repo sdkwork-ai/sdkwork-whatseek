@@ -291,7 +291,7 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                 ),
                 child: Text(WhatseekAppsStrings.of(context, 'detail.use')),
               ),
-              OutlinedButton(
+              FilledButton.tonal(
                 onPressed: () => Navigator.of(context).pushNamed(
                   'app.whatseek.apps.create',
                   arguments: app.summary,

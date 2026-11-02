@@ -10,8 +10,9 @@ import 'bootstrap/runtime.dart';
 
 /// Root application widget (PRD §54): five bottom tabs, chat first. Detail
 /// routes are composed in `bootstrap/routes.dart` — single owner for route
-/// composition. Light/dark themes seed from the H5 brand color; appearance
-/// and locale follow the persisted settings controller.
+/// composition. Light/dark themes come from the shared tech-blue theme builder
+/// in core (THEME_DARKMODE_SPEC §6); appearance and locale follow the persisted
+/// settings controller, and this root is the only `ThemeMode` resolver.
 class WhatseekApp extends StatefulWidget {
   const WhatseekApp({super.key, this.settings});
 
@@ -27,19 +28,6 @@ class _WhatseekAppState extends State<WhatseekApp> {
       widget.settings ?? WhatseekBootstrap.bootstrap().settings.controller;
 
   int _currentIndex = 0;
-
-  /// H5 brand palette seed (`--sdk-ref-brand-500`: #1677ff tech blue).
-  static const Color _brand = Color(0xFF1677FF);
-
-  /// Outline glyph for the unselected destination, filled for the selected
-  /// one (tab icon-state norm in APP_FLUTTER_UI_SPEC §5).
-  static const Map<TabId, (IconData, IconData)> _tabIcons = {
-    TabId.chat: (Icons.auto_awesome_outlined, Icons.auto_awesome),
-    TabId.apps: (Icons.grid_view_outlined, Icons.grid_view),
-    TabId.contacts: (Icons.people_outline, Icons.people),
-    TabId.messages: (Icons.chat_bubble_outline, Icons.chat_bubble),
-    TabId.profile: (Icons.person_outline, Icons.person),
-  };
 
   @override
   void initState() {
@@ -69,12 +57,6 @@ class _WhatseekAppState extends State<WhatseekApp> {
     return MaterialPageRoute<void>(settings: settings, builder: builder);
   }
 
-  /// Brand-seeded Material 3 theme for both brightnesses.
-  static ThemeData _theme(Brightness brightness) => ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: _brand, brightness: brightness),
-      );
-
   static Locale _localeOf(String tag) {
     final parts = tag.split('-');
     return parts.length > 1 ? Locale(parts[0], parts[1]) : Locale(parts[0]);
@@ -91,8 +73,11 @@ class _WhatseekAppState extends State<WhatseekApp> {
     return AuthGate(
       child: MaterialApp(
         onGenerateTitle: (context) => WhatseekShellStrings.of(context, 'nav.brand'),
-        theme: _theme(Brightness.light),
-        darkTheme: _theme(Brightness.dark),
+        // Tech-blue brand themes from the core theme module: one builder for
+        // both modes (THEME_DARKMODE_SPEC §6); this root stays the only
+        // `ThemeMode` resolver.
+        theme: WhatseekTheme.light,
+        darkTheme: WhatseekTheme.dark,
         themeMode: _themeModeOf(_settings.appearance),
         locale: _localeOf(_settings.locale),
         supportedLocales: const [Locale('zh', 'CN'), Locale('en', 'US')],
@@ -126,8 +111,8 @@ class _WhatseekAppState extends State<WhatseekApp> {
                 for (final route in kTabRootRoutes)
                   (
                     WhatseekCoreStrings.of(context, 'shell.tab.${route.tab!.name}'),
-                    _tabIcons[route.tab!]!.$1,
-                    _tabIcons[route.tab!]!.$2,
+                    kTabIcons[route.tab!]!.$1,
+                    kTabIcons[route.tab!]!.$2,
                   ),
               ],
               currentIndex: _currentIndex,

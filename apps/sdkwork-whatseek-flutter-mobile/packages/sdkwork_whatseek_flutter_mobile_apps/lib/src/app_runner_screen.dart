@@ -159,9 +159,10 @@ class _AppRunnerScreenState extends State<AppRunnerScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: scheme.surfaceContainerHighest,
+                      // Flat skeleton surface: a solid panel, no border; the
+                      // muted bars below supply the inner contrast.
+                      color: scheme.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: scheme.outlineVariant),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

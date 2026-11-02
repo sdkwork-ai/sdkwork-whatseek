@@ -15,7 +15,18 @@
     "collections": "编辑精选",
     "categories": "分类",
     "charts": "榜单速览",
-    "chartsMore": "查看完整榜单"
+    "chartsMore": "查看完整榜单",
+    "createMenu": {
+      "tooltip": "创建页面",
+      "corporateSite": "创建企业官网",
+      "webPage": "新建网页",
+      "landingPage": "创建活动落地页",
+      "personalPage": "创建个人主页",
+      "corporateSitePrompt": "帮我做一个企业官网：包含公司介绍、产品与服务、客户案例和联系方式，风格简洁专业。",
+      "webPagePrompt": "帮我新建一个网页，页面主题和内容我稍后补充。",
+      "landingPagePrompt": "帮我做一个活动落地页：包含主视觉、活动说明、报名表单和倒计时。",
+      "personalPagePrompt": "帮我做一个个人主页：包含头像、个人简介、作品集和联系方式。"
+    }
   },
   "charts": {
     "title": "排行榜"

@@ -14,3 +14,5 @@ export 'src/ports.dart';
 export 'src/route_table.dart';
 export 'src/runtime.dart';
 export 'src/settings/settings.dart';
+export 'src/tab_icons.dart';
+export 'src/theme/whatseek_theme.dart';

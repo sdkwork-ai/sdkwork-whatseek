@@ -23,6 +23,18 @@ const Map<String, Map<String, String>> whatseekAppsStrings = {
     'home.categories': '分类',
     'home.charts': '榜单速览',
     'home.chartsMore': '查看完整榜单',
+    'home.createMenu.tooltip': '创建页面',
+    'home.createMenu.corporateSite': '创建企业官网',
+    'home.createMenu.webPage': '新建网页',
+    'home.createMenu.landingPage': '创建活动落地页',
+    'home.createMenu.personalPage': '创建个人主页',
+    'home.createMenu.corporateSitePrompt':
+        '帮我做一个企业官网：包含公司介绍、产品与服务、客户案例和联系方式，风格简洁专业。',
+    'home.createMenu.webPagePrompt': '帮我新建一个网页，页面主题和内容我稍后补充。',
+    'home.createMenu.landingPagePrompt':
+        '帮我做一个活动落地页：包含主视觉、活动说明、报名表单和倒计时。',
+    'home.createMenu.personalPagePrompt':
+        '帮我做一个个人主页：包含头像、个人简介、作品集和联系方式。',
     'charts.title': '排行榜',
     'chart.hot': '热门榜',
     'chart.free': '免费榜',
@@ -127,6 +139,22 @@ const Map<String, Map<String, String>> whatseekAppsStrings = {
     'home.categories': 'Categories',
     'home.charts': 'Charts',
     'home.chartsMore': 'See all',
+    'home.createMenu.tooltip': 'Create a page',
+    'home.createMenu.corporateSite': 'Company website',
+    'home.createMenu.webPage': 'New web page',
+    'home.createMenu.landingPage': 'Campaign landing page',
+    'home.createMenu.personalPage': 'Personal homepage',
+    'home.createMenu.corporateSitePrompt':
+        'Build a company website with an about section, products and services, '
+        'customer cases, and contact details — clean and professional.',
+    'home.createMenu.webPagePrompt':
+        "Create a new web page; I'll add the topic and content next.",
+    'home.createMenu.landingPagePrompt':
+        'Build a campaign landing page with a hero section, campaign details, '
+        'a sign-up form, and a countdown.',
+    'home.createMenu.personalPagePrompt':
+        'Build a personal homepage with an avatar, bio, portfolio, and contact '
+        'details.',
     'charts.title': 'Charts',
     'chart.hot': 'Popular',
     'chart.free': 'Top Free',

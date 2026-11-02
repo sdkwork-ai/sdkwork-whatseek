@@ -227,6 +227,9 @@ class _MyAppsScreenState extends State<MyAppsScreen> {
           autofocus: true,
           decoration: InputDecoration(
             hintText: WhatseekAppsStrings.of(dialogContext, 'my.modifyPlaceholder'),
+            // The dialog is a panel, so the flat field needs the muted tone to
+            // stay visible (the canvas-tone default would blend into it).
+            fillColor: Theme.of(dialogContext).colorScheme.surfaceContainerHigh,
           ),
           onSubmitted: (value) => Navigator.of(dialogContext).pop(value),
         ),

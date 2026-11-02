@@ -68,8 +68,13 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
     Navigator.of(context).pushNamed('app.whatseek.apps.detail', arguments: appId);
   }
 
-  void _openCreate() {
-    Navigator.of(context).pushNamed('app.whatseek.apps.create');
+  /// Opens the AI create flow; a page type from the navbar "+" menu arrives as
+  /// the requirement seed that prefills the create screen.
+  void _openCreate([String requirement = '']) {
+    Navigator.of(context).pushNamed(
+      'app.whatseek.apps.create',
+      arguments: requirement,
+    );
   }
 
   void _openMyApps() {
@@ -87,10 +92,66 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
     );
   }
 
+  /// Navbar "+" menu: AI page creation. Every entry opens the create route with
+  /// a page-type requirement seed (PRD §17 creation entry), so the generation
+  /// flow starts from a concrete brief instead of an empty form.
+  static const List<({String labelKey, String promptKey, IconData icon})>
+      _createMenuEntries = <({String labelKey, String promptKey, IconData icon})>[
+    (
+      labelKey: 'home.createMenu.corporateSite',
+      promptKey: 'home.createMenu.corporateSitePrompt',
+      icon: Icons.business_outlined,
+    ),
+    (
+      labelKey: 'home.createMenu.webPage',
+      promptKey: 'home.createMenu.webPagePrompt',
+      icon: Icons.web_asset_outlined,
+    ),
+    (
+      labelKey: 'home.createMenu.landingPage',
+      promptKey: 'home.createMenu.landingPagePrompt',
+      icon: Icons.campaign_outlined,
+    ),
+    (
+      labelKey: 'home.createMenu.personalPage',
+      promptKey: 'home.createMenu.personalPagePrompt',
+      icon: Icons.person_outline,
+    ),
+  ];
+
+  Widget _buildCreateMenu(BuildContext context) {
+    // Read the scheme on the screen's context so the menu picks up a live
+    // light/dark swap like the rest of the page.
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return PopupMenuButton<String>(
+      tooltip: WhatseekAppsStrings.of(context, 'home.createMenu.tooltip'),
+      icon: const Icon(Icons.add),
+      position: PopupMenuPosition.under,
+      onSelected: (promptKey) =>
+          _openCreate(WhatseekAppsStrings.of(context, promptKey)),
+      itemBuilder: (context) => <PopupMenuEntry<String>>[
+        for (final entry in _createMenuEntries)
+          PopupMenuItem<String>(
+            value: entry.promptKey,
+            child: Row(
+              children: [
+                Icon(entry.icon, size: 18, color: scheme.primary),
+                const SizedBox(width: 10),
+                Text(WhatseekAppsStrings.of(context, entry.labelKey)),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(WhatseekAppsStrings.of(context, 'home.title'))),
+      appBar: AppBar(
+        title: Text(WhatseekAppsStrings.of(context, 'home.title')),
+        actions: <Widget>[_buildCreateMenu(context)],
+      ),
       body: FutureBuilder<_HomeData>(
         future: _data,
         builder: (context, snapshot) {
@@ -211,14 +272,14 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
       child: Row(
         children: [
           Expanded(
-            child: OutlinedButton(
+            child: FilledButton.tonal(
               onPressed: _openMyApps,
               child: Text(WhatseekAppsStrings.of(context, 'home.myApps')),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: OutlinedButton(
+            child: FilledButton.tonal(
               onPressed: () => Navigator.of(context).pushNamed(
                 'app.whatseek.apps.my',
                 arguments: 'favorites',
@@ -233,6 +294,12 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
 
   /// Editorial story rail (appstore Today 故事卡, simplified H5 `StoryCard`).
   Widget _buildStoryRail(BuildContext context, List<AppStoryCard> stories) {
+    // Read the ambient theme on the screen's own context, not on the deferred
+    // item builder's: the values below are captured into the item widgets, so
+    // this screen must depend on the theme to repaint on a live light/dark
+    // swap (THEME_DARKMODE_SPEC §3.2).
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return SizedBox(
       height: 132,
       child: ListView.builder(
@@ -241,7 +308,6 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
         itemCount: stories.length,
         itemBuilder: (context, index) {
           final story = stories[index];
-          final scheme = Theme.of(context).colorScheme;
           return InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: () => _openDetail(story.appId),
@@ -262,14 +328,14 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
                     story.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall,
+                    style: textTheme.titleSmall,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     story.subtitle,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: textTheme.bodySmall,
                   ),
                 ],
               ),
@@ -285,6 +351,10 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
   /// route.
   Widget _buildCollectionRail(
       BuildContext context, List<AppCollectionCard> collections) {
+    // See `_buildStoryRail`: the screen owns the theme dependency, the deferred
+    // item builder only consumes the captured values.
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return SizedBox(
       height: 168,
       child: ListView.builder(
@@ -293,7 +363,6 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
         itemCount: collections.length,
         itemBuilder: (context, index) {
           final collection = collections[index];
-          final scheme = Theme.of(context).colorScheme;
           final covers = collection.coverApps;
           return Card(
             margin: const EdgeInsetsDirectional.only(end: 12),
@@ -338,14 +407,14 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
                       collection.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: textTheme.titleSmall,
                     ),
                     const SizedBox(height: 2),
                     Text(
                       collection.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: textTheme.bodySmall,
                     ),
                   ],
                 ),
@@ -413,6 +482,8 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
     required String title,
     required List<WhatseekApp> apps,
   }) {
+    // See `_buildStoryRail`: the screen owns the theme dependency.
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -443,7 +514,7 @@ class _AppsHomeScreenState extends State<AppsHomeScreen> {
                             maxLines: 1, overflow: TextOverflow.ellipsis),
                         Text(app.priceLabel,
                             maxLines: 1, overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.labelSmall),
+                            style: textTheme.labelSmall),
                       ],
                     ),
                   ),

@@ -85,7 +85,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
               child: SizedBox(
                 width: double.infinity,
-                child: OutlinedButton.icon(
+                child: FilledButton.tonalIcon(
                   onPressed: _openTaskInChat,
                   icon: const Icon(Icons.task_alt),
                   label: Text(WhatseekMessagesStrings.of(context, 'conversation.viewTask')),
