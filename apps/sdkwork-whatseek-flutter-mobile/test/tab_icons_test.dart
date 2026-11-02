@@ -60,8 +60,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // 应用 is selected: the filled glyph paints, its outline does not.
-      expect(find.byIcon(Icons.apps), findsOneWidget);
-      expect(find.byIcon(Icons.apps_outlined), findsNothing);
+      expect(find.byIcon(Icons.widgets), findsOneWidget);
+      expect(find.byIcon(Icons.widgets_outlined), findsNothing);
       // Other tabs stay on their outline glyph.
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
       expect(find.byIcon(Icons.person), findsNothing);
