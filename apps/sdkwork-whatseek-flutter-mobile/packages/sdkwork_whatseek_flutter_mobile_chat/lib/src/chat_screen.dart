@@ -6,9 +6,10 @@ import 'chat_drawer.dart';
 import 'i18n/chat_strings.dart';
 import 'scan_screen.dart';
 
-/// The 对话 navbar "+" menu entries: the two quick actions of the first tab
-/// (WeChat-style home menu, rebranded for WhatSeek).
-enum _ChatMoreAction { scan, createApp }
+/// The 对话 navbar "+" menu entries: the first tab's quick actions (WeChat-style
+/// home menu, rebranded for WhatSeek). A fresh conversation leads, because it is
+/// the entry a returning user reaches for most.
+enum _ChatMoreAction { newChat, scan, createApp }
 
 /// One rendered chat turn. Assistant text carries an i18n key (raw service
 /// text passes through unresolved); AI replies may carry a task id (PRD §41)
@@ -243,9 +244,8 @@ class _ChatScreenState extends State<ChatScreen> {
     Navigator.of(context).pushNamed('app.whatseek.profile.settings');
   }
 
-  /// Navbar trailing slot: the "+" menu with 扫一扫 and 创建应用. The two
-  /// entries are the only quick actions of the first tab; everything else
-  /// lives in the drawer.
+  /// Navbar trailing slot: the "+" menu with 新建会话, 扫一扫 and 创建应用. These
+  /// are the first tab's quick actions; everything else lives in the drawer.
   Widget _buildMoreMenu(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
     return PopupMenuButton<_ChatMoreAction>(
@@ -254,6 +254,8 @@ class _ChatScreenState extends State<ChatScreen> {
       position: PopupMenuPosition.under,
       onSelected: (_ChatMoreAction action) {
         switch (action) {
+          case _ChatMoreAction.newChat:
+            _startNewConversation();
           case _ChatMoreAction.scan:
             _openScan(context);
           case _ChatMoreAction.createApp:
@@ -261,6 +263,16 @@ class _ChatScreenState extends State<ChatScreen> {
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<_ChatMoreAction>>[
+        PopupMenuItem<_ChatMoreAction>(
+          value: _ChatMoreAction.newChat,
+          child: Row(
+            children: [
+              Icon(Icons.add_comment_outlined, size: 18, color: scheme.primary),
+              const SizedBox(width: 10),
+              Text(WhatseekChatStrings.of(context, 'home.menuNewChat')),
+            ],
+          ),
+        ),
         PopupMenuItem<_ChatMoreAction>(
           value: _ChatMoreAction.scan,
           child: Row(
@@ -289,7 +301,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // The navbar hamburger opens this drawer; the trailing "+" menu holds
-      // the two quick actions. Only the first tab owns this chrome.
+      // the quick actions. Only the first tab owns this chrome.
       drawer: ChatDrawer(
         onNewChat: _startNewConversation,
         onOpenMyApps: () => _openMyApps(context),

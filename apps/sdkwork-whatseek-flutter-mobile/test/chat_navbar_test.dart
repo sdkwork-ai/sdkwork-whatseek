@@ -1,7 +1,7 @@
 // First-tab navbar: the 对话 home bar carries a drawer icon on the leading
-// edge, the "+" quick-action menu on the trailing edge (扫一扫 / 创建应用), and
-// the drawer itself. Only the chat tab is touched — the other tab roots keep
-// their own chrome.
+// edge, the "+" quick-action menu on the trailing edge (新建会话 / 扫一扫 /
+// 创建应用), and the drawer itself. Only the chat tab is touched — the other tab
+// roots keep their own chrome.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -52,6 +52,38 @@ void main() {
 
       expect(find.text('扫一扫'), findsOneWidget);
       expect(find.text('创建应用'), findsOneWidget);
+    });
+
+    testWidgets('plus_menu_leads_with_new_conversation', (tester) async {
+      await tester.pumpWidget(_host(_RouteProbe()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.add));
+      await tester.pumpAndSettle();
+
+      expect(find.text('新建会话'), findsOneWidget);
+      // First row of the dropdown: new conversation sits above the other two.
+      final newChatTop = tester.getTopLeft(find.text('新建会话')).dy;
+      expect(newChatTop, lessThan(tester.getTopLeft(find.text('扫一扫')).dy));
+      expect(newChatTop, lessThan(tester.getTopLeft(find.text('创建应用')).dy));
+    });
+
+    testWidgets('plus_new_conversation_entry_clears_the_thread', (tester) async {
+      await tester.pumpWidget(_host(_RouteProbe()));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), '你好');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+      expect(find.text('你好'), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.add));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('新建会话'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('你好'), findsNothing);
+      expect(find.text('你想做什么？'), findsOneWidget);
     });
 
     testWidgets('create_app_entry_opens_the_app_creation_route',
