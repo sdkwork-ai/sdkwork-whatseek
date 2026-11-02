@@ -1,8 +1,9 @@
 // Tab icon fill-state contract (APP_FLUTTER_UI_SPEC §5): the selected tab MUST
 // paint a filled glyph while the others stay outline, so every tab pairs an
-// outline codepoint with a distinct filled one. Icon families that only ship an
-// outline drawing fail the rule — `grid_view` and `grid_view_outlined` are the
-// same hollow squares, which is why 应用 moved to the `apps` family.
+// outline codepoint with a visually distinct filled one. Icon families that only
+// ship an outline drawing fail the rule — `grid_view` and `apps` render their
+// filled and outlined codepoints as the same hollow squares, which is why 应用
+// uses the `widgets` family.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -29,10 +30,12 @@ void main() {
     });
 
     test('apps_tab_uses_a_family_that_ships_a_filled_variant', () {
-      expect(kTabIcons[TabId.apps], (Icons.apps_outlined, Icons.apps));
-      // Guard against regressing to the outline-only grid_view pair.
+      expect(kTabIcons[TabId.apps], (Icons.widgets_outlined, Icons.widgets));
+      // Guard against regressing to the identical-filled grid_view/apps pairs.
       expect(kTabIcons[TabId.apps]!.$1, isNot(Icons.grid_view_outlined));
       expect(kTabIcons[TabId.apps]!.$2, isNot(Icons.grid_view));
+      expect(kTabIcons[TabId.apps]!.$1, isNot(Icons.apps_outlined));
+      expect(kTabIcons[TabId.apps]!.$2, isNot(Icons.apps));
     });
 
     testWidgets('selected_tab_paints_the_filled_glyph_only', (tester) async {

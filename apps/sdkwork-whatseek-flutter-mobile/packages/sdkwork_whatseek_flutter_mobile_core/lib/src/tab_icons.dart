@@ -7,9 +7,10 @@
 /// codepoint with its outline counterpart.
 ///
 /// A glyph family that only ships an outline drawing is not allowed: `grid_view`
-/// and `grid_view_outlined` render as the same four hollow squares, so the 应用
-/// tab moves to the `apps` family (3×3 solid vs 3×3 hollow), which has both
-/// states. `test/tab_icons_test.dart` pins this contract.
+/// and `apps` both render their filled and outlined codepoints as the same hollow
+/// squares, so the 应用 tab uses the `widgets` family (filled 2×2 blocks vs the
+/// outlined grid), which has both states. `test/tab_icons_test.dart` pins this
+/// contract.
 library;
 
 import 'package:flutter/material.dart';
@@ -17,9 +18,10 @@ import 'package:flutter/material.dart';
 import 'route_table.dart';
 
 /// `TabId` → (unselected outline icon, selected filled icon).
-const Map<TabId, (IconData, IconData)> kTabIcons = <TabId, (IconData, IconData)>{
+const Map<TabId, (IconData, IconData)> kTabIcons =
+    <TabId, (IconData, IconData)>{
   TabId.chat: (Icons.auto_awesome_outlined, Icons.auto_awesome),
-  TabId.apps: (Icons.apps_outlined, Icons.apps),
+  TabId.apps: (Icons.widgets_outlined, Icons.widgets),
   TabId.contacts: (Icons.people_outline, Icons.people),
   TabId.messages: (Icons.chat_bubble_outline, Icons.chat_bubble),
   TabId.profile: (Icons.person_outline, Icons.person),
