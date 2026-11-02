@@ -20,7 +20,7 @@ import 'route_table.dart';
 /// `TabId` → (unselected outline icon, selected filled icon).
 const Map<TabId, (IconData, IconData)> kTabIcons =
     <TabId, (IconData, IconData)>{
-  TabId.chat: (Icons.auto_awesome_outlined, Icons.auto_awesome),
+  TabId.chat: (Icons.stars_outlined, Icons.stars),
   TabId.apps: (Icons.widgets_outlined, Icons.widgets),
   TabId.contacts: (Icons.people_outline, Icons.people),
   TabId.messages: (Icons.chat_bubble_outline, Icons.chat_bubble),
