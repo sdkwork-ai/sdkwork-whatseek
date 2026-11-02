@@ -450,6 +450,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildCard(BuildContext context, ChatCard card) {
     return Container(
+      // The card is a panel, not a shrink-wrapped chip: it owns the reply's
+      // full inner width so the answer never leaves a gap on the right (H5
+      // block-level `rounded-2xl` cards parity).
+      width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         // Flat nested surface: a solid panel inside the muted bubble, no border.

@@ -1,7 +1,7 @@
 // Widget test for the chat thread layout: a user turn is a right-aligned
 // bubble capped at 82% of the screen, while an assistant turn is an answer and
-// spans the whole thread gutter — an AI reply must never be inset on the right
-// (H5 `w-full` parity).
+// spans the whole thread gutter — an AI reply (and its cards) must never be
+// inset on the right (H5 `w-full` parity).
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -61,5 +61,19 @@ void main() {
     expect(userBubble.right, moreOrLessEquals(gutterRight, epsilon: 0.5));
     expect(userBubble.left, greaterThan(kThreadGutter));
     expect(userBubble.width, lessThanOrEqualTo(screenWidth * 0.82 + 0.5));
+  });
+
+  testWidgets('assistant_card_panel_fills_the_reply_instead_of_indenting_right',
+      (tester) async {
+    await pumpChat(tester);
+    await sendUtterance(tester, '给张三发消息，告诉他下午三点开会');
+
+    // The confirmation card is nested inside the reply bubble; the bubble owns
+    // a 14pt horizontal padding, so the panel spans exactly that inset.
+    final bubble = bubbleAround(tester, find.text('我找到了联系人，发送前请确认：'));
+    final card = bubbleAround(tester, find.text('涉及对外发送，需要你明确确认后才会执行。'));
+
+    expect(card.left, moreOrLessEquals(bubble.left + 14, epsilon: 0.5));
+    expect(card.right, moreOrLessEquals(bubble.right - 14, epsilon: 0.5));
   });
 }
