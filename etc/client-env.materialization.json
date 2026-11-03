@@ -49,7 +49,15 @@
         "VITE_SDKWORK_DEPLOYMENT_PROFILE",
         "VITE_SDKWORK_PROFILE_ID",
         "VITE_SDKWORK_RUNTIME_TARGET"
-      ]
+      ],
+      "accessToken": {
+        "appId": "sdkwork-whatseek-h5",
+        "tenantId": "100001",
+        "organizationId": "0",
+        "permissionScope": [
+          "iam:self"
+        ]
+      }
     },
     {
       "id": "sdkwork-whatseek-pc",
@@ -75,7 +83,15 @@
         "VITE_SDKWORK_DEPLOYMENT_PROFILE",
         "VITE_SDKWORK_PROFILE_ID",
         "VITE_SDKWORK_RUNTIME_TARGET"
-      ]
+      ],
+      "accessToken": {
+        "appId": "sdkwork-whatseek-pc",
+        "tenantId": "100001",
+        "organizationId": "0",
+        "permissionScope": [
+          "iam:self"
+        ]
+      }
     }
   ]
 }
