@@ -92,6 +92,36 @@
           "iam:self"
         ]
       }
+    },
+    {
+      "id": "sdkwork-whatseek-flutter-mobile",
+      "root": "apps/sdkwork-whatseek-flutter-mobile",
+      "format": "flutter",
+      "runtimeTarget": "flutter-android",
+      "bindings": {},
+      "accessToken": {
+        "appId": "sdkwork-whatseek-flutter-mobile",
+        "tenantId": "100001",
+        "organizationId": "0",
+        "permissionScope": [
+          "iam:self"
+        ]
+      }
+    },
+    {
+      "id": "sdkwork-whatseek-mini-program",
+      "root": "apps/sdkwork-whatseek-mini-program",
+      "format": "mini-program",
+      "runtimeTarget": "mini-program",
+      "bindings": {},
+      "accessToken": {
+        "appId": "sdkwork-whatseek-mini-program",
+        "tenantId": "100001",
+        "organizationId": "0",
+        "permissionScope": [
+          "iam:self"
+        ]
+      }
     }
   ]
 }
