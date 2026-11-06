@@ -9,7 +9,8 @@
   "vocabulary": {
     "deploymentProfile": {
       "allowed": [
-        "standalone"
+        "standalone",
+        "cloud"
       ]
     },
     "environment": {
@@ -17,7 +18,8 @@
         "development",
         "test",
         "staging",
-        "production"
+        "production",
+        "demo"
       ]
     }
   },

@@ -22,7 +22,13 @@
     "standalone.development",
     "standalone.test",
     "standalone.staging",
-    "standalone.production"
+    "standalone.demo",
+    "standalone.production",
+    "cloud.development",
+    "cloud.test",
+    "cloud.staging",
+    "cloud.demo",
+    "cloud.production"
   ],
   "surfaces": [
     {
