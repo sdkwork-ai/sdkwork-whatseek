@@ -134,6 +134,19 @@
     "domain": "whatseek",
     "capability": "super-app",
     "standardOwner": "sdkwork-whatseek",
-    "deploymentConfig": "etc/sdkwork.deployment.config.json"
+    "deploymentConfig": "etc/sdkwork.deployment.config.json",
+    "publishing": {
+      "appIdByTarget": {
+        "standalone.development": "cf3d93d2-a193-4213-9cf6-fcdebe323737"
+      },
+      "birdcoder": {
+        "appId": "cf3d93d2-a193-4213-9cf6-fcdebe323737",
+        "appName": "问寻 WhatSeek",
+        "appSlug": "whatseek",
+        "appKey": "sdkwork-whatseek",
+        "sourceDirectory": "D:\\sdkwork-space\\sdkwork-whatseek",
+        "updatedAt": "2026-11-13T15:01:41.564Z"
+      }
+    }
   }
 }
